@@ -40,7 +40,7 @@ export const WhyOlympiaSection: React.FC<WhyOlympiaSectionProps> = ({ className 
         {/* Asymmetrical Bento Grid */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           {/* Card 1: Dominant Feature (Span 7) - Heavy Free Weights & Platforms */}
-          <SpotlightCard className="md:col-span-7 flex flex-col justify-between p-8 bg-brand-surface/80 border-white/10 hover:border-brand-volt/40 min-h-[320px]">
+          <SpotlightCard className="md:col-span-7 flex flex-col justify-between p-8 bg-brand-surface/80 border-brand-border/80 hover:border-brand-volt/40 min-h-[320px]">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-10 h-10 rounded-xl bg-brand-volt/10 border border-brand-volt/30 flex items-center justify-center text-brand-volt">
@@ -58,7 +58,7 @@ export const WhyOlympiaSection: React.FC<WhyOlympiaSectionProps> = ({ className 
               </p>
             </div>
 
-            <div className="pt-6 mt-4 border-t border-white/5 flex flex-wrap items-center gap-4 text-xs font-mono text-brand-text-muted">
+            <div className="pt-6 mt-4 border-t border-brand-border/40 flex flex-wrap items-center gap-4 text-xs font-mono text-brand-text-muted">
               <span>✓ Calibrated Bumper Plates</span>
               <span>✓ Solid Steel Power Cages</span>
               <span>✓ High-Density Rubber Mats</span>
@@ -66,7 +66,7 @@ export const WhyOlympiaSection: React.FC<WhyOlympiaSectionProps> = ({ className 
           </SpotlightCard>
 
           {/* Card 2: 100% Unisex Inclusive Culture (Span 5) */}
-          <SpotlightCard className="md:col-span-5 flex flex-col justify-between p-8 bg-brand-surface/80 border-white/10 hover:border-brand-volt/40 min-h-[320px]">
+          <SpotlightCard className="md:col-span-5 flex flex-col justify-between p-8 bg-brand-surface/80 border-brand-border/80 hover:border-brand-volt/40 min-h-[320px]">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-10 h-10 rounded-xl bg-brand-volt/10 border border-brand-volt/30 flex items-center justify-center text-brand-volt">
@@ -84,14 +84,14 @@ export const WhyOlympiaSection: React.FC<WhyOlympiaSectionProps> = ({ className 
               </p>
             </div>
 
-            <div className="pt-6 mt-4 border-t border-white/5 flex items-center gap-2 text-xs text-brand-text-muted">
+            <div className="pt-6 mt-4 border-t border-brand-border/40 flex items-center gap-2 text-xs text-brand-text-muted">
               <ShieldCheck className="w-4 h-4 text-emerald-400" />
               <span>Certified Safe & Welcoming Space in Yemmiganur</span>
             </div>
           </SpotlightCard>
 
           {/* Card 3: Form Correction & Floor Guidance (Span 5) */}
-          <SpotlightCard className="md:col-span-5 flex flex-col justify-between p-8 bg-brand-surface/80 border-white/10 hover:border-brand-volt/40 min-h-[280px]">
+          <SpotlightCard className="md:col-span-5 flex flex-col justify-between p-8 bg-brand-surface/80 border-brand-border/80 hover:border-brand-volt/40 min-h-[280px]">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-10 h-10 rounded-xl bg-brand-volt/10 border border-brand-volt/30 flex items-center justify-center text-brand-volt">
@@ -109,13 +109,13 @@ export const WhyOlympiaSection: React.FC<WhyOlympiaSectionProps> = ({ className 
               </p>
             </div>
 
-            <div className="pt-4 border-t border-white/5 flex items-center gap-2 text-xs font-mono text-emerald-400">
+            <div className="pt-4 border-t border-brand-border/40 flex items-center gap-2 text-xs font-mono text-emerald-400">
               <span>★ 5.0 Star Member Satisfaction</span>
             </div>
           </SpotlightCard>
 
           {/* Card 4: Structured Batches & Location Convenience (Span 7) */}
-          <SpotlightCard className="md:col-span-7 flex flex-col justify-between p-8 bg-brand-surface/80 border-white/10 hover:border-brand-volt/40 min-h-[280px]">
+          <SpotlightCard className="md:col-span-7 flex flex-col justify-between p-8 bg-brand-surface/80 border-brand-border/80 hover:border-brand-volt/40 min-h-[280px]">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-10 h-10 rounded-xl bg-brand-volt/10 border border-brand-volt/30 flex items-center justify-center text-brand-volt">
@@ -133,7 +133,7 @@ export const WhyOlympiaSection: React.FC<WhyOlympiaSectionProps> = ({ className 
               </p>
             </div>
 
-            <div className="pt-4 border-t border-white/5 flex flex-wrap items-center justify-between gap-2 text-xs text-brand-text-muted">
+            <div className="pt-4 border-t border-brand-border/40 flex flex-wrap items-center justify-between gap-2 text-xs text-brand-text-muted">
               <span>Shiva Priya Theater Area, Yemmiganur</span>
               <span className="text-brand-volt font-bold font-mono">DIRECT ACCESS</span>
             </div>

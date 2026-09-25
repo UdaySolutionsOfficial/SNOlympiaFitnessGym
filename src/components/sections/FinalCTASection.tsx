@@ -16,6 +16,8 @@ export const FinalCTASection: React.FC<FinalCTASectionProps> = ({ onJoinClick })
         <img
           src={ASSET_MANIFEST.about.gymAtmosphere.path}
           alt="Olympia Fitness Training Floor"
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover opacity-20 filter brightness-40 contrast-125 scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/80 to-brand-dark" />

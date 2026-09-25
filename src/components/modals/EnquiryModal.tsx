@@ -221,10 +221,14 @@ export const EnquiryModal: React.FC<EnquiryModalProps> = ({
                 </label>
                 <input
                   ref={firstInputRef}
+                  id="enquiry-name"
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="e.g. Rahul Sharma"
+                  aria-required="true"
+                  aria-invalid={errors.name ? 'true' : 'false'}
+                  aria-describedby={errors.name ? 'enquiry-name-error' : undefined}
                   className={`w-full px-3.5 py-2.5 rounded-xl bg-brand-dark/80 border text-sm text-white placeholder-brand-text-muted focus:outline-none transition-colors ${
                     errors.name
                       ? 'border-red-500/80 focus:border-red-500'
@@ -234,7 +238,7 @@ export const EnquiryModal: React.FC<EnquiryModalProps> = ({
                   required
                 />
                 {errors.name && (
-                  <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1 font-mono">
+                  <p id="enquiry-name-error" role="alert" className="text-[11px] text-red-400 mt-1 flex items-center gap-1 font-mono">
                     <AlertCircle className="w-3 h-3" />
                     <span>{errors.name}</span>
                   </p>
@@ -243,14 +247,18 @@ export const EnquiryModal: React.FC<EnquiryModalProps> = ({
 
               {/* Phone */}
               <div>
-                <label className="block text-xs font-mono uppercase tracking-wider text-brand-text-secondary mb-1.5">
+                <label htmlFor="enquiry-phone" className="block text-xs font-mono uppercase tracking-wider text-brand-text-secondary mb-1.5">
                   Contact Phone (WhatsApp) <span className="text-brand-volt">*</span>
                 </label>
                 <input
+                  id="enquiry-phone"
                   type="tel"
                   value={phone}
                   onChange={(e) => setPhone(e.target.value)}
                   placeholder="e.g. 95337 79533"
+                  aria-required="true"
+                  aria-invalid={errors.phone ? 'true' : 'false'}
+                  aria-describedby={errors.phone ? 'enquiry-phone-error' : undefined}
                   className={`w-full px-3.5 py-2.5 rounded-xl bg-brand-dark/80 border text-sm text-white placeholder-brand-text-muted focus:outline-none transition-colors ${
                     errors.phone
                       ? 'border-red-500/80 focus:border-red-500'
@@ -260,7 +268,7 @@ export const EnquiryModal: React.FC<EnquiryModalProps> = ({
                   required
                 />
                 {errors.phone && (
-                  <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1 font-mono">
+                  <p id="enquiry-phone-error" role="alert" className="text-[11px] text-red-400 mt-1 flex items-center gap-1 font-mono">
                     <AlertCircle className="w-3 h-3" />
                     <span>{errors.phone}</span>
                   </p>
@@ -269,14 +277,17 @@ export const EnquiryModal: React.FC<EnquiryModalProps> = ({
 
               {/* Email (Optional) */}
               <div>
-                <label className="block text-xs font-mono uppercase tracking-wider text-brand-text-secondary mb-1.5">
+                <label htmlFor="enquiry-email" className="block text-xs font-mono uppercase tracking-wider text-brand-text-secondary mb-1.5">
                   Email Address <span className="text-brand-text-muted">(Optional)</span>
                 </label>
                 <input
+                  id="enquiry-email"
                   type="email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   placeholder="e.g. rahul@example.com"
+                  aria-invalid={errors.email ? 'true' : 'false'}
+                  aria-describedby={errors.email ? 'enquiry-email-error' : undefined}
                   className={`w-full px-3.5 py-2.5 rounded-xl bg-brand-dark/80 border text-sm text-white placeholder-brand-text-muted focus:outline-none transition-colors ${
                     errors.email
                       ? 'border-red-500/80 focus:border-red-500'
@@ -285,7 +296,7 @@ export const EnquiryModal: React.FC<EnquiryModalProps> = ({
                   autoComplete="email"
                 />
                 {errors.email && (
-                  <p className="text-[11px] text-red-400 mt-1 flex items-center gap-1 font-mono">
+                  <p id="enquiry-email-error" role="alert" className="text-[11px] text-red-400 mt-1 flex items-center gap-1 font-mono">
                     <AlertCircle className="w-3 h-3" />
                     <span>{errors.email}</span>
                   </p>

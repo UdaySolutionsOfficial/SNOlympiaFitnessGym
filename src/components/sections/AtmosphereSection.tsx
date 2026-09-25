@@ -11,6 +11,8 @@ export const AtmosphereSection: React.FC = () => {
         <img
           src={ASSET_MANIFEST.about.gymAtmosphere.path}
           alt="Olympia Fitness Atmosphere"
+          loading="lazy"
+          decoding="async"
           className="w-full h-full object-cover opacity-25 filter brightness-50 contrast-125 scale-105"
         />
         <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-brand-dark/85 to-brand-dark" />
