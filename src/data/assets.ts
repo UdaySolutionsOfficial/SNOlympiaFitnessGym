@@ -12,7 +12,7 @@ export interface AssetMeta {
   aspectRatio: string;
   alt: string;
   description: string;
-  targetFormat: 'webp' | 'avif' | 'glb' | 'mp4' | 'svg';
+  targetFormat: 'webp' | 'avif' | 'glb' | 'mp4' | 'svg' | 'jpg';
   status: 'PENDING_GENERATION' | 'READY';
 }
 
@@ -26,7 +26,7 @@ export const ASSET_MANIFEST = {
       aspectRatio: '16:9',
       alt: 'SN Olympia Fitness Athlete during intensive strength session',
       description: 'Cinematic rim-lit strength athlete in dark atmospheric gym',
-      targetFormat: 'webp',
+      targetFormat: 'jpg',
       status: 'READY',
     } satisfies AssetMeta,
     athleteMobile: {
@@ -37,7 +37,7 @@ export const ASSET_MANIFEST = {
       aspectRatio: '9:16',
       alt: 'Athletic portrait composed for mobile viewports',
       description: 'Vertical athletic portrait with dark negative space top/bottom',
-      targetFormat: 'webp',
+      targetFormat: 'jpg',
       status: 'READY',
     } satisfies AssetMeta,
     ambientDepth: {
@@ -53,88 +53,138 @@ export const ASSET_MANIFEST = {
     } satisfies AssetMeta,
   },
 
+  about: {
+    gymAtmosphere: {
+      id: 'about-gym-atmosphere',
+      path: '/assets/images/about/about-gym-atmosphere.jpg',
+      width: 2560,
+      height: 1440,
+      aspectRatio: '16:9',
+      alt: 'Wide interior view of SN Olympia training floor with dumbbell rack and platforms',
+      description: 'Atmospheric heavy dumbbell racks and Olympic power cages with chalk dust',
+      targetFormat: 'jpg',
+      status: 'READY',
+    } satisfies AssetMeta,
+  },
+
   programs: {
     strength: {
       id: 'program-strength-hypertrophy',
-      path: '/assets/images/programs/program-strength.webp',
+      path: '/assets/images/programs/program-strength.jpg',
       width: 1200,
       height: 800,
       aspectRatio: '3:2',
       alt: 'Heavy barbell deadlift strength training at SN Olympia',
       description: 'Knurled steel Olympic bar with chalk dust and iron plates',
-      targetFormat: 'webp',
-      status: 'PENDING_GENERATION',
+      targetFormat: 'jpg',
+      status: 'READY',
     } satisfies AssetMeta,
     conditioning: {
       id: 'program-conditioning-hiit',
-      path: '/assets/images/programs/program-conditioning.webp',
+      path: '/assets/images/programs/program-conditioning.jpg',
       width: 1200,
       height: 800,
       aspectRatio: '3:2',
       alt: 'High-intensity conditioning battle ropes exercise',
       description: 'Dynamic motion blur battle ropes and agility training',
-      targetFormat: 'webp',
-      status: 'PENDING_GENERATION',
+      targetFormat: 'jpg',
+      status: 'READY',
     } satisfies AssetMeta,
     coaching: {
       id: 'program-personal-coaching',
-      path: '/assets/images/programs/program-coaching.webp',
+      path: '/assets/images/programs/program-coaching.jpg',
       width: 1200,
       height: 800,
       aspectRatio: '3:2',
       alt: 'One-on-one personal coaching biomechanical analysis',
       description: 'Dedicated trainer spotting and guiding athletic execution',
-      targetFormat: 'webp',
-      status: 'PENDING_GENERATION',
+      targetFormat: 'jpg',
+      status: 'READY',
     } satisfies AssetMeta,
-    functional: {
-      id: 'program-functional-mobility',
-      path: '/assets/images/programs/program-functional.webp',
+    womens: {
+      id: 'program-womens-fitness',
+      path: '/assets/images/programs/program-womens.jpg',
       width: 1200,
       height: 800,
       aspectRatio: '3:2',
-      alt: 'Functional fitness and joint mobility exercises',
-      description: 'Kettlebell precision movement on athletic turf',
-      targetFormat: 'webp',
-      status: 'PENDING_GENERATION',
+      alt: 'Women’s functional resistance and strength conditioning',
+      description: 'Athletic woman performing focused kettlebell movement on turf',
+      targetFormat: 'jpg',
+      status: 'READY',
     } satisfies AssetMeta,
   },
 
   facilities: {
     freeWeights: {
       id: 'facility-free-weights',
-      path: '/assets/images/facilities/facility-free-weights.webp',
-      width: 1400,
-      height: 900,
-      aspectRatio: '14:9',
+      path: '/assets/images/facilities/facility-free-weights.jpg',
+      width: 2560,
+      height: 1440,
+      aspectRatio: '16:9',
       alt: 'Heavy dumbbell rack and free weight zone',
       description: 'Precision urethane dumbbells neatly aligned with floor uplights',
-      targetFormat: 'webp',
-      status: 'PENDING_GENERATION',
+      targetFormat: 'jpg',
+      status: 'READY',
     } satisfies AssetMeta,
     powerRacks: {
       id: 'facility-power-cages',
-      path: '/assets/images/facilities/facility-power-cages.webp',
-      width: 1400,
-      height: 900,
-      aspectRatio: '14:9',
+      path: '/assets/images/facilities/facility-power-cages.jpg',
+      width: 2560,
+      height: 1440,
+      aspectRatio: '16:9',
       alt: 'Olympic lifting platforms and heavy-duty power racks',
       description: 'Commercial power cages with Olympic bumper plates',
-      targetFormat: 'webp',
-      status: 'PENDING_GENERATION',
-    } satisfies AssetMeta,
-    cardioFloor: {
-      id: 'facility-cardio-turf',
-      path: '/assets/images/facilities/facility-cardio-turf.webp',
-      width: 1400,
-      height: 900,
-      aspectRatio: '14:9',
-      alt: 'Sprint turf and high-end cardio machines',
-      description: 'Curved treadmills and athletic sprint track',
-      targetFormat: 'webp',
-      status: 'PENDING_GENERATION',
+      targetFormat: 'jpg',
+      status: 'READY',
     } satisfies AssetMeta,
   },
+
+  gallery: [
+    {
+      id: 'gallery-01',
+      path: '/assets/images/gallery/gallery-01.jpg',
+      width: 1080,
+      height: 1080,
+      aspectRatio: '1:1',
+      alt: 'Extreme macro close-up of knurled steel barbell with magnesium chalk',
+      description: 'Olympic barbell knurling macro texture',
+      targetFormat: 'jpg',
+      status: 'READY',
+    } satisfies AssetMeta,
+    {
+      id: 'gallery-02',
+      path: '/assets/images/gallery/gallery-02.jpg',
+      width: 1440,
+      height: 1080,
+      aspectRatio: '4:3',
+      alt: 'Athlete clapping chalk hands with billowing dust in atmospheric gym',
+      description: 'Pre-lift chalk clap focus in dark gym environment',
+      targetFormat: 'jpg',
+      status: 'READY',
+    } satisfies AssetMeta,
+    {
+      id: 'gallery-03',
+      path: '/assets/images/facilities/facility-free-weights.jpg',
+      width: 2560,
+      height: 1440,
+      aspectRatio: '16:9',
+      alt: 'Free weight dumbbell arena perspective down the line',
+      description: 'Dumbbell tier line with precision knurling',
+      targetFormat: 'jpg',
+      status: 'READY',
+    } satisfies AssetMeta,
+    {
+      id: 'gallery-04',
+      path: '/assets/images/programs/program-strength.jpg',
+      width: 1200,
+      height: 800,
+      aspectRatio: '3:2',
+      alt: 'Heavy barbell deadlift execution on shock-absorbent platform',
+      description: 'Heavy compound lift in dark industrial atmosphere',
+      targetFormat: 'jpg',
+      status: 'READY',
+    } satisfies AssetMeta,
+  ],
 
   threeD: {
     signaturePlate: {
@@ -149,18 +199,4 @@ export const ASSET_MANIFEST = {
       status: 'PENDING_GENERATION',
     } satisfies AssetMeta,
   },
-
-  cta: {
-    crucibleAtmosphere: {
-      id: 'cta-crucible-atmosphere',
-      path: '/assets/images/cta/cta-atmosphere.webp',
-      width: 2560,
-      height: 1200,
-      aspectRatio: '21:9',
-      alt: 'Atmospheric view inside SN Olympia Gym floor',
-      description: 'Wide cinematic perspective inviting member action',
-      targetFormat: 'webp',
-      status: 'PENDING_GENERATION',
-    } satisfies AssetMeta,
-  }
 };
