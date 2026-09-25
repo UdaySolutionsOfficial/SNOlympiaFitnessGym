@@ -1,7 +1,7 @@
 import React from 'react';
 import { Button } from '../common/Button';
 import { SITE_CONTENT } from '../../data/siteContent';
-import { ArrowRight, Phone, MessageSquare, ChevronDown } from 'lucide-react';
+import { ArrowRight, Phone, MessageSquare, Star, ShieldCheck, Clock } from 'lucide-react';
 
 export interface HeroContentProps {
   onJoinClick?: () => void;
@@ -10,42 +10,29 @@ export interface HeroContentProps {
 }
 
 /**
- * Hero Content & CTA System
- * Oversized athletic typography, masked entrance sequence,
- * and high-impact conversion triggers inspired by ThreeUI Glass AI button.
+ * Animated Glassmorphic Hero Card
+ * Houses the understandable plain-language value proposition,
+ * direct action buttons, and verified gym details in a floating frosted card.
  */
 export const HeroContent: React.FC<HeroContentProps> = ({
   onJoinClick,
   onExploreClick,
-  className,
+  className = '',
 }) => {
   return (
-    <div className={`space-y-6 ${className}`}>
-      {/* 1. Eyebrow Badge */}
-      <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-surface/80 border border-white/10 text-xs font-bold tracking-wider text-brand-text-secondary uppercase shadow-sm">
-        <span className="w-2 h-2 rounded-full bg-brand-volt shadow-glow-volt animate-pulse" />
-        <span className="text-white">{SITE_CONTENT.hero.badge}</span>
-        <span className="text-white/20">/</span>
-        <span className="text-brand-volt font-mono">TIMMAPPA COLONY</span>
-      </div>
+    <div
+      className={`relative max-w-3xl mx-auto p-6 sm:p-8 rounded-3xl bg-brand-surface/80 backdrop-blur-2xl border border-white/15 shadow-[0_20px_50px_rgba(0,0,0,0.85)] text-center transition-all duration-500 hover:border-brand-volt/50 ${className}`}
+    >
+      {/* Subtle Ambient Radial Light Accent Inside the Card */}
+      <div className="absolute top-0 inset-x-0 h-px bg-gradient-to-r from-transparent via-brand-volt/60 to-transparent" />
 
-      {/* 2. Headline with Split Athletic Weight */}
-      <div className="space-y-1">
-        <h1 className="text-fluid-hero font-black uppercase text-white tracking-tighter leading-[0.92] select-none">
-          <span className="block drop-shadow-md">{SITE_CONTENT.hero.headlineWord1}</span>
-          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-white via-brand-text-primary to-brand-text-muted">
-            {SITE_CONTENT.hero.headlineWord2}
-          </span>
-        </h1>
-      </div>
-
-      {/* 3. Supporting Editorial Statement */}
-      <p className="text-sm sm:text-base md:text-lg text-brand-text-secondary max-w-xl leading-relaxed font-normal">
-        {SITE_CONTENT.hero.subheadline} Step inside Yemmiganur’s premier unisex crucible for heavy iron, metabolic conditioning, and personal discipline.
+      {/* Understandable Paragraph Text for Everyone */}
+      <p className="text-base sm:text-lg md:text-xl text-brand-text-primary leading-relaxed font-medium max-w-2xl mx-auto">
+        {SITE_CONTENT.hero.subheadline}
       </p>
 
-      {/* 4. Action CTAs (Primary Glass AI Style + Secondary Outline + Direct WhatsApp) */}
-      <div className="flex flex-wrap items-center gap-3.5 pt-2">
+      {/* Direct Action Triggers */}
+      <div className="flex flex-wrap items-center justify-center gap-3.5 pt-6">
         {/* Primary CTA (JOIN NOW) */}
         <Button
           size="lg"
@@ -58,7 +45,7 @@ export const HeroContent: React.FC<HeroContentProps> = ({
           {SITE_CONTENT.hero.primaryCta}
         </Button>
 
-        {/* Secondary CTA (EXPLORE GYM) */}
+        {/* Secondary CTA (EXPLORE PROGRAMS) */}
         <Button
           size="lg"
           variant="secondary"
@@ -67,7 +54,7 @@ export const HeroContent: React.FC<HeroContentProps> = ({
           {SITE_CONTENT.hero.secondaryCta}
         </Button>
 
-        {/* Quick WhatsApp Local Inquiry */}
+        {/* Quick WhatsApp Inquiry */}
         <a
           href={`https://wa.me/${SITE_CONTENT.brand.contact.whatsapp.value.replace('+', '')}?text=Hi%20Olympia%20Fitness,%20I%20would%20like%20to%20inquire%20about%20membership%20and%20timings`}
           target="_blank"
@@ -83,23 +70,30 @@ export const HeroContent: React.FC<HeroContentProps> = ({
             WHATSAPP
           </Button>
         </a>
+
+        {/* Direct Phone Dial */}
+        <a
+          href={`tel:${SITE_CONTENT.brand.contact.phone.value}`}
+          className="inline-flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/5 border border-white/10 text-xs font-mono font-bold text-white hover:border-brand-volt hover:text-brand-volt transition-colors whitespace-nowrap"
+        >
+          <Phone className="w-3.5 h-3.5 text-brand-volt shrink-0" />
+          <span className="whitespace-nowrap">{SITE_CONTENT.brand.contact.phoneDisplay.value}</span>
+        </a>
       </div>
 
-      {/* 5. Verified Metric Micro-Bar */}
-      <div className="flex items-center gap-6 pt-4 border-t border-white/5 text-xs text-brand-text-muted">
-        <div>
-          <span className="font-mono font-black text-white text-base block">5.0★</span>
-          <span className="uppercase text-[10px] tracking-wider">Member Reviews</span>
+      {/* Verified Facility Credentials Micro-Bar */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 mt-6 border-t border-white/10 text-xs text-brand-text-muted">
+        <div className="flex items-center justify-center gap-2">
+          <Star className="w-4 h-4 text-amber-400 fill-amber-400 shrink-0" />
+          <span className="font-bold text-white">5.0★ Google Rating</span>
         </div>
-        <div className="h-6 w-px bg-white/10" />
-        <div>
-          <span className="font-mono font-black text-white text-base block">100%</span>
-          <span className="uppercase text-[10px] tracking-wider">Unisex Facility</span>
+        <div className="flex items-center justify-center gap-2">
+          <ShieldCheck className="w-4 h-4 text-brand-volt shrink-0" />
+          <span className="font-bold text-white">100% Unisex Facility</span>
         </div>
-        <div className="h-6 w-px bg-white/10" />
-        <div>
-          <span className="font-mono font-black text-white text-base block">PRO</span>
-          <span className="uppercase text-[10px] tracking-wider">Coaching Guidance</span>
+        <div className="flex items-center justify-center gap-2">
+          <Clock className="w-4 h-4 text-brand-text-secondary shrink-0" />
+          <span className="font-mono text-white">5:00 AM – 10:00 PM</span>
         </div>
       </div>
     </div>

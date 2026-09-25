@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import { ASSET_MANIFEST } from '../../data/assets';
-import { PlateViewer } from '../3d/PlateViewer';
-import { HeroFloatingCards } from './HeroFloatingCards';
+import { SITE_CONTENT } from '../../data/siteContent';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
-import { Sparkles } from 'lucide-react';
 
 export interface HeroVisualProps {
   mouseOffset?: { x: number; y: number };
@@ -11,108 +9,104 @@ export interface HeroVisualProps {
 }
 
 /**
- * Senior UI/UX Redesigned Hero Visual Layer
- * Features the ultra-muscular athlete back with wide wingspan,
- * seamlessly blended into the obsidian background with chiaroscuro edge gradients.
- * The 3D Olympic Plate is resized into an elegant, non-intrusive interactive medallion
- * positioned gracefully at the bottom-right, leaving the athlete in full glory.
+ * Centered Layered Editorial Hero Visual
+ * - Layer 1 (z-10, behind person): Monumental typography ("BUILD YOUR" & "OLYMPIA")
+ * - Layer 2 (z-20, center): Shredded athlete transparent cutout (zero black band, ultra-detailed 8K musculature)
+ * - Layer 3 (z-30, foreground at bottom of image): Punchy universally understandable headline ("UNSTOPPABLE STRENGTH")
  */
 export const HeroVisual: React.FC<HeroVisualProps> = ({
   mouseOffset = { x: 0, y: 0 },
-  className,
+  className = '',
 }) => {
   const [imageError, setImageError] = useState(false);
   const prefersReducedMotion = useReducedMotion();
 
-  // Gentle parallax displacement on desktop
-  const parallaxTransform = !prefersReducedMotion
+  // Subtle mouse parallax depth
+  const parallaxAthlete = !prefersReducedMotion
     ? {
-        transform: `translate3d(${mouseOffset.x * 0.02}px, ${mouseOffset.y * 0.02}px, 0)`,
+        transform: `translate3d(${mouseOffset.x * 0.03}px, ${mouseOffset.y * 0.03}px, 0)`,
+        transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+      }
+    : undefined;
+
+  const parallaxBackdrop = !prefersReducedMotion
+    ? {
+        transform: `translate3d(${mouseOffset.x * -0.015}px, ${mouseOffset.y * -0.015}px, 0)`,
         transition: 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
       }
     : undefined;
 
   return (
-    <div className={`relative flex items-center justify-center ${className}`}>
-      {/* 1. Athlete Photography Container (Wide 16:10 aspect to honor arm wingspan) */}
+    <div className={`relative w-full flex flex-col items-center justify-center select-none ${className}`}>
+      
+      {/* ========================================================================= */}
+      {/* LAYER 1 (z-10): WORDS BEHIND THE PERSON                                   */}
+      {/* ========================================================================= */}
       <div
-        style={parallaxTransform}
-        className="relative w-full max-w-xl lg:max-w-2xl aspect-[16/10] sm:aspect-[16/10] rounded-3xl overflow-hidden bg-brand-surface/40 border border-white/10 shadow-[0_30px_70px_rgba(0,0,0,0.9)] group"
+        style={parallaxBackdrop}
+        className="relative z-10 w-full flex flex-col items-center justify-center text-center pointer-events-none"
+      >
+        {/* Top Phrase Behind Athlete's Head */}
+        <span className="text-xs sm:text-sm md:text-base font-black tracking-[0.35em] text-brand-volt/90 uppercase mb-1">
+          {SITE_CONTENT.hero.topPhrase || 'BUILD YOUR'}
+        </span>
+
+        {/* Monumental Architectural Word Sitting Behind the Outstretched Arms */}
+        <h2 className="text-[19vw] sm:text-[17vw] md:text-[14vw] lg:text-[11rem] xl:text-[13rem] font-black uppercase tracking-tighter text-white/[0.07] leading-[0.8] select-none">
+          {SITE_CONTENT.hero.backgroundWord || 'OLYMPIA'}
+        </h2>
+      </div>
+
+      {/* ========================================================================= */}
+      {/* LAYER 2 (z-20): CENTERED SHREDDED ATHLETE CUTOUT (NO BLACK BAND, NO BG)  */}
+      {/* ========================================================================= */}
+      <div
+        style={parallaxAthlete}
+        className="relative z-20 -mt-[14vw] sm:-mt-[12vw] md:-mt-[9rem] lg:-mt-[11rem] w-full max-w-md sm:max-w-2xl md:max-w-3xl lg:max-w-4xl flex items-center justify-center pointer-events-none"
       >
         {!imageError ? (
-          <picture className="w-full h-full block">
-            {/* Mobile portrait crop */}
-            <source
-              media="(max-width: 640px)"
-              srcSet={ASSET_MANIFEST.hero.athleteMobile.path}
-            />
-            {/* Desktop high-resolution wide composition */}
-            <img
-              src={ASSET_MANIFEST.hero.athleteDesktop.path}
-              alt="SN Olympia Fitness Athlete demonstrating high-performance back hypertrophy and discipline"
-              loading="eager"
-              decoding="async"
-              onError={() => setImageError(true)}
-              className="w-full h-full object-cover object-center filter contrast-[1.05] brightness-[0.98] group-hover:scale-[1.03] transition-transform duration-700 ease-out"
-            />
-          </picture>
+          <div className="relative w-full aspect-[16/9] flex items-center justify-center">
+            {/* Ambient Backlight Glow behind the athlete */}
+            <div className="absolute inset-0 max-w-lg mx-auto bg-gradient-to-t from-brand-volt/10 via-brand-volt/5 to-transparent blur-3xl rounded-full -z-10" />
+
+            <picture className="w-full h-full flex items-center justify-center">
+              <source
+                srcSet={ASSET_MANIFEST.hero.athleteCutoutWebp.path}
+                type="image/webp"
+              />
+              <img
+                src={ASSET_MANIFEST.hero.athleteCutout.path}
+                alt="SN Olympia Fitness muscular athlete with shredded back and outstretched arms on dark transparent background"
+                loading="eager"
+                decoding="async"
+                onError={() => setImageError(true)}
+                className="w-full h-full object-contain filter contrast-[1.05] brightness-[1.02] drop-shadow-[0_20px_40px_rgba(0,0,0,0.9)]"
+              />
+            </picture>
+
+            {/* Seamless Bottom Edge Feathering onto dark canvas */}
+            <div className="absolute bottom-0 inset-x-0 h-16 sm:h-24 bg-gradient-to-t from-brand-dark via-brand-dark/60 to-transparent pointer-events-none" />
+          </div>
         ) : (
-          /* Graceful Fallback if image fails to load */
-          <div className="w-full h-full flex flex-col items-center justify-center p-8 bg-brand-surface text-center">
-            <div className="w-20 h-20 rounded-full border-2 border-brand-volt/40 flex items-center justify-center mb-4">
-              <span className="text-2xl font-black text-brand-volt">SN</span>
-            </div>
-            <h3 className="text-base font-bold text-white uppercase tracking-wider mb-1">
-              SN OLYMPIA FITNESS
-            </h3>
-            <p className="text-xs text-brand-text-muted">
-              Unisex Strength & Conditioning Ground
-            </p>
+          /* Graceful Fallback if image fails */
+          <div className="w-64 h-64 rounded-full border border-brand-volt/30 flex flex-col items-center justify-center p-6 text-center">
+            <span className="text-3xl font-black text-brand-volt">SN</span>
+            <span className="text-sm font-bold text-white uppercase mt-2">OLYMPIA FITNESS</span>
           </div>
         )}
-
-        {/* Seamless Dark Edge Vignettes & Gradients */}
-        <div className="absolute inset-0 bg-gradient-to-t from-brand-dark via-transparent to-brand-dark/30 pointer-events-none" />
-        <div className="absolute inset-0 bg-gradient-to-r from-brand-dark/50 via-transparent to-brand-dark/40 pointer-events-none" />
-
-        {/* Bottom Location & Floor Credential Tag */}
-        <div className="absolute top-4 left-4 z-10 flex items-center gap-2 px-3 py-1 rounded-full bg-brand-dark/80 backdrop-blur-md border border-white/10 text-[10px] font-mono">
-          <span className="w-1.5 h-1.5 rounded-full bg-brand-volt animate-pulse" />
-          <span className="text-white font-bold tracking-wider uppercase">COMMERCIAL IRON</span>
-          <span className="text-brand-text-muted">•</span>
-          <span className="text-brand-volt">TIMMAPPA COLONY</span>
-        </div>
       </div>
 
-      {/* 2. Resized, Repositioned 3D Olympic Weight Plate Medallion */}
-      {/* Placed at bottom-right corner as an elegant interactive badge that does not obstruct the athlete */}
-      <div
-        style={{
-          transform: !prefersReducedMotion
-            ? `translate3d(${mouseOffset.x * -0.025}px, ${mouseOffset.y * -0.025}px, 0)`
-            : undefined,
-          transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-        }}
-        className="hidden sm:flex flex-col items-center absolute -bottom-6 -right-3 sm:-right-6 z-20 p-2.5 rounded-2xl bg-brand-surface/90 backdrop-blur-xl border border-brand-volt/30 shadow-[0_15px_35px_rgba(0,0,0,0.85)] hover:border-brand-volt transition-colors"
-      >
-        <div className="flex items-center gap-1.5 text-[9px] font-mono uppercase text-brand-text-muted tracking-wider mb-1">
-          <Sparkles className="w-3 h-3 text-brand-volt" />
-          <span>3D PLATE</span>
-          <span className="text-brand-volt font-bold">20 KG</span>
-        </div>
-        <div className="w-24 h-24 md:w-28 md:h-28 relative">
-          <PlateViewer className="w-full h-full" autoRotate />
-        </div>
-        <span className="text-[8px] font-mono text-brand-text-muted mt-0.5 tracking-tight">
-          DRAG TO ROTATE
-        </span>
+      {/* ========================================================================= */}
+      {/* LAYER 3 (z-30): FOREGROUND WORDS AT BOTTOM OF HERO IMAGE                   */}
+      {/* ========================================================================= */}
+      <div className="relative z-30 -mt-10 sm:-mt-14 md:-mt-20 lg:-mt-24 text-center px-4 max-w-4xl pointer-events-none">
+        <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-black uppercase tracking-tight leading-[0.95] drop-shadow-[0_15px_35px_rgba(0,0,0,0.95)]">
+          <span className="block text-white">UNSTOPPABLE</span>
+          <span className="block text-transparent bg-clip-text bg-gradient-to-r from-brand-volt via-white to-brand-volt">
+            STRENGTH
+          </span>
+        </h1>
       </div>
-
-      {/* 3. Floating Verified Proof Badges (Bottom-Left Counterbalance) */}
-      <HeroFloatingCards
-        mouseOffset={mouseOffset}
-        className="hidden sm:flex absolute -bottom-6 -left-3 sm:-left-6 z-20 flex-col gap-2.5"
-      />
     </div>
   );
 };

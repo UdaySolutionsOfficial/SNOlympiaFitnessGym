@@ -134,3 +134,23 @@ In strict adherence to the Content Truth Charter:
   - Resized and repositioned Three.js Olympic bumper plate from top-right blocker to an elegant bottom-right interactive medallion (`w-24 h-24 md:w-28 md:h-28`).
   - Retained full 360-degree pointer drag interaction and auto-rotation without obstructing the athlete visual.
 
+---
+
+## 13. Centered Layered Hero Architecture & Cutout Refinement
+
+- **Black Band Removal & Transparent PNG Cutout:**
+  - Preserved the client's chosen shredded athlete physique (`hero_athlete_shredded_1790343669801.jpg`) without changing the athlete or musculature.
+  - Eliminated the black rubber resistance band from across the arms and neck.
+  - Segmented the athlete with 1.8px alpha edge feathering into high-fidelity transparent assets (`hero-athlete-cutout.png` and ultra-lightweight 129 KB `hero-athlete-cutout.webp`).
+- **Centered Layered Depth Composition:**
+  - **Layer 1 (Behind Athlete, `z-10`):** Architectural typography (`BUILD YOUR` and monumental `OLYMPIA` text).
+  - **Layer 2 (Centerpiece, `z-20`):** Centered athlete cutout with natural wingspan and subtle pointer parallax.
+  - **Layer 3 (Foreground Overlap, `z-30`):** Universally understandable, powerful headline (`UNSTOPPABLE STRENGTH`) overlapping the bottom edge of the visual.
+- **Animated Glassmorphic Card:**
+  - Plain-language value proposition accessible to every visitor: *"Welcome to Yemmiganur's premier unisex fitness gym. Whether you want to build muscle, lose weight, or build everyday athletic energy, our world-class iron and expert trainers guide you every step of the way."*
+  - Integrated direct conversion CTAs: `JOIN NOW — INQUIRE BATCH`, direct hotline dial, and WhatsApp.
+- **Free-Floating 3D Olympic Plate:**
+  - Completely detached from any card or box container.
+  - Floats freely in open 3D space on the hero section with interactive 360° drag rotation and metallic knurling reflections.
+
+

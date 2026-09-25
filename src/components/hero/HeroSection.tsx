@@ -2,7 +2,9 @@ import React, { useState, useCallback, useEffect } from 'react';
 import { HeroBackground } from './HeroBackground';
 import { HeroContent } from './HeroContent';
 import { HeroVisual } from './HeroVisual';
-import { ChevronDown } from 'lucide-react';
+import { PlateViewer } from '../3d/PlateViewer';
+import { SITE_CONTENT } from '../../data/siteContent';
+import { ChevronDown, Sparkles } from 'lucide-react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 export interface HeroSectionProps {
@@ -11,9 +13,11 @@ export interface HeroSectionProps {
 }
 
 /**
- * Master Hero Section
- * Orchestrates atmospheric canvas, fluid typography, high-resolution photography,
- * 3D plate satellite, verified floating metrics, and pointer parallax.
+ * Master Centered Hero Section
+ * - Centered layered editorial composition (Background text -> Shredded Athlete Cutout -> Foreground text)
+ * - Animated glassmorphic card housing plain-language explanation and conversion triggers
+ * - Free-floating 3D Olympic Plate (kept completely free on the hero section without any card container)
+ * - Responsive across mobile, tablet, and desktop viewports
  */
 export const HeroSection: React.FC<HeroSectionProps> = ({
   onJoinClick,
@@ -50,29 +54,59 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section
       id="overview"
-      className="relative min-h-[95vh] lg:min-h-screen flex flex-col justify-between pt-28 pb-12 sm:pt-36 sm:pb-16 px-4 md:px-8 max-w-7xl mx-auto overflow-hidden"
+      className="relative min-h-[95vh] lg:min-h-screen flex flex-col justify-between pt-24 pb-12 sm:pt-32 sm:pb-16 px-4 md:px-8 max-w-7xl mx-auto overflow-hidden"
     >
       {/* 1. Atmospheric Canvas Background Layer */}
       <HeroBackground />
 
-      {/* 2. Main Hero Composition (Asymmetric 12-Column Grid) */}
-      <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center my-auto">
-        {/* Left Column: Typography, Value Proposition & CTAs (Span 6) */}
-        <div className="lg:col-span-6">
+      {/* 2. Free-Floating 3D Animated Olympic Weight Plate */}
+      {/* Kept 100% free on the hero section — NOT inside any card container! */}
+      <div
+        style={{
+          transform: !prefersReducedMotion
+            ? `translate3d(${mouseOffset.x * -0.05}px, ${mouseOffset.y * -0.05}px, 0)`
+            : undefined,
+          transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
+        }}
+        className="absolute top-24 sm:top-28 right-3 sm:right-6 md:right-10 z-40 flex flex-col items-center pointer-events-auto cursor-grab active:cursor-grabbing select-none group"
+      >
+        <div className="w-24 h-24 sm:w-28 sm:h-28 md:w-36 md:h-36 relative filter drop-shadow-[0_15px_30px_rgba(204,255,0,0.18)]">
+          <PlateViewer className="w-full h-full" autoRotate />
+        </div>
+        <div className="flex items-center gap-1.5 text-[9px] sm:text-[10px] font-mono tracking-widest uppercase text-brand-volt mt-1 drop-shadow-md">
+          <Sparkles className="w-3 h-3 animate-pulse text-brand-volt" />
+          <span className="font-bold">3D PLATE • 20 KG</span>
+        </div>
+        <span className="text-[8px] font-mono text-brand-text-muted tracking-tight group-hover:text-white transition-colors">
+          DRAG TO ROTATE
+        </span>
+      </div>
+
+      {/* 3. Centered Hero Main Stage */}
+      <div className="relative z-10 w-full flex flex-col items-center justify-center my-auto space-y-6 sm:space-y-8">
+        
+        {/* Top Eyebrow Badge (Centered) */}
+        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-surface/90 backdrop-blur-md border border-white/10 text-[11px] sm:text-xs font-bold tracking-wider text-brand-text-secondary uppercase shadow-sm">
+          <span className="w-2 h-2 rounded-full bg-brand-volt shadow-glow-volt animate-pulse" />
+          <span className="text-white">{SITE_CONTENT.hero.badge}</span>
+          <span className="text-white/20">/</span>
+          <span className="text-brand-volt font-mono">TIMMAPPA COLONY</span>
+        </div>
+
+        {/* Layered Visual: Words Behind Person -> Centered Athlete Cutout -> Foreground Words */}
+        <HeroVisual mouseOffset={mouseOffset} />
+
+        {/* Animated Glassmorphic Card: Understandable Paragraph & Direct Conversion Actions */}
+        <div className="w-full relative z-30 pt-2 sm:pt-4">
           <HeroContent
             onJoinClick={onJoinClick}
             onExploreClick={onExploreClick}
           />
         </div>
-
-        {/* Right Column: High-End Athlete Photography, 3D Plate & Verified Cards (Span 6) */}
-        <div className="lg:col-span-6 relative">
-          <HeroVisual mouseOffset={mouseOffset} />
-        </div>
       </div>
 
-      {/* 3. Hero Bottom Scroll Cue */}
-      <div className="relative z-10 flex justify-center pt-8 sm:pt-12">
+      {/* 4. Hero Bottom Scroll Cue */}
+      <div className="relative z-10 flex justify-center pt-6 sm:pt-10">
         <button
           onClick={scrollToNext}
           aria-label="Scroll to explore Olympia philosophy"

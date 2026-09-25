@@ -129,12 +129,15 @@ export const SITE_CONTENT = {
   ],
 
   hero: {
-    badge: 'UNISEX HIGH-PERFORMANCE TRAINING',
-    headlineWord1: 'FORGE',
-    headlineWord2: 'YOUR LEGACY',
-    subheadline: 'The premier athletic destination in Yemmiganur. Engineered for serious strength, muscular definition, and unbreakable discipline.',
-    primaryCta: 'JOIN NOW',
-    secondaryCta: 'EXPLORE GYM',
+    badge: 'PREMIER UNISEX FITNESS DESTINATION',
+    topPhrase: 'BUILD YOUR',
+    backgroundWord: 'OLYMPIA',
+    foregroundPhrase: 'UNSTOPPABLE STRENGTH',
+    headlineWord1: 'BUILD YOUR',
+    headlineWord2: 'TRUE STRENGTH',
+    subheadline: "Welcome to Yemmiganur's premier unisex fitness gym. Whether you want to build muscle, lose weight, or build everyday athletic energy, our world-class iron and expert trainers guide you every step of the way.",
+    primaryCta: 'JOIN NOW — INQUIRE BATCH',
+    secondaryCta: 'EXPLORE PROGRAMS',
     quickStats: [
       {
         value: '5.0★',
