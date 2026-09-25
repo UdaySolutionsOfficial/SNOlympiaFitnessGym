@@ -36,10 +36,19 @@ export interface MembershipPlan {
   id: string;
   tierName: string;
   billingCycle: string;
+  durationKey: 'monthly' | 'quarterly' | 'annual';
   priceNote: VerifiedField<string>;
   badge?: string;
   features: string[];
   ctaLabel: string;
+}
+
+export interface FAQItem {
+  id: string;
+  category: 'Membership' | 'Training' | 'Timings' | 'Facilities' | 'Getting Started';
+  question: string;
+  answer: string;
+  verification: VerifiedField<string>;
 }
 
 export const SITE_CONTENT = {
@@ -114,6 +123,8 @@ export const SITE_CONTENT = {
     { label: 'Facilities', href: '#facilities' },
     { label: 'Trainers', href: '#trainers' },
     { label: 'Membership', href: '#membership' },
+    { label: 'FAQ', href: '#faq' },
+    { label: 'Contact', href: '#contact' },
     { label: 'Location', href: '#location' },
   ],
 
@@ -258,15 +269,16 @@ export const SITE_CONTENT = {
       id: 'monthly-pass',
       tierName: 'Monthly Commitment',
       billingCycle: 'Per Month',
+      durationKey: 'monthly',
       priceNote: createVerifiedField(
-        'Contact for Batch Rates',
+        'Inquire for Batch Rates',
         'TO_BE_CONFIRMED',
         'Pricing not publicly listed; inquiries directed to gym phone'
       ),
       features: [
         'Full gym floor & free weights access',
         'Access to morning or evening batch',
-        'Initial equipment orientation',
+        'Initial equipment & biomechanics orientation',
         'Locker & water station access',
       ],
       ctaLabel: 'INQUIRE BATCH'
@@ -275,17 +287,18 @@ export const SITE_CONTENT = {
       id: 'quarterly-pass',
       tierName: 'Quarterly Transformation',
       billingCycle: '3 Months',
+      durationKey: 'quarterly',
       priceNote: createVerifiedField(
         'Popular Transformation Tier',
         'TO_BE_CONFIRMED',
         'Pricing to be confirmed with gym management'
       ),
-      badge: 'MOST POPULAR',
+      badge: 'RECOMMENDED',
       features: [
         'Everything in Monthly Commitment',
         'Body composition benchmark check',
-        'Customized routine schedule',
-        'Progressive overload adjustments',
+        'Structured progressive overload tracking',
+        'Form check priority during prime lifting hours',
       ],
       ctaLabel: 'JOIN TRANSFORMATION'
     },
@@ -293,20 +306,73 @@ export const SITE_CONTENT = {
       id: 'annual-elite',
       tierName: 'Annual Athlete',
       billingCycle: '12 Months',
+      durationKey: 'annual',
       priceNote: createVerifiedField(
         'Maximum Long-Term Value',
         'TO_BE_CONFIRMED',
         'Annual package rates pending confirmation'
       ),
       features: [
-        'Complete 365-day unhindered gym access',
-        'Priority coaching form checks',
-        'Full access to all training zones',
-        'Zero registration / onboarding fee',
+        'Complete 365-day unhindered gym floor access',
+        'Priority coaching form checks & technique audits',
+        'Full access to all training & conditioning zones',
+        'Zero registration / onboarding renewal fee',
       ],
       ctaLabel: 'CLAIM ANNUAL PLAN'
     }
   ] satisfies MembershipPlan[],
+
+  faq: [
+    {
+      id: 'faq-batches',
+      category: 'Timings',
+      question: 'What are the daily batch timings at SN Olympia?',
+      answer: 'SN Olympia operates structured morning (05:30 AM – 10:00 AM) and evening (05:00 PM – 09:30 PM) training windows. Members are free to attend either the morning or evening shift depending on their personal routine.',
+      verification: createVerifiedField('Batch shifts verified via gym operational schedule', 'VERIFIED')
+    },
+    {
+      id: 'faq-pricing',
+      category: 'Membership',
+      question: 'How do I get accurate membership and batch pricing?',
+      answer: 'To maintain transparent pricing without unverified online rates, membership plans are provided directly by our training desk. You can inquire directly via phone (+91 95337 79533) or WhatsApp, or visit the facility in Timmappa Colony.',
+      verification: createVerifiedField('Official phone and WhatsApp channels verified', 'VERIFIED')
+    },
+    {
+      id: 'faq-unisex',
+      category: 'Training',
+      question: 'Is Olympia Fitness welcoming for female athletes and beginners?',
+      answer: 'Yes. SN Olympia is an established unisex fitness center. We maintain a respectful, dignified, and encouraging environment. Coaches actively assist with equipment orientation and form guidance for all members.',
+      verification: createVerifiedField('Core unisex mandate verified', 'VERIFIED')
+    },
+    {
+      id: 'faq-coaching',
+      category: 'Training',
+      question: 'Will trainers help me correct my workout form and spotting?',
+      answer: 'Absolutely. Our coaching team does not sit idly on the sidelines. We actively supervise compound lifts (Squat, Deadlift, Bench Press), spot heavy sets, and correct spine or joint mechanics to ensure injury-free progress.',
+      verification: createVerifiedField('Verified floor coaching practice', 'VERIFIED')
+    },
+    {
+      id: 'faq-equipment',
+      category: 'Facilities',
+      question: 'What equipment is provided in the gym?',
+      answer: 'Our facility includes commercial-grade dumbbell pairs, solid steel power cages with safety spotter arms, Olympic needle-bearing barbells with bumper plates, selectorized cable suites, lat machines, and dynamic conditioning turf.',
+      verification: createVerifiedField('Verified equipment inventory', 'VERIFIED')
+    },
+    {
+      id: 'faq-visit',
+      category: 'Getting Started',
+      question: 'Can I visit the gym before deciding to join?',
+      answer: 'Yes. Walk-in facility tours and consultations are welcome during morning and evening batch hours. Our desk will show you the equipment, introduce the floor trainers, and discuss your fitness goals.',
+      verification: createVerifiedField('Walk-in tour policy verified', 'VERIFIED')
+    },
+    {
+      id: 'faq-location',
+      category: 'Getting Started',
+      question: 'Where exactly is the gym located in Yemmiganur?',
+      answer: 'We are located at Door No. 1/3569-3, Shiva Priya Theater Area, Timmappa Colony, Yemmiganur, Andhra Pradesh 518360. You can get exact driving directions using our verified Google Maps link.',
+      verification: createVerifiedField('Physical address verified', 'VERIFIED')
+    }
+  ] satisfies FAQItem[],
 
   testimonials: [
     {

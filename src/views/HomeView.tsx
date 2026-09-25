@@ -13,19 +13,25 @@ import { FacilitiesSection } from '../components/sections/FacilitiesSection';
 import { AtmosphereSection } from '../components/sections/AtmosphereSection';
 import { GallerySection } from '../components/sections/GallerySection';
 import { TestimonialsSection } from '../components/sections/TestimonialsSection';
-import { EndPhaseTransition } from '../components/sections/EndPhaseTransition';
-import { SITE_CONTENT } from '../data/siteContent';
-import { Layers, MapPin, Phone, Instagram, Star, ShieldCheck } from 'lucide-react';
+import { MembershipSection } from '../components/sections/MembershipSection';
+import { FAQSection } from '../components/sections/FAQSection';
+import { ContactSection } from '../components/sections/ContactSection';
+import { LocationSection } from '../components/sections/LocationSection';
+import { FinalCTASection } from '../components/sections/FinalCTASection';
+import { MainFooter } from '../components/footer/MainFooter';
+import { StickyMobileBar } from '../components/navigation/StickyMobileBar';
+import { EnquiryModal } from '../components/modals/EnquiryModal';
+import { Layers } from 'lucide-react';
 
 export interface HomeViewProps {
   onOpenDesignSystem?: () => void;
 }
 
 /**
- * Phase 3 Master Home View — "The Living Fitness Story"
- * Assembles the full cinematic narrative:
+ * Phase 4 Complete Master Home View — "Conversion Experience & The Complete Story"
+ * Unifies the entire 15-chapter narrative with practical, trustworthy conversion touchpoints:
  * 1. IntroLoader (Cinematic entry sequence)
- * 2. TopDock (Proximity navigation dock)
+ * 2. TopDock (Proximity navigation dock with smart anchor linking)
  * 3. HeroSection (Signature hero + 3D Plate satellite + verified stats)
  * 4. SectionTransition (Philosophy bridge)
  * 5. ManifestoMarquee (Kinetic velocity typography)
@@ -38,14 +44,23 @@ export interface HomeViewProps {
  * 12. AtmosphereSection (Full-bleed raw steel & discipline visual moment)
  * 13. GallerySection (Editorial photo grid + accessible Lightbox modal)
  * 14. TestimonialsSection (Verified 5.0★ Google/Justdial community feedback)
- * 15. EndPhaseTransition (Floor inquiry invitation & Phase 4 teaser)
- * 16. Comprehensive Milestone Footer
+ * 15. MembershipSection (Duration toggle, batch admissions & honest price states)
+ * 16. FAQSection (Accessible accordion with verified answers)
+ * 17. ContactSection (Direct phone, WhatsApp & Instagram channels)
+ * 18. LocationSection (Timmappa Colony address, radar map & Google directions)
+ * 19. FinalCTASection (The final cinematic climax before footer)
+ * 20. MainFooter (The definitive brand footer with watermark and full sitemap)
+ * 21. StickyMobileBar (Subtle mobile-only bottom conversion bar)
+ * 22. EnquiryModal (Contextual, accessible modal for direct admissions & inquiries)
  */
 export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
   const [introFinished, setIntroFinished] = useState(false);
+  const [enquiryModalOpen, setEnquiryModalOpen] = useState(false);
+  const [modalInterest, setModalInterest] = useState('General Membership Inquiry');
 
-  const handleJoinClick = () => {
-    window.location.href = `tel:${SITE_CONTENT.brand.contact.phone.value}`;
+  const handleOpenEnquiry = (interestSubject: string = 'General Membership Inquiry') => {
+    setModalInterest(interestSubject);
+    setEnquiryModalOpen(true);
   };
 
   const handleExploreClick = () => {
@@ -63,8 +78,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
       {/* 2. Responsive Sable-Inspired Top Navigation Dock */}
       <TopDock
         onNavigate={(href) => {
-          if (href === '#membership' || href === '#contact') {
-            handleJoinClick();
+          if (href === '#membership') {
+            const target = document.querySelector(href);
+            target?.scrollIntoView({ behavior: 'smooth' });
           } else {
             const target = document.querySelector(href);
             target?.scrollIntoView({ behavior: 'smooth' });
@@ -83,11 +99,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
         </button>
       </div>
 
-      {/* 4. The Continuous Fitness Story */}
+      {/* 4. Master Narrative Flow */}
       <main>
-        {/* Act I: The Awakening */}
+        {/* Act I: The Awakening & Master Entrance */}
         <HeroSection
-          onJoinClick={handleJoinClick}
+          onJoinClick={() => handleOpenEnquiry('Hero Admission Inquiry')}
           onExploreClick={handleExploreClick}
         />
 
@@ -104,7 +120,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
         <WhyOlympiaSection />
 
         {/* Act IV: Disciplines & Training Architecture */}
-        <ProgramsSection onInquireBatch={handleJoinClick} />
+        <ProgramsSection onInquireBatch={(progId) => handleOpenEnquiry(`Program: ${progId}`)} />
 
         {/* Act V: The 4-Stage Progressive Methodology */}
         <MethodologySection />
@@ -124,88 +140,37 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
         {/* Act X: Community Proof & 5.0★ Verified Trust */}
         <TestimonialsSection />
 
-        {/* Act XI: Floor Inquiry & Transition to Phase 4 */}
-        <EndPhaseTransition />
+        {/* Act XI: Admissions & Membership Commitments */}
+        <MembershipSection onSelectPlan={(plan) => handleOpenEnquiry(`Membership Plan: ${plan}`)} />
+
+        {/* Act XII: Clarifications & Frequently Asked Questions */}
+        <FAQSection onAskQuestion={() => handleOpenEnquiry('General FAQ Inquiry')} />
+
+        {/* Act XIII: Direct Communication Channels */}
+        <ContactSection onOpenEnquiry={() => handleOpenEnquiry('Direct Contact Inquiry')} />
+
+        {/* Act XIV: Physical Ground & Directions */}
+        <LocationSection />
+
+        {/* Act XV: The Final Cinematic Climax */}
+        <FinalCTASection onJoinClick={() => handleOpenEnquiry('Final Commitment Admission')} />
       </main>
 
-      {/* 5. Phase 3 Milestone Footer */}
-      <footer className="py-16 px-4 md:px-8 max-w-7xl mx-auto border-t border-brand-border/60">
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 mb-12">
-          {/* Brand Info */}
-          <div className="md:col-span-6 space-y-4">
-            <div className="flex items-center gap-2">
-              <div className="w-2.5 h-2.5 rounded-full bg-brand-volt shadow-glow-volt" />
-              <span className="font-black text-white uppercase tracking-wider text-base">
-                SN OLYMPIA FITNESS UNISEX GYM
-              </span>
-            </div>
-            <p className="text-sm text-brand-text-secondary leading-relaxed max-w-md font-light">
-              Yemmiganur’s premier unisex strength and conditioning destination. Built on biomechanics, heavy iron, and unyielding training consistency.
-            </p>
-            <div className="flex items-center gap-2 text-xs font-mono text-emerald-400">
-              <ShieldCheck className="w-4 h-4" />
-              <span>Verified 5.0★ Google & Justdial Rating</span>
-            </div>
-          </div>
+      {/* 5. Master Brand Footer */}
+      <MainFooter />
 
-          {/* Quick Contact & Location */}
-          <div className="md:col-span-3 space-y-3 text-xs">
-            <div className="font-mono uppercase tracking-widest text-brand-volt font-bold">
-              Facility Address
-            </div>
-            <div className="text-brand-text-secondary leading-relaxed font-light">
-              {SITE_CONTENT.brand.address.doorNo.value}, {SITE_CONTENT.brand.address.area.value},<br />
-              {SITE_CONTENT.brand.address.city.value}, {SITE_CONTENT.brand.address.state.value} {SITE_CONTENT.brand.address.pincode.value}
-            </div>
-            <a
-              href={SITE_CONTENT.brand.address.googleShareUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-brand-volt hover:underline font-mono"
-            >
-              <MapPin className="w-3.5 h-3.5" />
-              <span>View On Google Maps</span>
-            </a>
-          </div>
+      {/* 6. Mobile-Only Sticky Conversion Bar */}
+      <StickyMobileBar
+        onJoinClick={() => handleOpenEnquiry('Mobile Sticky Bar')}
+        isModalOpen={enquiryModalOpen}
+      />
 
-          {/* Direct Line & Social */}
-          <div className="md:col-span-3 space-y-3 text-xs">
-            <div className="font-mono uppercase tracking-widest text-brand-volt font-bold">
-              Direct Communication
-            </div>
-            <div>
-              <a
-                href={`tel:${SITE_CONTENT.brand.contact.phone.value}`}
-                className="font-mono text-sm text-white hover:text-brand-volt transition-colors font-bold block"
-              >
-                {SITE_CONTENT.brand.contact.phoneDisplay.value}
-              </a>
-              <span className="text-[11px] text-brand-text-muted">Morning & Evening Shifts</span>
-            </div>
-            <a
-              href={SITE_CONTENT.brand.contact.instagramUrl.value}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-1.5 text-brand-text-secondary hover:text-brand-volt transition-colors"
-            >
-              <Instagram className="w-3.5 h-3.5" />
-              <span>{SITE_CONTENT.brand.contact.instagramHandle.value}</span>
-            </a>
-          </div>
-        </div>
-
-        {/* Bottom Bar */}
-        <div className="pt-8 border-t border-brand-border/40 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-brand-text-muted">
-          <div>
-            © {new Date().getFullYear()} SN Olympia Fitness. All rights reserved.
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="text-brand-volt font-bold">PHASE 3 COMPLETE</span>
-            <span>•</span>
-            <span>THE LIVING FITNESS STORY</span>
-          </div>
-        </div>
-      </footer>
+      {/* 7. Direct Admissions & Inquiry Modal */}
+      <EnquiryModal
+        isOpen={enquiryModalOpen}
+        onClose={() => setEnquiryModalOpen(false)}
+        initialInterest={modalInterest}
+      />
     </div>
   );
 };
