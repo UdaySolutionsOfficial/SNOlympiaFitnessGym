@@ -57,16 +57,16 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
 
       {/* 2. Main Hero Composition (Asymmetric 12-Column Grid) */}
       <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center my-auto">
-        {/* Left Column: Typography, Value Proposition & CTAs (Span 7) */}
-        <div className="lg:col-span-7">
+        {/* Left Column: Typography, Value Proposition & CTAs (Span 6) */}
+        <div className="lg:col-span-6">
           <HeroContent
             onJoinClick={onJoinClick}
             onExploreClick={onExploreClick}
           />
         </div>
 
-        {/* Right Column: High-End Athlete Photography, 3D Plate & Verified Cards (Span 5) */}
-        <div className="lg:col-span-5 relative">
+        {/* Right Column: High-End Athlete Photography, 3D Plate & Verified Cards (Span 6) */}
+        <div className="lg:col-span-6 relative">
           <HeroVisual mouseOffset={mouseOffset} />
         </div>
       </div>

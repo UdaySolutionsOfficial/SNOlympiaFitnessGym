@@ -9,10 +9,10 @@ export interface TopDockProps {
 }
 
 /**
- * Premium Responsive Navigation Dock
- * Inspired by ThreeUI Sable Dock with pointer proximity and scroll transformation.
- * Desktop: Centered glass pill with subtle hover expansion & compact scroll state.
- * Mobile: Full-screen editorial overlay with sequential entrance.
+ * Premium Luxury Navigation Header & Dock
+ * Designed to feel like a high-end athletic brand (Nike Lab / Equinox).
+ * Clean typography, non-wrapping hotline, subtle active indicator dots,
+ * and zero cramped/garish neon blobs.
  */
 export const TopDock: React.FC<TopDockProps> = ({
   onNavigate,
@@ -20,37 +20,31 @@ export const TopDock: React.FC<TopDockProps> = ({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [hoveredIdx, setHoveredIdx] = useState<number | null>(null);
   const navRef = useRef<HTMLElement | null>(null);
 
-  // Monitor scroll for compact navbar transformation
+  // Monitor scroll for header background elevation
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 40) {
-        setIsScrolled(true);
-      } else {
-        setIsScrolled(false);
-      }
+      setIsScrolled(window.scrollY > 30);
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  // Lock body scroll and listen for Escape key when mobile menu is open
+  // Lock body scroll when mobile menu is open
   useEffect(() => {
     if (mobileMenuOpen) {
+      const originalOverflow = document.body.style.overflow;
       document.body.style.overflow = 'hidden';
       const handleKeyDown = (e: KeyboardEvent) => {
         if (e.key === 'Escape') setMobileMenuOpen(false);
       };
       window.addEventListener('keydown', handleKeyDown);
       return () => {
-        document.body.style.overflow = '';
+        document.body.style.overflow = originalOverflow;
         window.removeEventListener('keydown', handleKeyDown);
       };
-    } else {
-      document.body.style.overflow = '';
     }
   }, [mobileMenuOpen]);
 
@@ -60,114 +54,114 @@ export const TopDock: React.FC<TopDockProps> = ({
       onNavigate(href);
     } else {
       const target = document.querySelector(href);
-      if (target) {
-        target.scrollIntoView({ behavior: 'smooth' });
-      }
+      target?.scrollIntoView({ behavior: 'smooth' });
     }
   };
+
+  // Primary desktop navigation items (curated for visual balance and zero crowding)
+  const navItems = [
+    { label: 'Overview', href: '#overview' },
+    { label: 'Programs', href: '#programs' },
+    { label: 'Facilities', href: '#facilities' },
+    { label: 'Trainers', href: '#trainers' },
+    { label: 'Membership', href: '#membership' },
+    { label: 'FAQ', href: '#faq' },
+    { label: 'Location', href: '#location' },
+  ];
 
   return (
     <>
       <header
-        className={`fixed top-0 inset-x-0 z-[35] px-4 pointer-events-none flex justify-center transition-all duration-300 ${
-          isScrolled ? 'pt-3' : 'pt-5 md:pt-7'
+        className={`fixed top-0 inset-x-0 z-[40] transition-all duration-300 pointer-events-none ${
+          isScrolled
+            ? 'py-3 bg-brand-dark/90 backdrop-blur-xl border-b border-brand-border/60 shadow-[0_10px_30px_rgba(0,0,0,0.8)]'
+            : 'py-5 md:py-6 bg-gradient-to-b from-brand-dark/90 via-brand-dark/40 to-transparent'
         }`}
       >
-        <div className="w-full max-w-5xl pointer-events-auto">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pointer-events-auto">
           <nav
             ref={navRef}
             aria-label="Primary Navigation"
-            className={`flex items-center justify-between rounded-full border transition-all duration-300 ${
-              isScrolled
-                ? 'py-2 px-4 bg-brand-surface/90 backdrop-blur-2xl border-white/15 shadow-[0_12px_40px_rgba(0,0,0,0.8)]'
-                : 'py-2.5 px-5 bg-brand-surface/65 backdrop-blur-xl border-white/10 shadow-[0_8px_32px_rgba(0,0,0,0.5)]'
-            }`}
+            className="flex items-center justify-between"
           >
-            {/* Brand Logo & Wordmark */}
+            {/* Left: Brand Logo & Wordmark */}
             <a
               href="#overview"
               onClick={(e) => {
                 e.preventDefault();
                 handleLinkClick('#overview');
               }}
-              className="flex items-center gap-2 group px-2 py-1 rounded-full focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-brand-volt"
+              className="flex items-center gap-2.5 group focus-visible:outline-none"
             >
-              <div className="relative flex items-center justify-center w-6 h-6 rounded-full bg-brand-volt/10 border border-brand-volt/40 group-hover:scale-110 transition-transform">
-                <Dumbbell className="w-3.5 h-3.5 text-brand-volt" />
-                <span className="absolute -top-0.5 -right-0.5 w-1.5 h-1.5 rounded-full bg-brand-volt animate-ping" />
+              <div className="flex items-center justify-center w-8 h-8 rounded-lg bg-brand-surface border border-brand-volt/40 group-hover:border-brand-volt group-hover:scale-105 transition-all shadow-glow-volt/20">
+                <Dumbbell className="w-4 h-4 text-brand-volt" />
               </div>
-              <span className="font-black tracking-tight text-sm md:text-base text-white uppercase flex items-center gap-1.5">
-                SN OLYMPIA
-                <span className="text-[10px] font-mono tracking-widest text-brand-volt px-1.5 py-0.2 rounded bg-brand-volt/10 border border-brand-volt/20 hidden sm:inline-block">
-                  GYM
+              <div className="flex flex-col">
+                <span className="font-black tracking-tight text-sm sm:text-base text-white uppercase leading-none">
+                  SN OLYMPIA
                 </span>
-              </span>
+                <span className="text-[9px] font-mono tracking-widest text-brand-volt uppercase font-bold mt-0.5">
+                  UNISEX FITNESS
+                </span>
+              </div>
             </a>
 
-            {/* Desktop Sable-Inspired Dock Navigation */}
-            <ul
-              className="hidden md:flex items-center gap-1 text-xs font-bold uppercase tracking-wider text-brand-text-secondary"
-              onMouseLeave={() => setHoveredIdx(null)}
-            >
-              {SITE_CONTENT.navigation.map((item, idx) => {
+            {/* Center: Curated Desktop Nav Links */}
+            <ul className="hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-brand-surface/70 backdrop-blur-md border border-brand-border/70 text-xs font-semibold uppercase tracking-wider text-brand-text-secondary shadow-lg">
+              {navItems.map((item) => {
                 const isActive = activeSection === item.href.replace('#', '');
-                const isHovered = hoveredIdx === idx;
-                const isNeighbor =
-                  hoveredIdx !== null && Math.abs(hoveredIdx - idx) === 1;
 
                 return (
-                  <li key={item.label} className="relative">
+                  <li key={item.label}>
                     <a
                       href={item.href}
-                      onMouseEnter={() => setHoveredIdx(idx)}
                       onClick={(e) => {
                         e.preventDefault();
                         handleLinkClick(item.href);
                       }}
-                      className={`relative inline-block px-3.5 py-1.5 rounded-full transition-all duration-200 select-none ${
+                      className={`relative px-3.5 py-1.5 rounded-full transition-all duration-200 select-none block ${
                         isActive
-                          ? 'text-brand-dark bg-brand-volt font-black shadow-glow-volt'
-                          : isHovered
-                          ? 'text-white bg-white/10 scale-105'
-                          : isNeighbor
-                          ? 'text-brand-text-primary bg-white/5 scale-[1.02]'
-                          : 'hover:text-white'
+                          ? 'text-white bg-white/10 font-bold'
+                          : 'hover:text-white hover:bg-white/5'
                       }`}
                     >
-                      {item.label}
+                      <span>{item.label}</span>
+                      {isActive && (
+                        <span className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full bg-brand-volt shadow-glow-volt" />
+                      )}
                     </a>
                   </li>
                 );
               })}
             </ul>
 
-            {/* Quick Actions (Call line & Primary CTA) */}
-            <div className="flex items-center gap-2">
+            {/* Right: Phone Hotline & Primary CTA */}
+            <div className="flex items-center gap-3">
+              {/* Phone Line: Never wraps into vertical lines */}
               <a
                 href={`tel:${SITE_CONTENT.brand.contact.phone.value}`}
                 aria-label={`Call Olympia Fitness at ${SITE_CONTENT.brand.contact.phoneDisplay.value}`}
-                className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold text-brand-text-secondary hover:text-brand-volt transition-colors"
+                className="hidden sm:inline-flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-mono font-bold text-brand-text-secondary hover:text-brand-volt transition-colors whitespace-nowrap"
               >
-                <Phone className="w-3.5 h-3.5 text-brand-volt" />
-                <span className="font-mono">{SITE_CONTENT.brand.contact.phoneDisplay.value}</span>
+                <Phone className="w-3.5 h-3.5 text-brand-volt shrink-0" />
+                <span className="whitespace-nowrap">{SITE_CONTENT.brand.contact.phoneDisplay.value}</span>
               </a>
 
-              <Button
-                size="sm"
-                variant="primary"
-                magnetic
+              {/* Join Now Button */}
+              <button
                 onClick={() => handleLinkClick('#membership')}
-                rightIcon={<ArrowUpRight className="w-3.5 h-3.5" />}
+                className="px-4 py-2 rounded-lg bg-brand-volt text-brand-dark font-black text-xs uppercase tracking-wider hover:bg-white hover:shadow-glow-volt transition-all flex items-center gap-1.5 shadow-md active:scale-95"
               >
-                JOIN NOW
-              </Button>
+                <span>JOIN NOW</span>
+                <ArrowUpRight className="w-3.5 h-3.5" />
+              </button>
 
-              {/* Mobile Hamburger Toggle Button */}
+              {/* Mobile Hamburger Toggle */}
               <button
                 onClick={() => setMobileMenuOpen(true)}
                 aria-label="Open navigation menu"
                 aria-expanded={mobileMenuOpen}
-                className="inline-flex md:hidden p-2 rounded-full text-brand-text-secondary hover:text-white hover:bg-white/5 focus:outline-none focus:ring-1 focus:ring-brand-volt"
+                className="inline-flex lg:hidden p-2 rounded-lg bg-brand-surface border border-brand-border text-brand-text-secondary hover:text-white focus:outline-none focus:ring-1 focus:ring-brand-volt"
               >
                 <Menu className="w-5 h-5" />
               </button>
@@ -176,77 +170,72 @@ export const TopDock: React.FC<TopDockProps> = ({
         </div>
       </header>
 
-      {/* DEDICATED FULLSCREEN MOBILE NAVIGATION OVERLAY */}
+      {/* FULLSCREEN MOBILE NAVIGATION OVERLAY */}
       {mobileMenuOpen && (
         <div
           role="dialog"
           aria-modal="true"
-          aria-label="Mobile Navigation Menu"
-          className="fixed inset-0 z-[60] bg-brand-dark/98 backdrop-blur-2xl flex flex-col justify-between p-6 sm:p-8 animate-fadeIn"
+          aria-label="Mobile Navigation"
+          className="fixed inset-0 z-50 lg:hidden bg-brand-dark/95 backdrop-blur-2xl flex flex-col justify-between p-6 sm:p-8 animate-fadeIn"
         >
-          {/* Top Bar with Brand & Close Button */}
-          <div className="flex items-center justify-between border-b border-brand-border pb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-3 h-3 rounded-full bg-brand-volt shadow-glow-volt" />
-              <span className="font-black text-lg text-white uppercase tracking-tight">
-                SN OLYMPIA FITNESS
+          {/* Top Bar with Brand & Close */}
+          <div className="flex items-center justify-between border-b border-brand-border/60 pb-5">
+            <div className="flex items-center gap-2.5">
+              <div className="w-7 h-7 rounded-lg bg-brand-volt/10 border border-brand-volt/30 flex items-center justify-center">
+                <Dumbbell className="w-3.5 h-3.5 text-brand-volt" />
+              </div>
+              <span className="font-black text-white text-base tracking-tight uppercase">
+                SN OLYMPIA
               </span>
             </div>
+
             <button
               onClick={() => setMobileMenuOpen(false)}
               aria-label="Close navigation menu"
-              className="p-2.5 rounded-full bg-brand-surface border border-white/10 text-white hover:text-brand-volt hover:border-brand-volt focus:outline-none"
+              className="p-2 rounded-lg bg-brand-charcoal text-brand-text-secondary hover:text-white transition-colors"
             >
               <X className="w-6 h-6" />
             </button>
           </div>
 
-          {/* Sequential Menu Links */}
-          <nav className="my-auto py-8">
-            <ul className="flex flex-col gap-5">
-              {SITE_CONTENT.navigation.map((item, idx) => (
-                <li key={item.label} className="overflow-hidden">
-                  <a
-                    href={item.href}
-                    onClick={(e) => {
-                      e.preventDefault();
-                      handleLinkClick(item.href);
-                    }}
-                    className="flex items-center justify-between text-2xl sm:text-3xl font-black uppercase tracking-tight text-brand-text-secondary hover:text-brand-volt transition-colors"
-                  >
-                    <span className="flex items-center gap-3">
-                      <span className="text-xs font-mono text-brand-volt">0{idx + 1}</span>
-                      <span>{item.label}</span>
-                    </span>
-                    <ArrowUpRight className="w-6 h-6 opacity-40 text-brand-volt" />
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </nav>
+          {/* Nav Links List */}
+          <ul className="space-y-4 my-auto py-6">
+            {navItems.map((item, index) => (
+              <li key={item.label}>
+                <a
+                  href={item.href}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleLinkClick(item.href);
+                  }}
+                  className="group flex items-center justify-between text-2xl font-black uppercase text-white hover:text-brand-volt transition-colors"
+                >
+                  <span>{item.label}</span>
+                  <span className="text-xs font-mono text-brand-text-muted group-hover:text-brand-volt">
+                    0{index + 1}
+                  </span>
+                </a>
+              </li>
+            ))}
+          </ul>
 
-          {/* Bottom Actions & Ground Details */}
-          <div className="border-t border-brand-border pt-6 space-y-4">
+          {/* Bottom Mobile Drawer Actions */}
+          <div className="space-y-3 pt-4 border-t border-brand-border/60">
             <a
               href={`tel:${SITE_CONTENT.brand.contact.phone.value}`}
-              className="flex items-center justify-center gap-2 py-3 rounded-xl bg-brand-surface border border-white/10 text-sm font-bold text-white uppercase tracking-wider hover:border-brand-volt transition-colors"
+              className="w-full py-3.5 px-4 rounded-xl bg-brand-surface border border-brand-border text-white text-xs font-mono font-bold flex items-center justify-center gap-2"
             >
               <Phone className="w-4 h-4 text-brand-volt" />
-              <span>Call: {SITE_CONTENT.brand.contact.phoneDisplay.value}</span>
+              <span>{SITE_CONTENT.brand.contact.phoneDisplay.value}</span>
             </a>
 
-            <Button
-              size="lg"
-              variant="primary"
-              className="w-full"
+            <button
               onClick={() => handleLinkClick('#membership')}
+              className="w-full py-3.5 px-4 rounded-xl bg-brand-volt text-brand-dark font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-glow-volt"
             >
-              JOIN NOW — INQUIRE BATCH
-            </Button>
-
-            <p className="text-[11px] text-center font-mono text-brand-text-muted">
-              Timmappa Colony, Yemmiganur, AP 518360
-            </p>
+              <span>JOIN OLYMPIA FITNESS</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </button>
           </div>
         </div>
       )}

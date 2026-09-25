@@ -116,3 +116,21 @@ In strict adherence to the Content Truth Charter:
 ## 11. Known Limitations
 
 - **No Public E-Commerce:** The site intentionally does not process direct credit card payments online; memberships are handled via direct phone/WhatsApp batch admissions at the gym desk.
+
+---
+
+## 12. Hero & Navigation Visual Polish (Post-Audit Enhancement)
+
+- **Photorealistic 8K Athlete Hero Imagery:**
+  - Regenerated hero visual based on client reference image: rear view of muscular athlete stretching resistance band.
+  - Features razor-sharp definition across trapezius, latissimus dorsi, and rear deltoids, seamlessly blended into the `#08090A` dark brand canvas with soft edge feathering.
+  - Implemented responsive desktop (16:10 aspect ratio preserving full wingspan) and mobile centered crops.
+- **Top Navigation (TopDock.tsx) Overhaul:**
+  - Integrated custom Olympic dumbbell brand mark and unisex fitness insignia.
+  - Replaced garish yellow active pill with frosted glass pill and volt indicator micro-dot.
+  - Fixed phone hotline number wrap (`whitespace-nowrap font-mono`) to prevent vertical multi-line distortion.
+  - Built sleek full-screen mobile menu drawer with quick-action hotline and batch inquiry links.
+- **3D Interactive Plate Optimization:**
+  - Resized and repositioned Three.js Olympic bumper plate from top-right blocker to an elegant bottom-right interactive medallion (`w-24 h-24 md:w-28 md:h-28`).
+  - Retained full 360-degree pointer drag interaction and auto-rotation without obstructing the athlete visual.
+

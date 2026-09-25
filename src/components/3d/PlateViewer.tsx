@@ -206,8 +206,7 @@ export const PlateViewer: React.FC<PlateViewerProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`relative overflow-hidden cursor-grab active:cursor-grabbing ${className}`}
-      style={{ minHeight: '260px' }}
+      className={`relative overflow-hidden cursor-grab active:cursor-grabbing w-full h-full ${className}`}
       aria-label="Interactive 3D Olympic Weight Plate"
       role="img"
     />
