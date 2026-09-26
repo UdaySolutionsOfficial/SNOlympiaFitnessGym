@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Dumbbell, Sparkles, Zap, Flame, ArrowUpRight } from 'lucide-react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { SNOlympiaLogo } from '../common/SNOlympiaLogo';
 
 export interface IntroLoaderProps {
   onComplete: () => void;
@@ -256,9 +256,9 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
           {/* Outer Rotating Dashed Neon Orbit Ring */}
           <div className="absolute -inset-2.5 rounded-full border border-dashed border-[#FF5E1E]/40 animate-spin [animation-duration:14s] pointer-events-none" />
 
-          {/* Glowing Crest Pill */}
-          <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-gradient-to-b from-[#2A2E3B] to-[#12141A] border border-white/20 flex items-center justify-center shadow-[0_0_25px_rgba(255,94,30,0.5)]">
-            <Dumbbell className="w-5 h-5 sm:w-7 sm:h-7 text-[#FF5E1E] animate-pulse" />
+          {/* Glowing Official SN Crest Medallion */}
+          <div className="w-12 h-12 sm:w-15 sm:h-15 rounded-full bg-gradient-to-b from-[#2A2E3B] to-[#12141A] border border-white/20 flex items-center justify-center shadow-[0_0_25px_rgba(255,94,30,0.6)] p-1.5">
+            <SNOlympiaLogo variant="mark" className="w-full h-full" glow={false} />
           </div>
         </div>
 

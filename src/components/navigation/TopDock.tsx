@@ -14,8 +14,8 @@ import {
   Info,
   Send,
   Zap,
-} from 'lucide-react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { SNOlympiaLogo } from '../common/SNOlympiaLogo';
 
 export interface TopDockProps {
   activeSection?: string;
@@ -265,9 +265,9 @@ export const TopDock: React.FC<TopDockProps> = ({
               }}
               className="flex items-center gap-2.5 group focus-visible:outline-none select-none pl-1 shrink-0"
             >
-              {/* Circular Brand Mark Insignia */}
-              <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-b from-[#2A2E3B]/80 to-[#12141A]/90 border border-white/25 shadow-md group-hover:border-[#FF5E1E] group-hover:shadow-[0_0_15px_rgba(255,94,30,0.6)] transition-all">
-                <Dumbbell className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FF5E1E] group-hover:scale-110 transition-transform" />
+              {/* Circular Brand Mark Insignia — Official SN Emblem */}
+              <div className="flex items-center justify-center w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-gradient-to-b from-[#2A2E3B]/80 to-[#12141A]/90 border border-white/25 shadow-md group-hover:border-[#FF5E1E] group-hover:shadow-[0_0_15px_rgba(255,94,30,0.6)] transition-all p-1">
+                <SNOlympiaLogo variant="mark" className="w-full h-full group-hover:scale-110 transition-transform" />
               </div>
 
               {/* Wordmark (Clean & Vertically Centered) */}
@@ -404,8 +404,8 @@ export const TopDock: React.FC<TopDockProps> = ({
           {/* Top Bar with Brand & Close */}
           <div className="flex items-center justify-between border-b border-white/10 pb-5">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 rounded-full bg-[#FF5E1E]/20 border border-[#FF5E1E]/40 flex items-center justify-center">
-                <Dumbbell className="w-4 h-4 text-[#FF5E1E]" />
+              <div className="w-8 h-8 rounded-full bg-[#FF5E1E]/20 border border-[#FF5E1E]/40 flex items-center justify-center p-1">
+                <SNOlympiaLogo variant="mark" className="w-full h-full" />
               </div>
               <span className="font-athletic italic uppercase font-black text-white text-base tracking-tight">
                 OLYMPIA <span className="text-[#FF5E1E]">GYM</span>

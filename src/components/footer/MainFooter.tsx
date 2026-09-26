@@ -1,7 +1,7 @@
 import React from 'react';
 import { ArrowUp, MapPin, Phone, Instagram, ShieldCheck, Heart } from 'lucide-react';
-import { SITE_CONTENT } from '../../data/siteContent';
 import { ScrollReveal, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
+import { SNOlympiaLogo } from '../common/SNOlympiaLogo';
 
 export const MainFooter: React.FC = () => {
   const brand = SITE_CONTENT.brand;
@@ -25,8 +25,8 @@ export const MainFooter: React.FC = () => {
         >
           {/* Brand Info (Span 4) */}
           <StaggerItem className="lg:col-span-4 space-y-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-2.5 h-2.5 rounded-full bg-brand-volt shadow-glow-volt" />
+            <div className="flex items-center gap-3">
+              <SNOlympiaLogo variant="mark" className="w-8 h-8 shrink-0" />
               <span className="font-black text-white uppercase tracking-wider text-base sm:text-lg">
                 SN OLYMPIA FITNESS
               </span>
