@@ -158,17 +158,6 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
           {/* Cinematic Vignettes */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30 pointer-events-none" />
 
-          {/* Top Tag & Live Indicator */}
-          <div className="absolute top-2.5 left-2.5 right-2.5 flex items-center justify-between pointer-events-none z-10">
-            <span className="px-2 py-0.5 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[9px] font-mono tracking-wider font-semibold text-white/90 uppercase">
-              {tag}
-            </span>
-            <div className="flex items-center gap-1.5 px-1.5 py-0.5 rounded-full bg-[#FF5E1E]/20 border border-[#FF5E1E]/40 text-[9px] font-mono font-bold text-[#FF5E1E]">
-              <span className="w-1.5 h-1.5 rounded-full bg-[#FF5E1E] animate-ping" />
-              <span>LIVE</span>
-            </div>
-          </div>
-
           {/* ========================================================================= */}
           {/* BOTTOM PLAY BUTTON WITH ANIMATED "EXPLORE" HOVER EXPANSION                 */}
           {/* ========================================================================= */}

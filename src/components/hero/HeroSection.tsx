@@ -26,7 +26,20 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onExploreClick,
 }) => {
   const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
+  const [heroPointer, setHeroPointer] = useState({ x: 0, y: 0 });
+  const [isHeroHovered, setIsHeroHovered] = useState(false);
+  const heroCardRef = useRef<HTMLDivElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
+
+  // Pointer position tracker for hero border glow following cursor direction
+  const handleHeroPointerMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!heroCardRef.current) return;
+    const rect = heroCardRef.current.getBoundingClientRect();
+    setHeroPointer({
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top,
+    });
+  };
 
   // Subtle mouse parallax on desktop
   const handleMouseMove = useCallback(
@@ -61,102 +74,152 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
       {/* 1. Ambient Background Layer */}
       <HeroBackground />
 
-      {/* 2. Main Stadium Hero Container (Framed exactly like reference image) */}
-      <div className="relative z-10 w-full rounded-[2rem] sm:rounded-[2.5rem] bg-[#0C0E12] border border-white/10 shadow-[0_25px_80px_rgba(0,0,0,0.95)] overflow-hidden my-auto">
-        
-        {/* Top Orange Neon Accent Edge Line */}
-        <div className="absolute top-0 inset-x-0 h-[2px] bg-gradient-to-r from-transparent via-[#FF5E1E] to-transparent opacity-90 shadow-[0_0_15px_#FF5E1E]" />
+      {/* 2. Main Stadium Hero Container with Dual Opposite-Sided Looping Border Beam & Pointer Glow */}
+      <div
+        ref={heroCardRef}
+        onMouseMove={handleHeroPointerMove}
+        onMouseEnter={() => setIsHeroHovered(true)}
+        onMouseLeave={() => setIsHeroHovered(false)}
+        className="relative z-10 w-full rounded-[2rem] sm:rounded-[2.5rem] p-[2px] overflow-hidden my-auto shadow-[0_25px_80px_rgba(0,0,0,0.95)] group/herocard transition-shadow duration-500 hover:shadow-[0_0_60px_rgba(255,94,30,0.3),0_25px_90px_rgba(0,0,0,0.95)]"
+      >
+        {/* Border Layer 1: Base Dark Edge Outline */}
+        <div className="absolute inset-0 rounded-[2rem] sm:rounded-[2.5rem] bg-white/10 pointer-events-none" />
 
-        {/* HERO ATHLETE WITH BACKGROUND "OLAMPIYA" TEXT */}
-        <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
-          <img
-            src={ASSET_MANIFEST.hero.athleteCurlingOlampiya.path}
-            alt="SN Olympia Fitness muscular athlete with curling barbell and Olampiya background typography"
-            loading="eager"
-            decoding="async"
-            className="w-full h-full object-cover object-center filter contrast-[1.05] brightness-[0.95]"
+        {/* Border Layer 2: Dual Opposite-Sided Looping Border Beam (180deg apart) */}
+        <div
+          className="absolute inset-[-150%] pointer-events-none animate-border-beam"
+          style={{
+            background: `conic-gradient(
+              from 0deg at 50% 50%,
+              transparent 0deg,
+              transparent 55deg,
+              rgba(255, 94, 30, 0.4) 70deg,
+              rgba(255, 160, 52, 0.95) 85deg,
+              #FFFFFF 90deg,
+              rgba(255, 160, 52, 0.95) 95deg,
+              rgba(255, 94, 30, 0.4) 110deg,
+              transparent 125deg,
+              transparent 235deg,
+              rgba(255, 94, 30, 0.4) 250deg,
+              rgba(255, 160, 52, 0.95) 265deg,
+              #FFFFFF 270deg,
+              rgba(255, 160, 52, 0.95) 275deg,
+              rgba(255, 94, 30, 0.4) 290deg,
+              transparent 305deg,
+              transparent 360deg
+            )`,
+          }}
+        />
+
+        {/* Border Layer 3: Interactive Pointer-Responsive Glow following Cursor Direction near Edges */}
+        {isHeroHovered && (
+          <div
+            className="absolute inset-0 pointer-events-none transition-opacity duration-200"
+            style={{
+              background: `radial-gradient(
+                450px circle at ${heroPointer.x}px ${heroPointer.y}px,
+                rgba(255, 255, 255, 0.98) 0%,
+                rgba(255, 160, 52, 0.85) 15%,
+                rgba(255, 94, 30, 0.5) 35%,
+                transparent 70%
+              )`,
+            }}
           />
-          {/* Subtle Lateral Vignettes for Crystal-Clear Text Contrast */}
-          <div className="absolute inset-y-0 left-0 w-2/5 sm:w-1/3 bg-gradient-to-r from-[#0C0E12]/95 via-[#0C0E12]/70 to-transparent" />
-          <div className="absolute inset-y-0 right-0 w-2/5 sm:w-1/3 bg-gradient-to-l from-[#0C0E12]/95 via-[#0C0E12]/70 to-transparent" />
-          <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0C0E12] via-[#0C0E12]/60 to-transparent" />
-        </div>
+        )}
 
-        {/* CONTENT GRID: LEFT (Get Fit) & RIGHT (Stay Fit + Video) */}
-        <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-center min-h-[580px] sm:min-h-[660px] lg:min-h-[720px] p-6 sm:p-10 lg:p-14">
-          
-          {/* ========================================================================= */}
-          {/* LEFT COLUMN: "Get Fit", Coaches Badge, and Bottom-Left Video Container     */}
-          {/* ========================================================================= */}
-          <div className="lg:col-span-5 flex flex-col justify-between h-full space-y-6">
-            <div className="space-y-4">
-              {/* Giant Energetic Athletic "Get Fit" Headline */}
-              <div className="group/headline cursor-default select-none">
-                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-2 shadow-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF5E1E] animate-pulse" />
-                  <span className="text-[10px] font-mono tracking-widest text-[#FF5E1E] uppercase font-bold">
-                    DISCIPLINE &bull; HYPERTROPHY
-                  </span>
-                </div>
-                <h1 className="font-athletic italic uppercase font-black tracking-tight leading-[0.85] text-5xl sm:text-6xl md:text-7xl lg:text-8xl drop-shadow-2xl transition-transform duration-300 group-hover/headline:translate-x-1">
-                  <span className="text-sheen-effect inline-block">GET</span>{' '}
-                  <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#FF5E1E] via-[#FF7538] to-[#FFA034] text-glow-orange">
-                    FIT
-                  </span>
-                </h1>
-              </div>
+        {/* Inner Surface of Hero Card */}
+        <div className="relative w-full h-full rounded-[calc(2rem-2px)] sm:rounded-[calc(2.5rem-2px)] bg-[#0C0E12] overflow-hidden">
+          {/* Top Subtle Amber Ambient Highlight */}
+          <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#FF5E1E] to-transparent opacity-80 shadow-[0_0_15px_#FF5E1E]" />
 
-              {/* 20 Active Coaches Credential Badge */}
-              <div>
-                <HeroCoachesBadge />
-              </div>
-            </div>
-
-            {/* Bottom Left: Second Video Card (Circled Location by User) */}
-            <div className="pt-2">
-              <HeroVideoCard
-                videoSrc={ASSET_MANIFEST.hero.introVideo2.path}
-                title="SN Olympia Energy & Coaching"
-                tag="WORKOUT PREVIEW"
-              />
-            </div>
+          {/* HERO ATHLETE WITH BACKGROUND "OLAMPIYA" TEXT */}
+          <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
+            <img
+              src={ASSET_MANIFEST.hero.athleteCurlingOlampiya.path}
+              alt="SN Olympia Fitness muscular athlete with curling barbell and Olampiya background typography"
+              loading="eager"
+              decoding="async"
+              className="w-full h-full object-cover object-center filter contrast-[1.05] brightness-[0.95]"
+            />
+            {/* Subtle Lateral Vignettes for Crystal-Clear Text Contrast */}
+            <div className="absolute inset-y-0 left-0 w-2/5 sm:w-1/3 bg-gradient-to-r from-[#0C0E12]/95 via-[#0C0E12]/70 to-transparent" />
+            <div className="absolute inset-y-0 right-0 w-2/5 sm:w-1/3 bg-gradient-to-l from-[#0C0E12]/95 via-[#0C0E12]/70 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-[#0C0E12] via-[#0C0E12]/60 to-transparent" />
           </div>
 
-          {/* ========================================================================= */}
-          {/* CENTER SPACER: Keeps center athlete clear and visible                     */}
-          {/* ========================================================================= */}
-          <div className="hidden lg:block lg:col-span-2 pointer-events-none" />
-
-          {/* ========================================================================= */}
-          {/* RIGHT COLUMN: "Stay Fit", First Video Card, Scroll Down Button & 3D Plate */}
-          {/* ========================================================================= */}
-          <div className="lg:col-span-5 flex flex-col justify-between items-start lg:items-end h-full space-y-6">
-            <div className="flex flex-col items-start lg:items-end w-full space-y-4">
-              {/* Giant Energetic Athletic "Stay Fit" Headline */}
-              <div className="group/stayline cursor-default select-none flex flex-col items-start lg:items-end">
-                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-2 shadow-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-[#FF5E1E] animate-pulse" />
-                  <span className="text-[10px] font-mono tracking-widest text-[#FF5E1E] uppercase font-bold">
-                    PERFORMANCE &bull; RESILIENCE
-                  </span>
+          {/* CONTENT GRID: LEFT (Get Fit) & RIGHT (Stay Fit + Video) */}
+          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-center min-h-[580px] sm:min-h-[660px] lg:min-h-[720px] p-6 sm:p-10 lg:p-14">
+            
+            {/* ========================================================================= */}
+            {/* LEFT COLUMN: "Get Fit", Coaches Badge, and Bottom-Left Video Container     */}
+            {/* ========================================================================= */}
+            <div className="lg:col-span-5 flex flex-col justify-between h-full space-y-6">
+              <div className="space-y-4">
+                {/* Giant Energetic Athletic "Get Fit" Headline */}
+                <div className="group/headline cursor-default select-none">
+                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-2 shadow-sm">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#FF5E1E] animate-pulse" />
+                    <span className="text-[10px] font-mono tracking-widest text-[#FF5E1E] uppercase font-bold">
+                      DISCIPLINE &bull; HYPERTROPHY
+                    </span>
+                  </div>
+                  <h1 className="font-athletic italic uppercase font-black tracking-tight leading-[0.85] text-5xl sm:text-6xl md:text-7xl lg:text-8xl drop-shadow-2xl transition-transform duration-300 group-hover/headline:translate-x-1">
+                    <span className="text-sheen-effect inline-block">GET</span>{' '}
+                    <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#FF5E1E] via-[#FF7538] to-[#FFA034] text-glow-orange">
+                      FIT
+                    </span>
+                  </h1>
                 </div>
-                <h2 className="font-athletic italic uppercase font-black tracking-tight leading-[0.85] text-5xl sm:text-6xl md:text-7xl lg:text-8xl drop-shadow-2xl transition-transform duration-300 group-hover/stayline:-translate-x-1 text-left lg:text-right">
-                  <span className="text-sheen-effect inline-block">STAY</span>{' '}
-                  <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#FF5E1E] via-[#FF7538] to-[#FFA034] text-glow-orange">
-                    FIT
-                  </span>
-                </h2>
+
+                {/* 20 Active Coaches Credential Badge */}
+                <div>
+                  <HeroCoachesBadge />
+                </div>
               </div>
 
-              {/* Floating Translucent Video Card (Intro Video 1) */}
-              <div className="mt-1">
+              {/* Bottom Left: Second Video Card (Clean: only preview + animated explore play button) */}
+              <div className="pt-2">
                 <HeroVideoCard
-                  videoSrc={ASSET_MANIFEST.hero.introVideo.path}
-                  title="SN Olympia Facility Showcase"
-                  tag="FACILITY & VIBE"
+                  videoSrc={ASSET_MANIFEST.hero.introVideo2.path}
+                  title="SN Olympia Energy & Coaching"
                 />
               </div>
             </div>
+
+            {/* ========================================================================= */}
+            {/* CENTER SPACER: Keeps center athlete clear and visible                     */}
+            {/* ========================================================================= */}
+            <div className="hidden lg:block lg:col-span-2 pointer-events-none" />
+
+            {/* ========================================================================= */}
+            {/* RIGHT COLUMN: "Stay Fit", First Video Card, Scroll Down Button & 3D Plate */}
+            {/* ========================================================================= */}
+            <div className="lg:col-span-5 flex flex-col justify-between items-start lg:items-end h-full space-y-6">
+              <div className="flex flex-col items-start lg:items-end w-full space-y-4">
+                {/* Giant Energetic Athletic "Stay Fit" Headline */}
+                <div className="group/stayline cursor-default select-none flex flex-col items-start lg:items-end">
+                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-2 shadow-sm">
+                    <span className="w-1.5 h-1.5 rounded-full bg-[#FF5E1E] animate-pulse" />
+                    <span className="text-[10px] font-mono tracking-widest text-[#FF5E1E] uppercase font-bold">
+                      PERFORMANCE &bull; RESILIENCE
+                    </span>
+                  </div>
+                  <h2 className="font-athletic italic uppercase font-black tracking-tight leading-[0.85] text-5xl sm:text-6xl md:text-7xl lg:text-8xl drop-shadow-2xl transition-transform duration-300 group-hover/stayline:-translate-x-1 text-left lg:text-right">
+                    <span className="text-sheen-effect inline-block">STAY</span>{' '}
+                    <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#FF5E1E] via-[#FF7538] to-[#FFA034] text-glow-orange">
+                      FIT
+                    </span>
+                  </h2>
+                </div>
+
+                {/* Floating Translucent Video Card (Clean: only preview + animated explore play button) */}
+                <div className="mt-1">
+                  <HeroVideoCard
+                    videoSrc={ASSET_MANIFEST.hero.introVideo.path}
+                    title="SN Olympia Facility Showcase"
+                  />
+                </div>
+              </div>
 
             {/* Bottom Right: Circular Scroll Down Button & 3D Plate Satellite */}
             <div className="flex items-center gap-4 pt-2 w-full justify-between lg:justify-end">
@@ -196,6 +259,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           <HeroExplore3DButton onClick={onExploreClick || onJoinClick} />
         </div>
       </div>
+    </div>
 
       {/* 3. Teaser Headline Below Hero Frame (Matching Reference Mockup) */}
       <div className="relative z-10 pt-10 sm:pt-14 px-2 select-none">
