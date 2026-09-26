@@ -167,6 +167,7 @@ export const VideoArenaSection: React.FC = () => {
   const snapTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Drag Interaction Tracking
+  const isPointerDownRef = useRef(false);
   const isDraggingRef = useRef(false);
   const dragStartXRef = useRef(0);
   const dragStartPosRef = useRef(0);
@@ -246,28 +247,29 @@ export const VideoArenaSection: React.FC = () => {
     });
   }, [activeAudioId, isAudioMuted, isPlaying]);
 
-  // Infinite Loop Horizontal Wheel & Trackpad Gesture Scrolling
+  // Infinite Loop Horizontal Wheel & Trackpad Gesture Scrolling (Real Intentional Scroll Only)
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 
     const onWheel = (e: WheelEvent) => {
-      const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
-      const isShift = e.shiftKey;
+      // Strictly filter for intentional horizontal scrolling (ignore stray micro-movements)
+      const isIntentionalHorizontal = Math.abs(e.deltaX) > 8 && Math.abs(e.deltaX) > Math.abs(e.deltaY) * 1.5;
+      const isShiftWheel = e.shiftKey && Math.abs(e.deltaY) > 8;
 
-      if (isHorizontal || isShift) {
+      if (isIntentionalHorizontal || isShiftWheel) {
         e.preventDefault();
-        const delta = isHorizontal ? e.deltaX : e.deltaY;
+        const delta = isIntentionalHorizontal ? e.deltaX : e.deltaY;
 
-        // Fluid continuous sensitivity without boundary clamping (Infinite Loop)
-        const step = delta * 0.0032;
+        // Controlled, predictable sensitivity
+        const step = delta * 0.0024;
         targetPosRef.current += step;
 
         if (snapTimeoutRef.current) clearTimeout(snapTimeoutRef.current);
         snapTimeoutRef.current = setTimeout(() => {
           targetPosRef.current = Math.round(targetPosRef.current);
           startLoop();
-        }, 180);
+        }, 160);
 
         startLoop();
       }
@@ -332,6 +334,7 @@ export const VideoArenaSection: React.FC = () => {
   // Pointer drag event handlers with 1:1 real-time tracking & infinite flick throw
   const handlePointerDown = (e: React.PointerEvent) => {
     if (e.button !== 0) return;
+    isPointerDownRef.current = true;
     isDraggingRef.current = false;
     dragStartXRef.current = e.clientX;
     dragStartPosRef.current = targetPosRef.current;
@@ -343,11 +346,19 @@ export const VideoArenaSection: React.FC = () => {
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
+    // CRITICAL: NEVER move on hover! Only move if mouse button is actively held down!
+    if (!isPointerDownRef.current) return;
+    if (e.buttons !== 1) {
+      isPointerDownRef.current = false;
+      isDraggingRef.current = false;
+      return;
+    }
+
     const totalDeltaX = e.clientX - dragStartXRef.current;
 
-    // Only engage drag if moved more than 6px
+    // Only engage drag if moved more than 10px intentionally
     if (!isDraggingRef.current) {
-      if (Math.abs(totalDeltaX) > 6) {
+      if (Math.abs(totalDeltaX) > 10) {
         isDraggingRef.current = true;
         if (containerRef.current) {
           try {
@@ -377,6 +388,8 @@ export const VideoArenaSection: React.FC = () => {
   };
 
   const handlePointerUp = (e: React.PointerEvent) => {
+    isPointerDownRef.current = false;
+
     if (containerRef.current) {
       try {
         containerRef.current.releasePointerCapture(e.pointerId);
@@ -390,13 +403,22 @@ export const VideoArenaSection: React.FC = () => {
 
     isDraggingRef.current = false;
     const totalDeltaX = e.clientX - dragStartXRef.current;
-    if (Math.abs(totalDeltaX) >= 8) {
+    if (Math.abs(totalDeltaX) >= 12) {
       // Natural flick throwing with momentum
-      const flickImpulse = -velocityXRef.current * 1.6;
+      const flickImpulse = -velocityXRef.current * 1.5;
       const projectedPos = targetPosRef.current + flickImpulse;
       targetPosRef.current = Math.round(projectedPos);
       startLoop();
     } else {
+      targetPosRef.current = Math.round(targetPosRef.current);
+      startLoop();
+    }
+  };
+
+  const handlePointerLeave = () => {
+    isPointerDownRef.current = false;
+    if (isDraggingRef.current) {
+      isDraggingRef.current = false;
       targetPosRef.current = Math.round(targetPosRef.current);
       startLoop();
     }
@@ -572,7 +594,7 @@ export const VideoArenaSection: React.FC = () => {
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
-          onPointerLeave={handlePointerUp}
+          onPointerLeave={handlePointerLeave}
           className="relative w-full h-[540px] sm:h-[600px] md:h-[640px] flex items-center justify-center [perspective:1400px] overflow-hidden cursor-grab active:cursor-grabbing select-none"
           style={{ touchAction: 'pan-y' }}
         >
