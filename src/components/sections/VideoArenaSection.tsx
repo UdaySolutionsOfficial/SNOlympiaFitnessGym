@@ -235,9 +235,12 @@ export const VideoArenaSection: React.FC = () => {
 
   return (
     <section
-      id="reels"
+      id="action"
       className="relative py-28 sm:py-36 md:py-44 bg-[#08090A] overflow-hidden border-t border-brand-border/60 select-none"
     >
+      {/* Anchor for backwards compatibility */}
+      <div id="reels" className="absolute -top-24 pointer-events-none" />
+
       {/* 1. Ambient Background Atmosphere */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/4 -left-48 w-96 h-96 rounded-full bg-[#FF5E1E]/12 filter blur-[120px]" />
@@ -255,7 +258,7 @@ export const VideoArenaSection: React.FC = () => {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-3 shadow-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-[#FF5E1E] animate-pulse" />
               <span className="text-[10px] font-mono tracking-widest text-[#FF5E1E] uppercase font-bold">
-                // 03.5 LIVE TRAINING REELS
+                // 03.5 LIVE ACTION ARENA
               </span>
             </div>
 
@@ -272,7 +275,7 @@ export const VideoArenaSection: React.FC = () => {
           <div className="flex items-center p-1.5 rounded-full bg-black/60 border border-white/15 backdrop-blur-xl shadow-lg self-start md:self-auto">
             {(
               [
-                { id: 'all', label: 'All Reels', count: 13, icon: <Sparkles className="w-3.5 h-3.5" /> },
+                { id: 'all', label: 'All Action', count: 13, icon: <Sparkles className="w-3.5 h-3.5" /> },
                 { id: 'men', label: "Men's Power", count: 8, icon: <Dumbbell className="w-3.5 h-3.5" /> },
                 { id: 'women', label: "Women's Zone", count: 5, icon: <Users className="w-3.5 h-3.5" /> },
               ] as const

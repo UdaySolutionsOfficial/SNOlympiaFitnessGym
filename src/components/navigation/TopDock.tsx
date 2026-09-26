@@ -13,7 +13,7 @@ import {
   Award,
   Info,
   Send,
-  Film,
+  Zap,
 } from 'lucide-react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 
@@ -37,28 +37,28 @@ const NAV_ITEMS: readonly NavItemConfig[] = [
     icon: <Home className="w-3.5 h-3.5" />,
   },
   {
+    id: 'about',
+    label: 'About',
+    href: '#about',
+    icon: <Info className="w-3.5 h-3.5" />,
+  },
+  {
     id: 'programs',
     label: 'Programs',
     href: '#programs',
     icon: <Layers className="w-3.5 h-3.5" />,
   },
   {
-    id: 'reels',
-    label: 'Reels',
-    href: '#reels',
-    icon: <Film className="w-3.5 h-3.5" />,
+    id: 'action',
+    label: 'Action',
+    href: '#action',
+    icon: <Zap className="w-3.5 h-3.5" />,
   },
   {
     id: 'membership',
     label: 'Membership',
     href: '#membership',
     icon: <Award className="w-3.5 h-3.5" />,
-  },
-  {
-    id: 'about',
-    label: 'About',
-    href: '#about',
-    icon: <Info className="w-3.5 h-3.5" />,
   },
   {
     id: 'contact',
@@ -208,10 +208,11 @@ export const TopDock: React.FC<TopDockProps> = ({
     setCurrentActive(targetId);
     if (onNavigate) {
       onNavigate(targetId);
-    }
-    const el = document.getElementById(targetId);
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth' });
+    } else {
+      const el = document.getElementById(targetId);
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth' });
+      }
     }
   };
 
@@ -319,18 +320,18 @@ export const TopDock: React.FC<TopDockProps> = ({
                         layoutId="activeDockPill"
                         transition={{
                           type: 'spring',
-                          stiffness: 420,
-                          damping: 32,
-                          mass: 0.8,
+                          stiffness: 280,
+                          damping: 26,
+                          mass: 0.6,
                         }}
-                        className="absolute inset-0 rounded-full bg-gradient-to-b from-white via-[#F4F6FB] to-[#E2E6EE] shadow-[0_10px_24px_-10px_rgba(255,94,30,0.8),inset_0_-1px_rgba(0,0,0,0.15)] z-0"
+                        className="absolute inset-0 rounded-full bg-gradient-to-b from-white via-[#F8FAFC] to-[#EDF2F7] shadow-[0_4px_22px_rgba(255,94,30,0.5),0_0_12px_rgba(255,255,255,0.7)] z-0"
                       />
                     )}
 
                     <span
                       className={`relative z-10 transition-colors shrink-0 ${
                         isActive
-                          ? 'text-[#0A0B10]'
+                          ? 'text-[#FF5E1E]'
                           : influence > 0.08
                           ? 'text-[#FF5E1E]'
                           : 'text-neutral-400'

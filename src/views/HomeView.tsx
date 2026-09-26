@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { IntroLoader } from '../components/loader/IntroLoader';
 import { TopDock } from '../components/navigation/TopDock';
 import { HeroSection } from '../components/hero/HeroSection';
@@ -75,20 +75,38 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
   };
 
   const [activeSection, setActiveSection] = useState('overview');
+  const isNavClickRef = useRef(false);
+  const navClickTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Dynamic Scroll Spy for Navigation Active State
+  const handleNavigate = (targetId: string) => {
+    const id = targetId.startsWith('#') ? targetId.slice(1) : targetId;
+    setActiveSection(id);
+    isNavClickRef.current = true;
+    if (navClickTimeoutRef.current) clearTimeout(navClickTimeoutRef.current);
+    navClickTimeoutRef.current = setTimeout(() => {
+      isNavClickRef.current = false;
+    }, 900);
+
+    const target = document.getElementById(id);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
+
+  // Dynamic Sequential Scroll Spy for Navigation Active State
   useEffect(() => {
     const navSections = [
       { id: 'overview', target: 'overview' },
       { id: 'about', target: 'about' },
       { id: 'benefits', target: 'about' },
       { id: 'programs', target: 'programs' },
-      { id: 'reels', target: 'reels' },
-      { id: 'methodology', target: 'reels' },
-      { id: 'trainers', target: 'reels' },
-      { id: 'facilities', target: 'reels' },
-      { id: 'atmosphere', target: 'programs' },
-      { id: 'gallery', target: 'programs' },
+      { id: 'action', target: 'action' },
+      { id: 'reels', target: 'action' },
+      { id: 'methodology', target: 'action' },
+      { id: 'trainers', target: 'action' },
+      { id: 'facilities', target: 'action' },
+      { id: 'atmosphere', target: 'action' },
+      { id: 'gallery', target: 'action' },
       { id: 'testimonials', target: 'membership' },
       { id: 'membership', target: 'membership' },
       { id: 'faq', target: 'membership' },
@@ -97,9 +115,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
     ];
 
     const handleScroll = () => {
+      if (isNavClickRef.current) return;
+
       // Bottom of page detection -> contact
       const isBottom =
-        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 120;
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 140;
       if (isBottom) {
         setActiveSection('contact');
         return;
@@ -125,7 +145,10 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
 
     window.addEventListener('scroll', handleScroll, { passive: true });
     handleScroll();
-    return () => window.removeEventListener('scroll', handleScroll);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (navClickTimeoutRef.current) clearTimeout(navClickTimeoutRef.current);
+    };
   }, []);
 
   return (
@@ -138,14 +161,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
       {/* 2. Responsive Sable-Inspired Top Navigation Dock */}
       <TopDock
         activeSection={activeSection}
-        onNavigate={(targetId) => {
-          const id = targetId.startsWith('#') ? targetId.slice(1) : targetId;
-          setActiveSection(id);
-          const target = document.getElementById(id);
-          if (target) {
-            target.scrollIntoView({ behavior: 'smooth' });
-          }
-        }}
+        onNavigate={handleNavigate}
       />
 
 
