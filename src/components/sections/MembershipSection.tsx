@@ -44,7 +44,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
         </ScrollReveal>
 
         {/* 3 Tier Cards Grid: 1 Month (Left), 12 Months Recommended (Center), 6 Months (Right) */}
-        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch pt-8 sm:pt-10">
+        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch pt-4 sm:pt-6">
           {plans.map((plan: MembershipPlan) => {
             const isFeatured = plan.durationKey === 'annual';
 
@@ -55,16 +55,6 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
                   isFeatured ? 'md:-translate-y-4 lg:-translate-y-5 z-20' : 'z-10'
                 }`}
               >
-                {/* Outer Floating Highlight Badge for Featured Card (12 Months Annual) - Sits on outer top side */}
-                {isFeatured && (
-                  <div className="absolute -top-3.5 sm:-top-4 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
-                    <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-400 via-[#FF7538] to-[#FF5E1E] text-brand-dark font-mono text-[11px] sm:text-xs font-black tracking-widest uppercase shadow-[0_0_25px_rgba(255,94,30,0.9)] border border-amber-200/50">
-                      <Flame className="w-3.5 h-3.5 fill-brand-dark animate-pulse" />
-                      <span>RECOMMENDED • BEST VALUE</span>
-                    </div>
-                  </div>
-                )}
-
                 {/* Outer Looping Glowing Edge Border Shell */}
                 <div
                   className={`group/card relative w-full h-full rounded-3xl p-[2px] overflow-hidden transition-all duration-500 flex flex-col justify-between ${
@@ -129,10 +119,20 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
                     <div className="absolute top-0 right-0 w-36 h-36 bg-brand-volt/10 rounded-full blur-2xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
                     <div>
+                      {/* Integrated In-Card Recommendation Pill - Seamless architectural part of card */}
+                      {isFeatured && (
+                        <div className="flex justify-center -mt-1 sm:-mt-2 mb-5">
+                          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-brand-volt/15 via-brand-volt/25 to-brand-volt/15 border border-brand-volt/40 text-brand-volt font-mono text-[11px] sm:text-xs font-black tracking-widest uppercase shadow-[0_0_20px_rgba(255,94,30,0.3)] backdrop-blur-md">
+                            <Flame className="w-3.5 h-3.5 fill-brand-volt text-brand-volt animate-pulse" />
+                            <span>RECOMMENDED • BEST VALUE</span>
+                          </div>
+                        </div>
+                      )}
+
                       {/* Duration & Access Badge */}
                       <div className="flex items-center justify-between text-xs font-mono mb-3">
                         <span className="text-brand-text-muted uppercase font-bold tracking-wider">
-                          {plan.billingCycle}
+                          {isFeatured ? 'Annual Pass (12 Mo)' : plan.billingCycle}
                         </span>
                         <span className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-volt px-2 py-0.5 rounded bg-brand-volt/10 border border-brand-volt/20">
                           <Award className="w-3 h-3" />
