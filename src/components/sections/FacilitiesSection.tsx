@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Dumbbell, Shield, Sparkles, CheckCircle2, ChevronRight, Layers } from 'lucide-react';
 import { ASSET_MANIFEST } from '../../data/assets';
+import { ScrollReveal, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 
 interface FacilityFeature {
   id: string;
@@ -90,7 +91,7 @@ export const FacilitiesSection: React.FC = () => {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="max-w-3xl mb-16 md:mb-20">
+        <ScrollReveal direction="up" delay={0.05} className="max-w-3xl mb-16 md:mb-20">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-volt/10 border border-brand-volt/30 text-brand-volt text-xs font-mono tracking-widest uppercase mb-4">
             <Layers className="w-3.5 h-3.5" />
             Commercial Training Arsenal
@@ -104,17 +105,13 @@ export const FacilitiesSection: React.FC = () => {
           <p className="mt-4 text-base sm:text-lg text-brand-text-secondary leading-relaxed font-light">
             We don’t fill our floor with gimmick machines. Every piece of equipment at Olympia was chosen to deliver heavy compound loading, smooth tension curves, and uncompromising floor safety.
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* Top 2 Primary Visual Showcases (Free Weights & Power Cages) */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
-          {FACILITY_ZONES.slice(0, 2).map((zone, idx) => (
-            <motion.div
+        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+          {FACILITY_ZONES.slice(0, 2).map((zone) => (
+            <StaggerItem
               key={zone.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: idx * 0.15 }}
               className="group relative rounded-2xl overflow-hidden border border-brand-border/80 bg-brand-surface flex flex-col justify-between"
             >
               {/* Image Frame */}
@@ -172,19 +169,15 @@ export const FacilitiesSection: React.FC = () => {
                   ))}
                 </div>
               </div>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
 
         {/* Bottom 2 Zones: Cable Suite & Conditioning Floor */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {FACILITY_ZONES.slice(2, 4).map((zone, idx) => (
-            <motion.div
+        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+          {FACILITY_ZONES.slice(2, 4).map((zone) => (
+            <StaggerItem
               key={zone.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: 0.2 + idx * 0.15 }}
               className="p-6 sm:p-8 rounded-2xl bg-brand-surface/70 border border-brand-border/80 hover:border-brand-volt/40 transition-all duration-300 flex flex-col justify-between"
             >
               <div>
@@ -225,18 +218,20 @@ export const FacilitiesSection: React.FC = () => {
                   </div>
                 ))}
               </div>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
 
         {/* Floor Cleanliness & Safety Badge */}
-        <div className="mt-12 p-4 rounded-xl bg-brand-surface/40 border border-brand-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-brand-text-muted">
-          <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-brand-volt" />
-            <span>DAILY RE-RACKING & HYGIENE PROTOCOLS STRICTLY ENFORCED</span>
+        <ScrollReveal direction="up" delay={0.15}>
+          <div className="mt-12 p-4 rounded-xl bg-brand-surface/40 border border-brand-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-brand-text-muted">
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4 text-brand-volt" />
+              <span>DAILY RE-RACKING & HYGIENE PROTOCOLS STRICTLY ENFORCED</span>
+            </div>
+            <span className="text-brand-text-secondary">Timmappa Colony, Yemmiganur</span>
           </div>
-          <span className="text-brand-text-secondary">Timmappa Colony, Yemmiganur</span>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );

@@ -14,6 +14,7 @@ import {
   Maximize2,
 } from 'lucide-react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
+import { ScrollReveal } from '../common/ScrollReveal';
 
 export type VideoCategory = 'all' | 'men' | 'women';
 
@@ -576,7 +577,7 @@ export const VideoArenaSection: React.FC = () => {
         {/* ========================================================================= */}
         {/* SECTION HEADER WITH CATEGORY FILTER                                       */}
         {/* ========================================================================= */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 sm:mb-16">
+        <ScrollReveal direction="up" delay={0.05} className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 sm:mb-16">
           <div>
             {/* Section Tag */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-3 shadow-sm">
@@ -636,7 +637,7 @@ export const VideoArenaSection: React.FC = () => {
               );
             })}
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* ========================================================================= */}
         {/* 3D CYLINDRICAL CURVED ACTION RING (INFINITE 360° LOOP ENGINE)              */}

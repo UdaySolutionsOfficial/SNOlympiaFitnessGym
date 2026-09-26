@@ -1,5 +1,6 @@
 import React from 'react';
 import { ArrowDown, Flame, Shield, Target } from 'lucide-react';
+import { ScrollReveal, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 
 export interface SectionTransitionProps {
   onExploreNext?: () => void;
@@ -25,7 +26,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
 
       <div className="max-w-7xl mx-auto relative z-10 space-y-12">
         {/* Kinetic Statement Lockup */}
-        <div className="text-center max-w-4xl mx-auto space-y-4">
+        <ScrollReveal direction="up" className="text-center max-w-4xl mx-auto space-y-4">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-surface border border-white/10 text-xs font-mono font-bold tracking-widest text-brand-volt uppercase">
             <Flame className="w-3.5 h-3.5 text-brand-volt" />
             <span>THE OLYMPIA PHILOSOPHY</span>
@@ -41,49 +42,55 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
           <p className="text-sm md:text-base text-brand-text-secondary max-w-2xl mx-auto leading-relaxed">
             We don’t believe in gimmicks, quick fixes, or half-hearted workouts. At SN Olympia Fitness, every barbell load, every conditioning interval, and every coach interaction is calibrated for measurable physical adaptation.
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* 3 Core Pillars Preview */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
-          <div className="p-6 rounded-2xl bg-brand-surface/80 border border-white/5 space-y-3 hover:border-brand-volt/40 transition-colors">
-            <div className="w-10 h-10 rounded-xl bg-brand-volt/10 border border-brand-volt/30 flex items-center justify-center text-brand-volt">
-              <Target className="w-5 h-5" />
+        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-3 gap-6 pt-4">
+          <StaggerItem>
+            <div className="p-6 rounded-2xl bg-brand-surface/80 border border-white/5 space-y-3 hover:border-brand-volt/40 transition-colors h-full">
+              <div className="w-10 h-10 rounded-xl bg-brand-volt/10 border border-brand-volt/30 flex items-center justify-center text-brand-volt">
+                <Target className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-black uppercase text-white tracking-tight">
+                01. Progressive Overload
+              </h3>
+              <p className="text-xs text-brand-text-secondary leading-relaxed">
+                Structured compound barbell and dumbbell movements designed to progressively increase resistance and muscle density week over week.
+              </p>
             </div>
-            <h3 className="text-lg font-black uppercase text-white tracking-tight">
-              01. Progressive Overload
-            </h3>
-            <p className="text-xs text-brand-text-secondary leading-relaxed">
-              Structured compound barbell and dumbbell movements designed to progressively increase resistance and muscle density week over week.
-            </p>
-          </div>
+          </StaggerItem>
 
-          <div className="p-6 rounded-2xl bg-brand-surface/80 border border-white/5 space-y-3 hover:border-brand-volt/40 transition-colors">
-            <div className="w-10 h-10 rounded-xl bg-brand-volt/10 border border-brand-volt/30 flex items-center justify-center text-brand-volt">
-              <Flame className="w-5 h-5" />
+          <StaggerItem>
+            <div className="p-6 rounded-2xl bg-brand-surface/80 border border-white/5 space-y-3 hover:border-brand-volt/40 transition-colors h-full">
+              <div className="w-10 h-10 rounded-xl bg-brand-volt/10 border border-brand-volt/30 flex items-center justify-center text-brand-volt">
+                <Flame className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-black uppercase text-white tracking-tight">
+                02. High-Capacity Cardio
+              </h3>
+              <p className="text-xs text-brand-text-secondary leading-relaxed">
+                Metabolic conditioning circuits that elevate cardiovascular threshold, incinerate visceral fat, and build athletic stamina.
+              </p>
             </div>
-            <h3 className="text-lg font-black uppercase text-white tracking-tight">
-              02. High-Capacity Cardio
-            </h3>
-            <p className="text-xs text-brand-text-secondary leading-relaxed">
-              Metabolic conditioning circuits that elevate cardiovascular threshold, incinerate visceral fat, and build athletic stamina.
-            </p>
-          </div>
+          </StaggerItem>
 
-          <div className="p-6 rounded-2xl bg-brand-surface/80 border border-white/5 space-y-3 hover:border-brand-volt/40 transition-colors">
-            <div className="w-10 h-10 rounded-xl bg-brand-volt/10 border border-brand-volt/30 flex items-center justify-center text-brand-volt">
-              <Shield className="w-5 h-5" />
+          <StaggerItem>
+            <div className="p-6 rounded-2xl bg-brand-surface/80 border border-white/5 space-y-3 hover:border-brand-volt/40 transition-colors h-full">
+              <div className="w-10 h-10 rounded-xl bg-brand-volt/10 border border-brand-volt/30 flex items-center justify-center text-brand-volt">
+                <Shield className="w-5 h-5" />
+              </div>
+              <h3 className="text-lg font-black uppercase text-white tracking-tight">
+                03. Biomechanical Safety
+              </h3>
+              <p className="text-xs text-brand-text-secondary leading-relaxed">
+                Attentive floor coaches ensuring spine safety, joint alignment, and strict execution across all weight classes and experience levels.
+              </p>
             </div>
-            <h3 className="text-lg font-black uppercase text-white tracking-tight">
-              03. Biomechanical Safety
-            </h3>
-            <p className="text-xs text-brand-text-secondary leading-relaxed">
-              Attentive floor coaches ensuring spine safety, joint alignment, and strict execution across all weight classes and experience levels.
-            </p>
-          </div>
-        </div>
+          </StaggerItem>
+        </StaggerContainer>
 
         {/* Phase 3 Transition Indicator */}
-        <div className="text-center pt-8">
+        <ScrollReveal direction="up" delay={0.2} className="text-center pt-8">
           <button
             onClick={() => {
               if (onExploreNext) {
@@ -98,7 +105,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
             <span>DISCOVER TRAINING DISCIPLINES (PHASE 3)</span>
             <ArrowDown className="w-3.5 h-3.5 group-hover:translate-y-1 transition-transform" />
           </button>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );

@@ -1,7 +1,7 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { Star, ShieldCheck, Quote, CheckCircle2 } from 'lucide-react';
 import { SITE_CONTENT } from '../../data/siteContent';
+import { ScrollReveal, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 
 export const TestimonialsSection: React.FC = () => {
   const testimonials = SITE_CONTENT.testimonials;
@@ -13,7 +13,7 @@ export const TestimonialsSection: React.FC = () => {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header with Verified 5.0★ Rating Badge */}
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16">
+        <ScrollReveal direction="up" delay={0.05} className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-volt/10 border border-brand-volt/30 text-brand-volt text-xs font-mono tracking-widest uppercase mb-4">
               <Star className="w-3.5 h-3.5 fill-brand-volt text-brand-volt" />
@@ -46,17 +46,13 @@ export const TestimonialsSection: React.FC = () => {
               </div>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
 
-        {/* Testimonials Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-12">
-          {testimonials.map((test, index) => (
-            <motion.div
+        {/* Testimonials Grid with Staggered Cascading Reveal */}
+        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:gap-8 mb-12">
+          {testimonials.map((test) => (
+            <StaggerItem
               key={test.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.15 }}
               className="p-8 rounded-2xl bg-brand-surface border border-brand-border/80 hover:border-brand-volt/40 transition-all duration-300 relative flex flex-col justify-between shadow-lg"
             >
               <Quote className="w-10 h-10 text-brand-volt/20 mb-4" />
@@ -82,18 +78,20 @@ export const TestimonialsSection: React.FC = () => {
                   <span>{test.source}</span>
                 </div>
               </div>
-            </motion.div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
 
         {/* Honest Content Truth Note */}
-        <div className="p-4 rounded-xl bg-brand-surface/40 border border-brand-border/60 flex items-center justify-between text-xs font-mono text-brand-text-muted">
-          <div className="flex items-center gap-2">
-            <CheckCircle2 className="w-4 h-4 text-brand-volt" />
-            <span>AUTHENTIC COMMUNITY REVIEWS • NO FABRICATED TESTIMONIALS</span>
+        <ScrollReveal direction="up" delay={0.15}>
+          <div className="p-4 rounded-xl bg-brand-surface/40 border border-brand-border/60 flex items-center justify-between text-xs font-mono text-brand-text-muted">
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="w-4 h-4 text-brand-volt" />
+              <span>AUTHENTIC COMMUNITY REVIEWS • NO FABRICATED TESTIMONIALS</span>
+            </div>
+            <span className="text-brand-text-secondary">Timmappa Colony • Shiva Priya Theater Area</span>
           </div>
-          <span className="text-brand-text-secondary">Timmappa Colony • Shiva Priya Theater Area</span>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );

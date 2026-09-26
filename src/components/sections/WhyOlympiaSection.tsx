@@ -1,6 +1,7 @@
 import React from 'react';
 import { SpotlightCard } from '../cards/SpotlightCard';
 import { StatusBadge } from '../common/StatusBadge';
+import { ScrollReveal, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 import { Dumbbell, ShieldCheck, Users, Clock, Award, Sparkles } from 'lucide-react';
 
 export interface WhyOlympiaSectionProps {
@@ -20,7 +21,7 @@ export const WhyOlympiaSection: React.FC<WhyOlympiaSectionProps> = ({ className 
     >
       <div className="space-y-12">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <ScrollReveal direction="up" delay={0.05} className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs font-mono font-bold tracking-[0.2em] text-brand-volt uppercase">
@@ -35,12 +36,13 @@ export const WhyOlympiaSection: React.FC<WhyOlympiaSectionProps> = ({ className 
           <p className="text-xs md:text-sm text-brand-text-secondary max-w-md">
             Engineered from the ground up for serious physical adaptation. Discover why athletes and beginners alike trust SN Olympia in Yemmiganur.
           </p>
-        </div>
+        </ScrollReveal>
 
-        {/* Asymmetrical Bento Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        {/* Asymmetrical Bento Grid with Staggered Fluid Reveal */}
+        <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 md:grid-cols-12 gap-6">
           {/* Card 1: Dominant Feature (Span 7) - Heavy Free Weights & Platforms */}
-          <SpotlightCard className="md:col-span-7 flex flex-col justify-between p-8 bg-brand-surface/80 border-brand-border/80 hover:border-brand-volt/40 min-h-[320px]">
+          <StaggerItem className="md:col-span-7 flex">
+            <SpotlightCard className="w-full flex flex-col justify-between p-8 bg-brand-surface/80 border-brand-border/80 hover:border-brand-volt/40 min-h-[320px]">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-10 h-10 rounded-xl bg-brand-volt/10 border border-brand-volt/30 flex items-center justify-center text-brand-volt">
@@ -64,9 +66,11 @@ export const WhyOlympiaSection: React.FC<WhyOlympiaSectionProps> = ({ className 
               <span>✓ High-Density Rubber Mats</span>
             </div>
           </SpotlightCard>
+        </StaggerItem>
 
-          {/* Card 2: 100% Unisex Inclusive Culture (Span 5) */}
-          <SpotlightCard className="md:col-span-5 flex flex-col justify-between p-8 bg-brand-surface/80 border-brand-border/80 hover:border-brand-volt/40 min-h-[320px]">
+        {/* Card 2: 100% Unisex Inclusive Culture (Span 5) */}
+        <StaggerItem className="md:col-span-5 flex">
+          <SpotlightCard className="w-full flex flex-col justify-between p-8 bg-brand-surface/80 border-brand-border/80 hover:border-brand-volt/40 min-h-[320px]">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-10 h-10 rounded-xl bg-brand-volt/10 border border-brand-volt/30 flex items-center justify-center text-brand-volt">
@@ -89,9 +93,11 @@ export const WhyOlympiaSection: React.FC<WhyOlympiaSectionProps> = ({ className 
               <span>Certified Safe & Welcoming Space in Yemmiganur</span>
             </div>
           </SpotlightCard>
+        </StaggerItem>
 
-          {/* Card 3: Form Correction & Floor Guidance (Span 5) */}
-          <SpotlightCard className="md:col-span-5 flex flex-col justify-between p-8 bg-brand-surface/80 border-brand-border/80 hover:border-brand-volt/40 min-h-[280px]">
+        {/* Card 3: Form Correction & Floor Guidance (Span 5) */}
+        <StaggerItem className="md:col-span-5 flex">
+          <SpotlightCard className="w-full flex flex-col justify-between p-8 bg-brand-surface/80 border-brand-border/80 hover:border-brand-volt/40 min-h-[280px]">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-10 h-10 rounded-xl bg-brand-volt/10 border border-brand-volt/30 flex items-center justify-center text-brand-volt">
@@ -113,9 +119,11 @@ export const WhyOlympiaSection: React.FC<WhyOlympiaSectionProps> = ({ className 
               <span>★ 5.0 Star Member Satisfaction</span>
             </div>
           </SpotlightCard>
+        </StaggerItem>
 
-          {/* Card 4: Structured Batches & Location Convenience (Span 7) */}
-          <SpotlightCard className="md:col-span-7 flex flex-col justify-between p-8 bg-brand-surface/80 border-brand-border/80 hover:border-brand-volt/40 min-h-[280px]">
+        {/* Card 4: Structured Batches & Location Convenience (Span 7) */}
+        <StaggerItem className="md:col-span-7 flex">
+          <SpotlightCard className="w-full flex flex-col justify-between p-8 bg-brand-surface/80 border-brand-border/80 hover:border-brand-volt/40 min-h-[280px]">
             <div>
               <div className="flex items-center justify-between mb-4">
                 <div className="w-10 h-10 rounded-xl bg-brand-volt/10 border border-brand-volt/30 flex items-center justify-center text-brand-volt">
@@ -138,8 +146,9 @@ export const WhyOlympiaSection: React.FC<WhyOlympiaSectionProps> = ({ className 
               <span className="text-brand-volt font-bold font-mono">DIRECT ACCESS</span>
             </div>
           </SpotlightCard>
-        </div>
-      </div>
-    </section>
+        </StaggerItem>
+      </StaggerContainer>
+    </div>
+  </section>
   );
 };

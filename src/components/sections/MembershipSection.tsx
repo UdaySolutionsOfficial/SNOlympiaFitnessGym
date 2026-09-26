@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Check, Shield, Sparkles, ArrowRight, MessageSquare, Phone } from 'lucide-react';
 import { SITE_CONTENT, type MembershipPlan } from '../../data/siteContent';
+import { ScrollReveal, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 
 export interface MembershipSectionProps {
   onSelectPlan?: (planName: string) => void;
@@ -31,7 +32,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16">
+        <ScrollReveal direction="up" delay={0.05} className="flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6 mb-16">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-volt/10 border border-brand-volt/30 text-brand-volt text-xs font-mono tracking-widest uppercase mb-4">
               <Sparkles className="w-3.5 h-3.5" />
@@ -91,20 +92,16 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
               Annual
             </button>
           </div>
-        </div>
+        </ScrollReveal>
 
-        {/* Membership Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
-          {filteredPlans.map((plan: MembershipPlan, index: number) => {
+        {/* Membership Cards Grid with Staggered Cascading Reveal */}
+        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch">
+          {filteredPlans.map((plan: MembershipPlan) => {
             const isFeatured = plan.durationKey === 'quarterly';
 
             return (
-              <motion.div
+              <StaggerItem
                 key={plan.id}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ duration: 0.5, delay: index * 0.12 }}
                 className={`relative flex flex-col justify-between p-6 sm:p-8 rounded-2xl transition-all duration-300 ${
                   isFeatured
                     ? 'bg-brand-surface border-2 border-brand-volt/80 shadow-glow-volt/20 shadow-xl'
@@ -171,24 +168,26 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
                     <ArrowRight className="w-4 h-4" />
                   </button>
                 </div>
-              </motion.div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerContainer>
 
         {/* Content Truth Guarantee Footer */}
-        <div className="mt-12 p-4 rounded-xl bg-brand-surface/40 border border-brand-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-brand-text-muted">
-          <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-brand-volt" />
-            <span>NO HIDDEN RENEWAL SURCHARGES • DIRECT DESK TRANSPARENCY</span>
+        <ScrollReveal direction="up" delay={0.15}>
+          <div className="mt-12 p-4 rounded-xl bg-brand-surface/40 border border-brand-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-brand-text-muted">
+            <div className="flex items-center gap-2">
+              <Shield className="w-4 h-4 text-brand-volt" />
+              <span>NO HIDDEN RENEWAL SURCHARGES • DIRECT DESK TRANSPARENCY</span>
+            </div>
+            <a
+              href={`tel:${SITE_CONTENT.brand.contact.phone.value}`}
+              className="text-brand-volt hover:underline"
+            >
+              Direct Inquiry: {SITE_CONTENT.brand.contact.phoneDisplay.value}
+            </a>
           </div>
-          <a
-            href={`tel:${SITE_CONTENT.brand.contact.phone.value}`}
-            className="text-brand-volt hover:underline"
-          >
-            Direct Inquiry: {SITE_CONTENT.brand.contact.phoneDisplay.value}
-          </a>
-        </div>
+        </ScrollReveal>
       </div>
     </section>
   );

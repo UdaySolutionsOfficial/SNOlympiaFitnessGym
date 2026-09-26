@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { HelpCircle, ChevronDown, CheckCircle2, MessageCircle } from 'lucide-react';
 import { SITE_CONTENT, type FAQItem } from '../../data/siteContent';
+import { ScrollReveal, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 
 export interface FAQSectionProps {
   onAskQuestion?: () => void;
@@ -22,7 +23,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onAskQuestion }) => {
 
       <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
+        <ScrollReveal direction="up" delay={0.05} className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-16">
           <div className="max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-volt/10 border border-brand-volt/30 text-brand-volt text-xs font-mono tracking-widest uppercase mb-4">
               <HelpCircle className="w-3.5 h-3.5" />
@@ -46,73 +47,74 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onAskQuestion }) => {
             <MessageCircle className="w-4 h-4" />
             <span>Have Another Question?</span>
           </button>
-        </div>
+        </ScrollReveal>
 
-        {/* Accordion List */}
-        <div className="space-y-3">
+        {/* Accordion List with Staggered Cascading Reveal */}
+        <StaggerContainer staggerDelay={0.07} className="space-y-3">
           {faqItems.map((item: FAQItem, index: number) => {
             const isOpen = openId === item.id;
             const contentId = `faq-content-${item.id}`;
             const buttonId = `faq-button-${item.id}`;
 
             return (
-              <div
-                key={item.id}
-                className={`rounded-2xl transition-all duration-300 border ${
-                  isOpen
-                    ? 'bg-brand-surface border-brand-volt/60 shadow-lg'
-                    : 'bg-brand-surface/40 border-brand-border/70 hover:border-brand-border hover:bg-brand-surface/70'
-                }`}
-              >
-                <button
-                  id={buttonId}
-                  aria-expanded={isOpen}
-                  aria-controls={contentId}
-                  onClick={() => toggleFAQ(item.id)}
-                  className="w-full flex items-center justify-between p-5 sm:p-6 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-volt rounded-2xl"
+              <StaggerItem key={item.id}>
+                <div
+                  className={`rounded-2xl transition-all duration-300 border ${
+                    isOpen
+                      ? 'bg-brand-surface border-brand-volt/60 shadow-lg'
+                      : 'bg-brand-surface/40 border-brand-border/70 hover:border-brand-border hover:bg-brand-surface/70'
+                  }`}
                 >
-                  <div className="flex items-center gap-3 pr-4">
-                    <span className="font-mono text-xs text-brand-volt font-bold shrink-0">
-                      0{index + 1}.
-                    </span>
-                    <span className="text-base sm:text-lg font-bold text-white tracking-tight">
-                      {item.question}
-                    </span>
-                  </div>
+                  <button
+                    id={buttonId}
+                    aria-expanded={isOpen}
+                    aria-controls={contentId}
+                    onClick={() => toggleFAQ(item.id)}
+                    className="w-full flex items-center justify-between p-5 sm:p-6 text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-brand-volt rounded-2xl"
+                  >
+                    <div className="flex items-center gap-3 pr-4">
+                      <span className="font-mono text-xs text-brand-volt font-bold shrink-0">
+                        0{index + 1}.
+                      </span>
+                      <span className="text-base sm:text-lg font-bold text-white tracking-tight">
+                        {item.question}
+                      </span>
+                    </div>
 
-                  <div className={`p-1.5 rounded-lg bg-brand-charcoal text-brand-text-secondary transition-transform duration-300 shrink-0 ${
-                    isOpen ? 'rotate-180 text-brand-volt bg-brand-volt/10' : ''
-                  }`}>
-                    <ChevronDown className="w-4 h-4" />
-                  </div>
-                </button>
+                    <div className={`p-1.5 rounded-lg bg-brand-charcoal text-brand-text-secondary transition-transform duration-300 shrink-0 ${
+                      isOpen ? 'rotate-180 text-brand-volt bg-brand-volt/10' : ''
+                    }`}>
+                      <ChevronDown className="w-4 h-4" />
+                    </div>
+                  </button>
 
-                <AnimatePresence initial={false}>
-                  {isOpen && (
-                    <motion.div
-                      id={contentId}
-                      role="region"
-                      aria-labelledby={buttonId}
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: 'auto', opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
-                      className="overflow-hidden"
-                    >
-                      <div className="px-5 sm:px-6 pb-6 pt-1 text-sm sm:text-base text-brand-text-secondary leading-relaxed font-light border-t border-brand-border/40 mt-1">
-                        <p>{item.answer}</p>
-                        <div className="mt-3 flex items-center gap-1.5 text-[11px] font-mono text-brand-volt">
-                          <CheckCircle2 className="w-3.5 h-3.5" />
-                          <span>{item.verification.note || 'Verified Operational Protocol'}</span>
+                  <AnimatePresence initial={false}>
+                    {isOpen && (
+                      <motion.div
+                        id={contentId}
+                        role="region"
+                        aria-labelledby={buttonId}
+                        initial={{ height: 0, opacity: 0 }}
+                        animate={{ height: 'auto', opacity: 1 }}
+                        exit={{ height: 0, opacity: 0 }}
+                        transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+                        className="overflow-hidden"
+                      >
+                        <div className="px-5 sm:px-6 pb-6 pt-1 text-sm sm:text-base text-brand-text-secondary leading-relaxed font-light border-t border-brand-border/40 mt-1">
+                          <p>{item.answer}</p>
+                          <div className="mt-3 flex items-center gap-1.5 text-[11px] font-mono text-brand-volt">
+                            <CheckCircle2 className="w-3.5 h-3.5" />
+                            <span>{item.verification.note || 'Verified Operational Protocol'}</span>
+                          </div>
                         </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+                </div>
+              </StaggerItem>
             );
           })}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

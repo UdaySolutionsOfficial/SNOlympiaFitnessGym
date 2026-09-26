@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Sparkles, Maximize2, Layers } from 'lucide-react';
 import { StatusBadge } from '../common/StatusBadge';
 import { DriftWall } from '../gallery/DriftWall';
 import { LightboxModal } from '../gallery/LightboxModal';
 import { OUR_WORLD_IMAGES, type OurWorldImageItem } from '../../data/ourWorldGallery';
+import { ScrollReveal } from '../common/ScrollReveal';
 
 export const GallerySection: React.FC = () => {
   const [lightboxOpen, setLightboxOpen] = useState(false);
@@ -67,7 +67,7 @@ export const GallerySection: React.FC = () => {
         <div className="absolute inset-0 bg-[radial-gradient(#ffffff06_1px,transparent_1px)] [background-size:24px_24px] opacity-40" />
       </div>
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 sm:mb-14">
+      <ScrollReveal direction="up" delay={0.05} className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 sm:mb-14">
         {/* Section Header */}
         <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6">
           <div className="max-w-3xl">
@@ -100,10 +100,10 @@ export const GallerySection: React.FC = () => {
             <span>Click any tile to inspect in full resolution</span>
           </div>
         </div>
-      </div>
+      </ScrollReveal>
 
       {/* 2. Interactive 3D DriftWall Canvas Container */}
-      <div className="relative w-full h-[580px] sm:h-[660px] md:h-[740px] lg:h-[800px] border-y border-white/5 bg-gradient-to-b from-[#08090A] via-[#0B0C10] to-[#08090A] shadow-2xl">
+      <ScrollReveal direction="zoom" delay={0.12} duration={0.85} className="relative w-full h-[580px] sm:h-[660px] md:h-[740px] lg:h-[800px] border-y border-white/5 bg-gradient-to-b from-[#08090A] via-[#0B0C10] to-[#08090A] shadow-2xl">
         <DriftWall
           items={OUR_WORLD_IMAGES}
           columns={wallConfig.columns}
@@ -128,7 +128,7 @@ export const GallerySection: React.FC = () => {
           overlayColor="#08090A"
           onItemClick={handleOpenLightbox}
         />
-      </div>
+      </ScrollReveal>
 
       {/* 3. Fullscreen High-Resolution Lightbox Modal */}
       <LightboxModal

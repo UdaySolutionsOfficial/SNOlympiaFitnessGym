@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShieldCheck, Target, TrendingUp, Cpu, ChevronRight, CheckCircle2 } from 'lucide-react';
+import { ScrollReveal, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 
 interface MethodStep {
   step: string;
@@ -94,7 +95,7 @@ export const MethodologySection: React.FC = () => {
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="max-w-3xl mb-16 md:mb-24">
+        <ScrollReveal direction="up" delay={0.05} className="max-w-3xl mb-16 md:mb-24">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-brand-volt/10 border border-brand-volt/30 text-brand-volt text-xs font-mono tracking-widest uppercase mb-4">
             <span className="w-1.5 h-1.5 rounded-full bg-brand-volt animate-pulse" />
             The Olympia Framework
@@ -108,24 +109,24 @@ export const MethodologySection: React.FC = () => {
           <p className="mt-4 text-base sm:text-lg text-brand-text-secondary leading-relaxed font-light">
             Real physical transformation is not accidental. We employ an evidence-based, four-stage progressive protocol designed to systematically turn effort into measurable athletic capacity.
           </p>
-        </div>
+        </ScrollReveal>
 
-        {/* Interactive Step Timeline Controls */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-10">
+        {/* Interactive Step Timeline Controls with Staggered Cascading Reveal */}
+        <StaggerContainer staggerDelay={0.08} className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-10">
           {METHOD_STEPS.map((step, index) => {
             const isActive = activeStepIndex === index;
             const Icon = step.icon;
 
             return (
-              <button
-                key={step.number}
-                onClick={() => setActiveStepIndex(index)}
-                className={`relative text-left p-4 sm:p-5 rounded-xl border transition-all duration-300 group overflow-hidden ${
-                  isActive
-                    ? 'bg-brand-surface border-brand-volt/80 shadow-glow-volt/30 shadow-lg'
-                    : 'bg-brand-surface/40 border-brand-border/70 hover:border-brand-border hover:bg-brand-surface/80'
-                }`}
-              >
+              <StaggerItem key={step.number}>
+                <button
+                  onClick={() => setActiveStepIndex(index)}
+                  className={`w-full relative text-left p-4 sm:p-5 rounded-xl border transition-all duration-300 group overflow-hidden ${
+                    isActive
+                      ? 'bg-brand-surface border-brand-volt/80 shadow-glow-volt/30 shadow-lg'
+                      : 'bg-brand-surface/40 border-brand-border/70 hover:border-brand-border hover:bg-brand-surface/80'
+                  }`}
+                >
                 {/* Active Top Glow Line */}
                 {isActive && (
                   <motion.div
@@ -153,9 +154,10 @@ export const MethodologySection: React.FC = () => {
                   {step.tagline}
                 </div>
               </button>
-            );
-          })}
-        </div>
+            </StaggerItem>
+          );
+        })}
+      </StaggerContainer>
 
         {/* Detailed Stage Showcase Card */}
         <AnimatePresence mode="wait">

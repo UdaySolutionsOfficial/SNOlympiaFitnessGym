@@ -1,8 +1,8 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { Flame, ArrowRight, Phone, Sparkles } from 'lucide-react';
+import { Flame, ArrowRight, Phone } from 'lucide-react';
 import { SITE_CONTENT } from '../../data/siteContent';
 import { ASSET_MANIFEST } from '../../data/assets';
+import { ScrollReveal, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 
 export interface FinalCTASectionProps {
   onJoinClick?: () => void;
@@ -29,76 +29,63 @@ export const FinalCTASection: React.FC<FinalCTASectionProps> = ({ onJoinClick })
 
       <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Eyebrow Badge */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-volt/10 border border-brand-volt/30 text-brand-volt text-xs font-mono tracking-widest uppercase mb-8"
-        >
-          <Flame className="w-3.5 h-3.5 animate-pulse" />
-          The Final Commitment
-        </motion.div>
+        <ScrollReveal direction="up" delay={0.05}>
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-brand-volt/10 border border-brand-volt/30 text-brand-volt text-xs font-mono tracking-widest uppercase mb-8">
+            <Flame className="w-3.5 h-3.5 animate-pulse" />
+            The Final Commitment
+          </div>
+        </ScrollReveal>
 
         {/* Master Cinema Headline */}
-        <motion.h2
-          initial={{ opacity: 0, scale: 0.95 }}
-          whileInView={{ opacity: 1, scale: 1 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.6 }}
-          className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-tight text-white leading-[0.94]"
-        >
-          FORGE YOUR PROGRESS.{' '}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt via-amber-300 to-brand-volt">
-            START TODAY.
-          </span>
-        </motion.h2>
+        <ScrollReveal direction="zoom" delay={0.15} duration={0.8}>
+          <h2 className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-tight text-white leading-[0.94]">
+            FORGE YOUR PROGRESS.{' '}
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt via-amber-300 to-brand-volt">
+              START TODAY.
+            </span>
+          </h2>
+        </ScrollReveal>
 
-        <motion.p
-          initial={{ opacity: 0, y: 15 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.2 }}
-          className="mt-8 max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-brand-text-secondary leading-relaxed font-light"
-        >
-          The iron is racked. The coaches are on the floor. Take the first step toward the strongest version of yourself at Yemmiganur’s premier unisex fitness center.
-        </motion.p>
+        {/* Narrative */}
+        <ScrollReveal direction="up" delay={0.25}>
+          <p className="mt-8 max-w-2xl mx-auto text-base sm:text-lg md:text-xl text-brand-text-secondary leading-relaxed font-light">
+            The iron is racked. The coaches are on the floor. Take the first step toward the strongest version of yourself at Yemmiganur’s premier unisex fitness center.
+          </p>
+        </ScrollReveal>
 
         {/* Dual Conversion Action Buttons */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5, delay: 0.3 }}
-          className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto"
-        >
-          <button
-            onClick={onJoinClick}
-            className="w-full sm:w-auto px-8 py-4 rounded-xl bg-brand-volt text-brand-dark font-black text-xs uppercase tracking-widest hover:bg-white hover:shadow-glow-volt transition-all flex items-center justify-center gap-2 shadow-2xl"
-          >
-            <span>JOIN NOW & INQUIRE BATCH</span>
-            <ArrowRight className="w-4 h-4" />
-          </button>
+        <ScrollReveal direction="up" delay={0.35}>
+          <div className="mt-12 flex flex-col sm:flex-row items-center justify-center gap-4 max-w-md mx-auto">
+            <button
+              onClick={onJoinClick}
+              className="w-full sm:w-auto px-8 py-4 rounded-xl bg-brand-volt text-brand-dark font-black text-xs uppercase tracking-widest hover:bg-white hover:shadow-glow-volt transition-all flex items-center justify-center gap-2 shadow-2xl"
+            >
+              <span>JOIN NOW & INQUIRE BATCH</span>
+              <ArrowRight className="w-4 h-4" />
+            </button>
 
-          <a
-            href={`tel:${SITE_CONTENT.brand.contact.phone.value}`}
-            className="w-full sm:w-auto px-6 py-4 rounded-xl bg-brand-surface border border-brand-border text-white font-bold text-xs uppercase tracking-widest hover:border-brand-volt hover:text-brand-volt transition-colors flex items-center justify-center gap-2"
-          >
-            <Phone className="w-4 h-4 text-brand-volt" />
-            <span>Call {SITE_CONTENT.brand.contact.phoneDisplay.value}</span>
-          </a>
-        </motion.div>
+            <a
+              href={`tel:${SITE_CONTENT.brand.contact.phone.value}`}
+              className="w-full sm:w-auto px-6 py-4 rounded-xl bg-brand-surface border border-brand-border text-white font-bold text-xs uppercase tracking-widest hover:border-brand-volt hover:text-brand-volt transition-colors flex items-center justify-center gap-2"
+            >
+              <Phone className="w-4 h-4 text-brand-volt" />
+              <span>Call {SITE_CONTENT.brand.contact.phoneDisplay.value}</span>
+            </a>
+          </div>
+        </ScrollReveal>
 
         {/* Reassurance Metadata */}
-        <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-xs font-mono text-brand-text-muted">
-          <span>✓ 100% Unisex Facility</span>
-          <span>•</span>
-          <span>✓ Morning & Evening Shifts</span>
-          <span>•</span>
-          <span>✓ Certified Floor Spotters</span>
-          <span>•</span>
-          <span>✓ 5.0★ Community Trust</span>
-        </div>
+        <ScrollReveal direction="up" delay={0.45}>
+          <div className="mt-12 flex flex-wrap items-center justify-center gap-6 text-xs font-mono text-brand-text-muted">
+            <span>✓ 100% Unisex Facility</span>
+            <span>•</span>
+            <span>✓ Morning & Evening Shifts</span>
+            <span>•</span>
+            <span>✓ Certified Floor Spotters</span>
+            <span>•</span>
+            <span>✓ 5.0★ Community Trust</span>
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );

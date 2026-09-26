@@ -3,6 +3,7 @@ import { SITE_CONTENT, type ProgramItem } from '../../data/siteContent';
 import { ASSET_MANIFEST } from '../../data/assets';
 import { StatusBadge } from '../common/StatusBadge';
 import { Button } from '../common/Button';
+import { ScrollReveal, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 import { Dumbbell, ArrowRight, Flame, Users, HeartHandshake, CheckCircle2 } from 'lucide-react';
 
 export interface ProgramsSectionProps {
@@ -46,7 +47,7 @@ export const ProgramsSection: React.FC<ProgramsSectionProps> = ({
     >
       <div className="space-y-12">
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
+        <ScrollReveal direction="up" delay={0.05} className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs font-mono font-bold tracking-[0.2em] text-brand-volt uppercase">
@@ -61,10 +62,10 @@ export const ProgramsSection: React.FC<ProgramsSectionProps> = ({
           <p className="text-xs md:text-sm text-brand-text-secondary max-w-md">
             Four systematically periodized training categories designed to develop raw compound power, functional stamina, and sustainable body composition.
           </p>
-        </div>
+        </ScrollReveal>
 
         {/* Desktop Interactive Storytelling Showcase (>= 1024px) */}
-        <div className="hidden lg:grid grid-cols-12 gap-8 items-center bg-brand-surface/50 border border-white/10 rounded-3xl p-8 lg:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.7)]">
+        <ScrollReveal direction="up" delay={0.12} duration={0.8} className="hidden lg:grid grid-cols-12 gap-8 items-center bg-brand-surface/50 border border-white/10 rounded-3xl p-8 lg:p-10 shadow-[0_20px_50px_rgba(0,0,0,0.7)]">
           {/* Left Column: Program Navigation Tabs (Span 5) */}
           <div className="col-span-5 space-y-4">
             <span className="text-[10px] font-mono tracking-widest text-brand-text-muted uppercase font-bold block mb-2">
@@ -183,12 +184,12 @@ export const ProgramsSection: React.FC<ProgramsSectionProps> = ({
               </div>
             </div>
           </div>
-        </div>
+        </ScrollReveal>
 
         {/* Mobile & Tablet Stacked Presentation (< 1024px) */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:hidden">
+        <StaggerContainer staggerDelay={0.1} className="grid grid-cols-1 md:grid-cols-2 gap-6 lg:hidden">
           {SITE_CONTENT.programs.map((program, idx) => (
-            <div
+            <StaggerItem
               key={program.id}
               className="rounded-2xl overflow-hidden bg-brand-surface/90 border border-white/10 flex flex-col justify-between shadow-card-depth"
             >
@@ -241,9 +242,9 @@ export const ProgramsSection: React.FC<ProgramsSectionProps> = ({
                   </Button>
                 </div>
               </div>
-            </div>
+            </StaggerItem>
           ))}
-        </div>
+        </StaggerContainer>
       </div>
     </section>
   );

@@ -1,6 +1,7 @@
 import React from 'react';
 import { ArrowUp, MapPin, Phone, Instagram, ShieldCheck, Heart } from 'lucide-react';
 import { SITE_CONTENT } from '../../data/siteContent';
+import { ScrollReveal, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 
 export const MainFooter: React.FC = () => {
   const brand = SITE_CONTENT.brand;
@@ -17,10 +18,13 @@ export const MainFooter: React.FC = () => {
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {/* Main Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 pb-16 border-b border-brand-border/40">
+        {/* Main Grid with Staggered Cascading Reveal */}
+        <StaggerContainer
+          staggerDelay={0.1}
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-10 lg:gap-12 pb-16 border-b border-brand-border/40"
+        >
           {/* Brand Info (Span 4) */}
-          <div className="lg:col-span-4 space-y-4">
+          <StaggerItem className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-2.5">
               <div className="w-2.5 h-2.5 rounded-full bg-brand-volt shadow-glow-volt" />
               <span className="font-black text-white uppercase tracking-wider text-base sm:text-lg">
@@ -34,10 +38,10 @@ export const MainFooter: React.FC = () => {
               <ShieldCheck className="w-4 h-4" />
               <span>5.0★ Verified Community Trust Rating</span>
             </div>
-          </div>
+          </StaggerItem>
 
           {/* Navigation Links (Span 3) */}
-          <div className="lg:col-span-3 space-y-3">
+          <StaggerItem className="lg:col-span-3 space-y-3">
             <div className="font-mono text-xs uppercase tracking-widest text-brand-volt font-bold">
               Navigation
             </div>
@@ -78,10 +82,10 @@ export const MainFooter: React.FC = () => {
                 </a>
               </li>
             </ul>
-          </div>
+          </StaggerItem>
 
           {/* Facility Location (Span 3) */}
-          <div className="lg:col-span-3 space-y-3 text-xs">
+          <StaggerItem className="lg:col-span-3 space-y-3 text-xs">
             <div className="font-mono text-xs uppercase tracking-widest text-brand-volt font-bold">
               Training Facility
             </div>
@@ -105,10 +109,10 @@ export const MainFooter: React.FC = () => {
               Morning: 05:30 AM – 10:00 AM<br />
               Evening: 05:00 PM – 09:30 PM
             </div>
-          </div>
+          </StaggerItem>
 
           {/* Direct Communication & Social (Span 2) */}
-          <div className="lg:col-span-2 space-y-3 text-xs">
+          <StaggerItem className="lg:col-span-2 space-y-3 text-xs">
             <div className="font-mono text-xs uppercase tracking-widest text-brand-volt font-bold">
               Connect
             </div>
@@ -132,27 +136,29 @@ export const MainFooter: React.FC = () => {
                 <span>{brand.contact.instagramHandle.value}</span>
               </a>
             </div>
-          </div>
-        </div>
+          </StaggerItem>
+        </StaggerContainer>
 
         {/* Bottom Bar */}
-        <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-brand-text-muted">
-          <div>
-            © {new Date().getFullYear()} SN Olympia Fitness Unisex Gym. All verified business facts reserved.
-          </div>
+        <ScrollReveal direction="up" delay={0.2}>
+          <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-brand-text-muted">
+            <div>
+              © {new Date().getFullYear()} SN Olympia Fitness Unisex Gym. All verified business facts reserved.
+            </div>
 
-          <div className="flex items-center gap-4">
-            <span className="text-brand-volt">Yemmiganur, Andhra Pradesh</span>
-            <span>•</span>
-            <button
-              onClick={scrollToTop}
-              className="inline-flex items-center gap-1 text-brand-text-secondary hover:text-brand-volt transition-colors"
-            >
-              <span>Back to Top</span>
-              <ArrowUp className="w-3.5 h-3.5" />
-            </button>
+            <div className="flex items-center gap-4">
+              <span className="text-brand-volt">Yemmiganur, Andhra Pradesh</span>
+              <span>•</span>
+              <button
+                onClick={scrollToTop}
+                className="inline-flex items-center gap-1 text-brand-text-secondary hover:text-brand-volt transition-colors"
+              >
+                <span>Back to Top</span>
+                <ArrowUp className="w-3.5 h-3.5" />
+              </button>
+            </div>
           </div>
-        </div>
+        </ScrollReveal>
       </div>
     </footer>
   );
