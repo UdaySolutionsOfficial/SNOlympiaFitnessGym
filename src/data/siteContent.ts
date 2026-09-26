@@ -121,7 +121,6 @@ export const SITE_CONTENT = {
     { label: 'Overview', href: '#overview' },
     { label: 'Programs', href: '#programs' },
     { label: 'Facilities', href: '#facilities' },
-    { label: 'Trainers', href: '#trainers' },
     { label: 'Membership', href: '#membership' },
     { label: 'FAQ', href: '#faq' },
     { label: 'Contact', href: '#contact' },

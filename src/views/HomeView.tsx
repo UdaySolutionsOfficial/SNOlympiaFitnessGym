@@ -9,7 +9,6 @@ import { WhyOlympiaSection } from '../components/sections/WhyOlympiaSection';
 import { ProgramsSection } from '../components/sections/ProgramsSection';
 import { VideoArenaSection } from '../components/sections/VideoArenaSection';
 import { MethodologySection } from '../components/sections/MethodologySection';
-import { TrainersSection } from '../components/sections/TrainersSection';
 import { FacilitiesSection } from '../components/sections/FacilitiesSection';
 import { AtmosphereSection } from '../components/sections/AtmosphereSection';
 import { GallerySection } from '../components/sections/GallerySection';
@@ -40,8 +39,7 @@ export interface HomeViewProps {
  * 7. WhyOlympiaSection (Asymmetric bento differentiators)
  * 8. ProgramsSection (Interactive discipline switcher + mobile vertical stack)
  * 9. MethodologySection (4-stage progressive adaptation timeline)
- * 10. TrainersSection (Coaching vigilance, floor safety & honest content truth)
- * 11. FacilitiesSection (Commercial free weights, power cages, cable suite)
+ * 10. FacilitiesSection (Commercial free weights, power cages, cable suite)
  * 12. AtmosphereSection (Full-bleed raw steel & discipline visual moment)
  * 13. GallerySection (Editorial photo grid + accessible Lightbox modal)
  * 14. TestimonialsSection (Verified 5.0★ Google/Justdial community feedback)
@@ -103,7 +101,6 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
       { id: 'action', target: 'action' },
       { id: 'reels', target: 'action' },
       { id: 'methodology', target: 'action' },
-      { id: 'trainers', target: 'action' },
       { id: 'facilities', target: 'action' },
       { id: 'atmosphere', target: 'action' },
       { id: 'gallery', target: 'action' },
@@ -195,10 +192,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
         {/* Act V: The 4-Stage Progressive Methodology */}
         <MethodologySection />
 
-        {/* Act VI: Floor Mentorship & Coaching Standards */}
-        <TrainersSection />
-
-        {/* Act VII: Commercial Iron Arsenal & Equipment */}
+        {/* Act VI: Commercial Iron Arsenal & Equipment */}
         <FacilitiesSection />
 
         {/* Act VIII: High-Contrast Floor Atmosphere */}
