@@ -73,6 +73,59 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
     aboutSection?.scrollIntoView({ behavior: 'smooth' });
   };
 
+  const [activeSection, setActiveSection] = useState('overview');
+
+  // Dynamic Scroll Spy for Navigation Active State
+  useEffect(() => {
+    const navSections = [
+      { id: 'overview', target: 'overview' },
+      { id: 'about', target: 'about' },
+      { id: 'benefits', target: 'about' },
+      { id: 'programs', target: 'programs' },
+      { id: 'methodology', target: 'programs' },
+      { id: 'trainers', target: 'programs' },
+      { id: 'facilities', target: 'programs' },
+      { id: 'atmosphere', target: 'programs' },
+      { id: 'gallery', target: 'programs' },
+      { id: 'testimonials', target: 'membership' },
+      { id: 'membership', target: 'membership' },
+      { id: 'faq', target: 'membership' },
+      { id: 'contact', target: 'contact' },
+      { id: 'location', target: 'contact' },
+    ];
+
+    const handleScroll = () => {
+      // Bottom of page detection -> contact
+      const isBottom =
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 120;
+      if (isBottom) {
+        setActiveSection('contact');
+        return;
+      }
+
+      // Top of page detection -> overview
+      if (window.scrollY < 200) {
+        setActiveSection('overview');
+        return;
+      }
+
+      const scrollPos = window.scrollY + 280;
+      let matched = 'overview';
+
+      for (const sec of navSections) {
+        const el = document.getElementById(sec.id);
+        if (el && el.offsetTop <= scrollPos) {
+          matched = sec.target;
+        }
+      }
+      setActiveSection(matched);
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   return (
     <div className="relative min-h-screen bg-brand-dark text-brand-text-primary selection:bg-brand-volt selection:text-brand-dark overflow-x-hidden">
       {/* 1. Cinematic Initial Loader */}
@@ -82,8 +135,10 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
 
       {/* 2. Responsive Sable-Inspired Top Navigation Dock */}
       <TopDock
+        activeSection={activeSection}
         onNavigate={(targetId) => {
           const id = targetId.startsWith('#') ? targetId.slice(1) : targetId;
+          setActiveSection(id);
           const target = document.getElementById(id);
           if (target) {
             target.scrollIntoView({ behavior: 'smooth' });

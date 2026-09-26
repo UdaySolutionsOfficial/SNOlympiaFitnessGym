@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { SITE_CONTENT } from '../../data/siteContent';
 import {
   Phone,
@@ -75,9 +76,15 @@ export const TopDock: React.FC<TopDockProps> = ({
   activeSection = 'overview',
   onNavigate,
 }) => {
+  const [currentActive, setCurrentActive] = useState(activeSection);
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+
+  // Sync internal active tab state with activeSection prop
+  useEffect(() => {
+    setCurrentActive(activeSection);
+  }, [activeSection]);
 
   // Proximity dock tracking
   const dockTrackRef = useRef<HTMLDivElement | null>(null);
@@ -191,6 +198,7 @@ export const TopDock: React.FC<TopDockProps> = ({
   const handleLinkClick = (href: string) => {
     setMobileMenuOpen(false);
     const targetId = href.startsWith('#') ? href.slice(1) : href;
+    setCurrentActive(targetId);
     if (onNavigate) {
       onNavigate(targetId);
     }
@@ -270,7 +278,7 @@ export const TopDock: React.FC<TopDockProps> = ({
               className="hidden md:flex items-center gap-1 sm:gap-1.5 p-1 rounded-full bg-white/[0.03] border border-white/5"
             >
               {NAV_ITEMS.map((item) => {
-                const isActive = activeSection === item.id;
+                const isActive = currentActive === item.id;
                 const influence = itemInfluences[item.id] || 0;
                 const scale = 1 + influence * 0.08;
                 const translateY = -influence * 2;
@@ -288,18 +296,32 @@ export const TopDock: React.FC<TopDockProps> = ({
                       transform: !prefersReducedMotion
                         ? `translateY(${translateY}px) scale(${scale})`
                         : undefined,
-                      transition: 'color 0.16s, background 0.18s, border-color 0.18s, box-shadow 0.18s',
+                      transition: 'color 0.16s, border-color 0.18s',
                     }}
-                    className={`relative flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider select-none outline-none transition-all ${
+                    className={`relative flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs uppercase tracking-wider select-none outline-none transition-colors ${
                       isActive
-                        ? 'bg-gradient-to-b from-white to-[#E2E6EE] text-[#0A0B10] font-bold shadow-[0_10px_24px_-10px_rgba(255,94,30,0.8),inset_0_-1px_rgba(0,0,0,0.15)] border-transparent'
+                        ? 'text-[#0A0B10]'
                         : influence > 0.08
                         ? 'text-white bg-white/10 border border-white/15 shadow-sm'
                         : 'text-neutral-400 hover:text-white bg-transparent border border-transparent'
                     }`}
                   >
+                    {/* Animated Smooth Sliding White Active Pill (Framer Motion spring layout) */}
+                    {isActive && (
+                      <motion.div
+                        layoutId="activeDockPill"
+                        transition={{
+                          type: 'spring',
+                          stiffness: 420,
+                          damping: 32,
+                          mass: 0.8,
+                        }}
+                        className="absolute inset-0 rounded-full bg-gradient-to-b from-white via-[#F4F6FB] to-[#E2E6EE] shadow-[0_10px_24px_-10px_rgba(255,94,30,0.8),inset_0_-1px_rgba(0,0,0,0.15)] z-0"
+                      />
+                    )}
+
                     <span
-                      className={`transition-colors shrink-0 ${
+                      className={`relative z-10 transition-colors shrink-0 ${
                         isActive
                           ? 'text-[#0A0B10]'
                           : influence > 0.08
@@ -309,7 +331,11 @@ export const TopDock: React.FC<TopDockProps> = ({
                     >
                       {item.icon}
                     </span>
-                    <span className="text-[11px] sm:text-xs font-medium whitespace-nowrap">
+                    <span
+                      className={`relative z-10 text-[11px] sm:text-xs whitespace-nowrap transition-all ${
+                        isActive ? 'font-black text-[#0A0B10]' : 'font-medium'
+                      }`}
+                    >
                       {item.label}
                     </span>
                   </button>
@@ -396,25 +422,45 @@ export const TopDock: React.FC<TopDockProps> = ({
 
           {/* Nav Links List */}
           <ul className="space-y-4 my-auto py-6">
-            {NAV_ITEMS.map((item, index) => (
-              <li key={item.id}>
-                <button
-                  type="button"
-                  onClick={() => handleLinkClick(item.href)}
-                  className="w-full group flex items-center justify-between text-2xl font-athletic italic uppercase font-black text-white hover:text-[#FF5E1E] transition-colors text-left"
-                >
-                  <div className="flex items-center gap-3">
-                    <span className="text-[#FF5E1E] opacity-70 group-hover:opacity-100">
-                      {item.icon}
+            {NAV_ITEMS.map((item, index) => {
+              const isActive = currentActive === item.id;
+              return (
+                <li key={item.id}>
+                  <button
+                    type="button"
+                    onClick={() => handleLinkClick(item.href)}
+                    className={`w-full group flex items-center justify-between text-2xl font-athletic italic uppercase font-black transition-all text-left ${
+                      isActive
+                        ? 'text-[#FF5E1E] translate-x-1'
+                        : 'text-white hover:text-[#FF5E1E]'
+                    }`}
+                  >
+                    <div className="flex items-center gap-3">
+                      <span
+                        className={`${
+                          isActive
+                            ? 'text-[#FF5E1E] opacity-100'
+                            : 'text-[#FF5E1E] opacity-70 group-hover:opacity-100'
+                        }`}
+                      >
+                        {item.icon}
+                      </span>
+                      <span>{item.label}</span>
+                      {isActive && (
+                        <span className="w-2 h-2 rounded-full bg-[#FF5E1E] shadow-[0_0_8px_#FF5E1E] ml-1 animate-pulse" />
+                      )}
+                    </div>
+                    <span
+                      className={`text-xs font-mono transition-colors ${
+                        isActive ? 'text-[#FF5E1E]' : 'text-brand-text-muted group-hover:text-[#FF5E1E]'
+                      }`}
+                    >
+                      0{index + 1}
                     </span>
-                    <span>{item.label}</span>
-                  </div>
-                  <span className="text-xs font-mono text-brand-text-muted group-hover:text-[#FF5E1E]">
-                    0{index + 1}
-                  </span>
-                </button>
-              </li>
-            ))}
+                  </button>
+                </li>
+              );
+            })}
           </ul>
 
           {/* Bottom Mobile Drawer Actions */}
