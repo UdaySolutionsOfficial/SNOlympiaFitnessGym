@@ -7,6 +7,7 @@ import { ManifestoMarquee } from '../components/sections/ManifestoMarquee';
 import { AboutSection } from '../components/sections/AboutSection';
 import { WhyOlympiaSection } from '../components/sections/WhyOlympiaSection';
 import { ProgramsSection } from '../components/sections/ProgramsSection';
+import { VideoArenaSection } from '../components/sections/VideoArenaSection';
 import { MethodologySection } from '../components/sections/MethodologySection';
 import { TrainersSection } from '../components/sections/TrainersSection';
 import { FacilitiesSection } from '../components/sections/FacilitiesSection';
@@ -82,9 +83,10 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
       { id: 'about', target: 'about' },
       { id: 'benefits', target: 'about' },
       { id: 'programs', target: 'programs' },
-      { id: 'methodology', target: 'programs' },
-      { id: 'trainers', target: 'programs' },
-      { id: 'facilities', target: 'programs' },
+      { id: 'reels', target: 'reels' },
+      { id: 'methodology', target: 'reels' },
+      { id: 'trainers', target: 'reels' },
+      { id: 'facilities', target: 'reels' },
       { id: 'atmosphere', target: 'programs' },
       { id: 'gallery', target: 'programs' },
       { id: 'testimonials', target: 'membership' },
@@ -170,6 +172,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
 
         {/* Act IV: Disciplines & Training Architecture */}
         <ProgramsSection onInquireBatch={(progId) => handleOpenEnquiry(`Program: ${progId}`)} />
+
+        {/* Act IV.B: Live 3D Curved Video Arena & Training Reels */}
+        <VideoArenaSection />
 
         {/* Act V: The 4-Stage Progressive Methodology */}
         <MethodologySection />

@@ -13,6 +13,7 @@ import {
   Award,
   Info,
   Send,
+  Film,
 } from 'lucide-react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 
@@ -40,6 +41,12 @@ const NAV_ITEMS: readonly NavItemConfig[] = [
     label: 'Programs',
     href: '#programs',
     icon: <Layers className="w-3.5 h-3.5" />,
+  },
+  {
+    id: 'reels',
+    label: 'Reels',
+    href: '#reels',
+    icon: <Film className="w-3.5 h-3.5" />,
   },
   {
     id: 'membership',
