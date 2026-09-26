@@ -61,16 +61,33 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
   const [isLoaded, setIsLoaded] = useState(false);
   const assetsLoadedCount = useRef(0);
 
-  // Rotate quotes every 4.2 seconds in a seamless loop
-  useEffect(() => {
-    const quoteInterval = setInterval(() => {
-      setCurrentQuoteIndex((prev) => (prev + 1) % FITNESS_QUOTES.length);
-    }, 4200);
+  const QUOTE_DURATION_MS = 4500; // 4.5 seconds per quote
+  const TOTAL_DURATION_MS = FITNESS_QUOTES.length * QUOTE_DURATION_MS; // 18 seconds total
 
-    return () => clearInterval(quoteInterval);
+  // Synchronized elapsed-time progression for quotes and neon progress bar
+  useEffect(() => {
+    const startTime = Date.now();
+
+    const progressInterval = setInterval(() => {
+      const elapsed = Date.now() - startTime;
+      const currentPct = Math.min(100, (elapsed / TOTAL_DURATION_MS) * 100);
+      setProgress(currentPct);
+
+      const activeIdx = Math.min(
+        FITNESS_QUOTES.length - 1,
+        Math.floor(elapsed / QUOTE_DURATION_MS)
+      );
+      setCurrentQuoteIndex(activeIdx);
+
+      if (elapsed >= TOTAL_DURATION_MS) {
+        clearInterval(progressInterval);
+      }
+    }, 35);
+
+    return () => clearInterval(progressInterval);
   }, []);
 
-  // Preload real assets while running neon progress bar
+  // Preload real assets in the background while the loader is active
   useEffect(() => {
     let isMounted = true;
     const totalAssets = CRITICAL_PRELOAD_ASSETS.length;
@@ -89,55 +106,21 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
       img.onerror = onAssetDone;
     });
 
-    // Check document font readiness
     if (typeof document !== 'undefined' && 'fonts' in document) {
-      document.fonts.ready.then(() => {
-        // Fonts ready
-      });
+      document.fonts.ready.catch(() => {});
     }
-
-    // Safety timeout: marked loaded after 6 seconds max
-    const maxWaitTimeout = setTimeout(() => {
-      if (isMounted) setIsLoaded(true);
-    }, 6000);
 
     return () => {
       isMounted = false;
-      clearTimeout(maxWaitTimeout);
     };
   }, []);
-
-  // Progress Bar ticker with natural easing towards 100%
-  useEffect(() => {
-    const progressInterval = setInterval(() => {
-      setProgress((prev) => {
-        if (prev >= 100) {
-          clearInterval(progressInterval);
-          return 100;
-        }
-
-        // Fast initial ramp, smooth deceleration, accelerates to 100 when assets ready
-        if (isLoaded) {
-          return Math.min(100, prev + 2.5);
-        } else if (prev < 65) {
-          return prev + 0.85;
-        } else if (prev < 88) {
-          return prev + 0.35;
-        } else {
-          return prev + 0.1;
-        }
-      });
-    }, 35);
-
-    return () => clearInterval(progressInterval);
-  }, [isLoaded]);
 
   // When progress reaches 100%, trigger smooth exit sequence
   useEffect(() => {
     if (progress >= 100 && !isExiting) {
       const exitTimer = setTimeout(() => {
         handleEnterSite();
-      }, 700);
+      }, 600);
 
       return () => clearTimeout(exitTimer);
     }

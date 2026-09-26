@@ -106,17 +106,99 @@
       href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Chakra+Petch:ital,wght@0,700;0,800;1,700;1,800;1,900&family=Rajdhani:wght@700;800&family=Teko:wght@600;700&display=swap"
       rel="stylesheet"
     />
+    <style>
+      html, body {
+        background-color: #07080A !important;
+        color: #ffffff;
+        margin: 0;
+        padding: 0;
+      }
+      .pre-root-hidden {
+        position: absolute !important;
+        width: 1px !important;
+        height: 1px !important;
+        padding: 0 !important;
+        margin: -1px !important;
+        overflow: hidden !important;
+        clip: rect(0, 0, 0, 0) !important;
+        white-space: nowrap !important;
+        border: 0 !important;
+      }
+      @keyframes preSpin {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+      }
+      @keyframes prePulse {
+        0%, 100% { transform: scale(1); opacity: 0.9; }
+        50% { transform: scale(1.05); opacity: 1; }
+      }
+      @keyframes preGlow {
+        0%, 100% { opacity: 0.6; }
+        50% { opacity: 1; }
+      }
+      @keyframes preBar {
+        0% { width: 4%; }
+        35% { width: 40%; }
+        70% { width: 75%; }
+        100% { width: 96%; }
+      }
+    </style>
   </head>
-  <body class="bg-[#08090A] text-[#F4F6F8] antialiased selection:bg-[#FF5E1E] selection:text-white">
-    <!-- Accessibility Skip Link -->
+  <body class="bg-[#07080A] text-[#F4F6F8] antialiased selection:bg-[#FF5E1E] selection:text-white" style="background-color: #07080A; margin: 0;">
+    <!-- Accessibility Skip Link (Hidden until focused) -->
     <a
       href="#overview"
-      class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#FF5E1E] focus:text-white focus:font-bold focus:rounded-md focus:shadow-lg focus:outline-none"
+      class="pre-root-hidden sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-[#FF5E1E] focus:text-white focus:font-bold focus:rounded-md focus:shadow-lg focus:outline-none"
     >
       Skip to main content
     </a>
 
-    <div id="root"></div>
+    <div id="root">
+      <!-- Instant Zero-Delay Pre-React Loading Screen (Never shows blank white page) -->
+      <div style="position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; justify-content: space-between; align-items: center; background: #07080A; color: #ffffff; padding: 40px 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-sizing: border-box; overflow: hidden; user-select: none;">
+        <!-- Background Ambient Neon Flares -->
+        <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 650px; height: 450px; border-radius: 50%; background: radial-gradient(circle, rgba(255,94,30,0.18) 0%, rgba(255,160,52,0.1) 40%, transparent 70%); filter: blur(90px); pointer-events: none;"></div>
+
+        <!-- Top Header -->
+        <div style="position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 10px;">
+          <div style="position: relative; width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(180deg, #2A2E3B 0%, #12141A 100%); border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(255,94,30,0.5); animation: prePulse 2s infinite ease-in-out;">
+            <div style="position: absolute; inset: -8px; border-radius: 50%; border: 1px dashed rgba(255,94,30,0.4); animation: preSpin 14s infinite linear;"></div>
+            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FF5E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>
+          </div>
+          <div style="text-align: center;">
+            <div style="font-size: 15px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase;">OLYMPIA <span style="color: #FF5E1E;">GYM</span></div>
+            <div style="font-size: 9px; font-family: monospace; letter-spacing: 0.25em; color: #8F9CAE; text-transform: uppercase;">YEMMIGANUR • UNISEX FITNESS</div>
+          </div>
+        </div>
+
+        <!-- Center Quotation -->
+        <div style="position: relative; z-index: 10; max-width: 780px; text-align: center; margin: auto; padding: 0 16px;">
+          <div style="display: inline-block; padding: 4px 14px; border-radius: 9999px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,94,30,0.3); font-family: monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.2em; color: #FF5E1E; text-transform: uppercase; margin-bottom: 20px;">
+            CHAMPION MINDSET
+          </div>
+          <div style="font-size: 24px; line-height: 1.25; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; color: #ffffff; text-shadow: 0 4px 20px rgba(0,0,0,0.8);">
+            “THE RESISTANCE THAT YOU FIGHT PHYSICALLY IN THE GYM AND THE RESISTANCE THAT YOU FIGHT IN LIFE CAN ONLY BUILD A STRONG CHARACTER.”
+          </div>
+          <div style="margin-top: 18px; font-family: monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.15em; color: #FFA034; text-transform: uppercase;">
+            — ARNOLD SCHWARZENEGGER
+          </div>
+        </div>
+
+        <!-- Bottom Neon Progress Bar -->
+        <div style="position: relative; z-index: 10; width: 100%; max-width: 520px; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+          <div style="width: 100%; display: flex; justify-content: space-between; font-family: monospace; font-size: 11px; font-weight: 700; color: #8F9CAE;">
+            <span style="display: flex; align-items: center; gap: 6px;"><span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #FF5E1E; animation: preGlow 1s infinite alternate;"></span> INITIALIZING HIGH-PERFORMANCE ENGINE...</span>
+            <span style="color: #FF5E1E; font-weight: 900;">PREPARING...</span>
+          </div>
+          <div style="width: 100%; height: 8px; border-radius: 9999px; background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.1); padding: 2px; box-sizing: border-box; overflow: hidden;">
+            <div style="height: 100%; border-radius: 9999px; background: linear-gradient(90deg, #FF3D00 0%, #FF5E1E 45%, #FFA034 80%, #FFE169 100%); box-shadow: 0 0 16px #FF5E1E, 0 0 30px rgba(255,160,52,0.6); animation: preBar 2.5s ease-out forwards;"></div>
+          </div>
+          <div style="font-family: monospace; font-size: 10px; letter-spacing: 0.18em; color: rgba(143,156,174,0.6); text-transform: uppercase;">
+            [ LOADING THE LIVE TRAINING ARENA ]
+          </div>
+        </div>
+      </div>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
