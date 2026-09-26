@@ -144,17 +144,17 @@ export const TopDock: React.FC<TopDockProps> = ({
               {/* Orange Contact Us Button */}
               <button
                 onClick={() => handleLinkClick('#contact')}
-                className="px-5 sm:px-6 py-2 rounded-full bg-brand-volt text-white font-black text-xs uppercase tracking-wider hover:bg-brand-volt-hover hover:shadow-glow-volt transition-all flex items-center gap-1.5 shadow-md active:scale-95"
+                className="px-5 sm:px-6 py-2 rounded-full bg-[#FF5E1E] text-white font-black text-xs uppercase tracking-wider hover:bg-[#FF7538] hover:shadow-[0_0_25px_rgba(255,94,30,0.6)] transition-all flex items-center gap-1.5 shadow-md active:scale-95"
               >
                 <span>Contact us</span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-white/80" />
+                <ArrowUpRight className="w-3.5 h-3.5 text-white/90" />
               </button>
 
               {/* User Profile Avatar Icon in Orange Circle */}
               <button
                 onClick={() => handleLinkClick('#membership')}
                 aria-label="Member Area & Profile"
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-brand-volt text-white flex items-center justify-center hover:scale-105 hover:shadow-glow-volt transition-all shadow-md active:scale-95 shrink-0"
+                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-[#FF5E1E] text-white flex items-center justify-center hover:scale-105 hover:bg-[#FF7538] hover:shadow-[0_0_25px_rgba(255,94,30,0.6)] transition-all shadow-md active:scale-95 shrink-0"
               >
                 <User className="w-4 h-4 fill-white text-white" />
               </button>

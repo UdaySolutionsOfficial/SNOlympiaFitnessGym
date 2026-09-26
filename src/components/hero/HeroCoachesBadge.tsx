@@ -17,17 +17,17 @@ export const HeroCoachesBadge: React.FC<HeroCoachesBadgeProps> = ({ className = 
       {/* Overlapping Coach Avatars */}
       <div className="flex -space-x-2.5 overflow-hidden">
         <img
-          className="inline-block h-8 w-8 rounded-full ring-2 ring-brand-volt/50 object-cover"
+          className="inline-block h-8 w-8 rounded-full ring-2 ring-[#FF5E1E]/60 object-cover"
           src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=120&q=80"
           alt="Coach Priya"
         />
         <img
-          className="inline-block h-8 w-8 rounded-full ring-2 ring-brand-volt/50 object-cover"
+          className="inline-block h-8 w-8 rounded-full ring-2 ring-[#FF5E1E]/60 object-cover"
           src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=120&q=80"
           alt="Coach Rahul"
         />
         <img
-          className="inline-block h-8 w-8 rounded-full ring-2 ring-brand-volt/50 object-cover"
+          className="inline-block h-8 w-8 rounded-full ring-2 ring-[#FF5E1E]/60 object-cover"
           src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=120&q=80"
           alt="Coach Anand"
         />
@@ -37,7 +37,7 @@ export const HeroCoachesBadge: React.FC<HeroCoachesBadgeProps> = ({ className = 
       <div className="flex flex-col">
         <div className="flex items-baseline gap-1.5">
           <span className="font-mono font-black text-white text-base leading-none">20+</span>
-          <span className="text-[10px] font-bold uppercase tracking-wider text-brand-volt">
+          <span className="text-[10px] font-bold uppercase tracking-wider text-[#FF5E1E]">
             Active Coaches
           </span>
         </div>

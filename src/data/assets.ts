@@ -40,6 +40,17 @@ export const ASSET_MANIFEST = {
       targetFormat: 'mp4',
       status: 'READY',
     } satisfies AssetMeta,
+    introVideo2: {
+      id: 'hero-intro-video-2',
+      path: '/assets/videos/intro-video-2.mp4',
+      width: 1920,
+      height: 1080,
+      aspectRatio: '16:9',
+      alt: 'SN Olympia Fitness high energy workout preview',
+      description: 'Second dynamic training video showing energy and coaching',
+      targetFormat: 'mp4',
+      status: 'READY',
+    } satisfies AssetMeta,
     athleteDesktop: {
       id: 'hero-athlete-desktop',
       path: '/assets/images/hero/hero-athlete-desktop.jpg',
