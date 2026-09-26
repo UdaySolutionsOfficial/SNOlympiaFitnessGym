@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { HeroBackground } from './HeroBackground';
 import { HeroVideoCard } from './HeroVideoCard';
 import { HeroCoachesBadge } from './HeroCoachesBadge';
