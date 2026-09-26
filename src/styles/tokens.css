@@ -13,17 +13,17 @@
   --color-text-muted: #6E7885;
   --color-text-inverted: #08090A;
 
-  /* Provisional Athletic Accent (Electric Volt Lime) */
-  --color-accent-primary: #CCFF00;
-  --color-accent-hover: #D6FF33;
-  --color-accent-active: #B5E600;
-  --color-accent-soft: rgba(204, 255, 0, 0.12);
-  --color-accent-glow: rgba(204, 255, 0, 0.35);
+  /* Athletic Brand Accent (Electric High-Energy Orange) */
+  --color-accent-primary: #FF5E1E;
+  --color-accent-hover: #FF7538;
+  --color-accent-active: #E0480C;
+  --color-accent-soft: rgba(255, 94, 30, 0.15);
+  --color-accent-glow: rgba(255, 94, 30, 0.45);
 
   /* Borders & Dividers */
   --color-border-subtle: rgba(255, 255, 255, 0.06);
   --color-border-medium: rgba(255, 255, 255, 0.12);
-  --color-border-accent: rgba(204, 255, 0, 0.35);
+  --color-border-accent: rgba(255, 94, 30, 0.45);
 
   /* Status Truth Indicators */
   --color-status-verified: #00E599;

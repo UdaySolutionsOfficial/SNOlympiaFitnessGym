@@ -18,6 +18,28 @@ export interface AssetMeta {
 
 export const ASSET_MANIFEST = {
   hero: {
+    athleteCurlingOlampiya: {
+      id: 'hero-athlete-curling-olampiya',
+      path: '/assets/images/hero/hero-curling-olampiya.jpg',
+      width: 1376,
+      height: 768,
+      aspectRatio: '16:9',
+      alt: 'SN Olympia Fitness front view athlete with curling barbell and Olampiya background typography',
+      description: 'Cinematic front-facing muscular athlete with barbell and Olampiya background',
+      targetFormat: 'jpg',
+      status: 'READY',
+    } satisfies AssetMeta,
+    introVideo: {
+      id: 'hero-intro-video',
+      path: '/assets/videos/intro-video.mp4',
+      width: 1920,
+      height: 1080,
+      aspectRatio: '16:9',
+      alt: 'SN Olympia Fitness intensive training intro video',
+      description: 'Cinematic video showcase of Olympia Fitness facilities and training',
+      targetFormat: 'mp4',
+      status: 'READY',
+    } satisfies AssetMeta,
     athleteDesktop: {
       id: 'hero-athlete-desktop',
       path: '/assets/images/hero/hero-athlete-desktop.jpg',

@@ -153,4 +153,23 @@ In strict adherence to the Content Truth Charter:
   - Completely detached from any card or box container.
   - Floats freely in open 3D space on the hero section with interactive 360° drag rotation and metallic knurling reflections.
 
+---
+
+## 14. Athletic Electric Orange Theme & Mockup Alignment
+
+- **Brand Accent Palette Overhaul:**
+  - Transitioned the entire website's accent color system from volt lime to high-energy athletic electric orange (`#FF5E1E` / `#FF7538`), matching modern premier fitness styling.
+  - Synced tokens in `tokens.css` and `tailwind.config.js` (`--color-accent-primary: #FF5E1E`, `shadow-glow-volt`, border accents).
+- **Curling Barbell Athlete with Background "OLAMPIYA" Typography:**
+  - Generated ultra-photorealistic 8K front-facing muscular athlete holding an EZ-curl barbell at waist level in mid-curl.
+  - Composited **"OLAMPIYA"** in bold transparent architectural lettering blended smoothly into the dark gym concrete wall behind the athlete (`hero-curling-olampiya.jpg`).
+- **Hero Stadium Composition (Get Fit / Stay Fit):**
+  - **Left Column:** "Get Fit" monumental headline, frosted glassmorphism card, **"Explore more"** orange pill button, and **20 Active Coaches** avatar credential badge.
+  - **Right Column:** "Stay Fit" monumental headline, floating glassmorphic **Intro Video Card** playing `/assets/videos/intro-video.mp4` with orange glowing play trigger, mute toggle, and expand modal.
+  - **Teaser Section:** `CLASSES DESIGNED / FOR YOU` lower section hook.
+- **ThreeUI `<GlassAiButton />` Integration:**
+  - Integrated the exact ThreeUI component bundle (`GlassAiButton.tsx`, `glass-ai-button.html`, `threeui.css`) with 100% SHA-256 integrity.
+  - Embedded as an interactive galaxy shader button in the hero conversion group.
+
+
 
