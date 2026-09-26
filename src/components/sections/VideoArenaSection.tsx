@@ -332,7 +332,7 @@ export const VideoArenaSection: React.FC = () => {
   // Pointer drag event handlers with 1:1 real-time tracking & infinite flick throw
   const handlePointerDown = (e: React.PointerEvent) => {
     if (e.button !== 0) return;
-    isDraggingRef.current = true;
+    isDraggingRef.current = false;
     dragStartXRef.current = e.clientX;
     dragStartPosRef.current = targetPosRef.current;
     lastXRef.current = e.clientX;
@@ -340,13 +340,25 @@ export const VideoArenaSection: React.FC = () => {
     velocityXRef.current = 0;
 
     if (snapTimeoutRef.current) clearTimeout(snapTimeoutRef.current);
-    if (containerRef.current) {
-      containerRef.current.setPointerCapture(e.pointerId);
-    }
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDraggingRef.current) return;
+    const totalDeltaX = e.clientX - dragStartXRef.current;
+
+    // Only engage drag if moved more than 6px
+    if (!isDraggingRef.current) {
+      if (Math.abs(totalDeltaX) > 6) {
+        isDraggingRef.current = true;
+        if (containerRef.current) {
+          try {
+            containerRef.current.setPointerCapture(e.pointerId);
+          } catch {}
+        }
+      } else {
+        return;
+      }
+    }
+
     const now = performance.now();
     const dt = Math.max(1, now - lastTimeRef.current);
     const dx = e.clientX - lastXRef.current;
@@ -355,7 +367,6 @@ export const VideoArenaSection: React.FC = () => {
     lastXRef.current = e.clientX;
     lastTimeRef.current = now;
 
-    const totalDeltaX = e.clientX - dragStartXRef.current;
     const cardSpacing = windowWidth < 640 ? 210 : 260;
 
     // Free continuous tracking in loop
@@ -366,15 +377,18 @@ export const VideoArenaSection: React.FC = () => {
   };
 
   const handlePointerUp = (e: React.PointerEvent) => {
-    if (!isDraggingRef.current) return;
-    isDraggingRef.current = false;
-
     if (containerRef.current) {
       try {
         containerRef.current.releasePointerCapture(e.pointerId);
       } catch {}
     }
 
+    if (!isDraggingRef.current) {
+      // It was a clean tap! Let onClick handle it cleanly
+      return;
+    }
+
+    isDraggingRef.current = false;
     const totalDeltaX = e.clientX - dragStartXRef.current;
     if (Math.abs(totalDeltaX) >= 8) {
       // Natural flick throwing with momentum
@@ -382,13 +396,16 @@ export const VideoArenaSection: React.FC = () => {
       const projectedPos = targetPosRef.current + flickImpulse;
       targetPosRef.current = Math.round(projectedPos);
       startLoop();
+    } else {
+      targetPosRef.current = Math.round(targetPosRef.current);
+      startLoop();
     }
   };
 
   // Click card handler: centers selected video and plays directly IN PLACE with sound!
   const handleCardClick = (video: GalleryVideoItem, idx: number) => {
-    const wasDraggingDistance = Math.abs(lastXRef.current - dragStartXRef.current);
-    if (wasDraggingDistance > 10) return;
+    // If was actively dragging, ignore
+    if (isDraggingRef.current) return;
 
     // Calculate shortest circular path to center this card
     let diff = ((idx - currentPosRef.current) % totalVideos + totalVideos) % totalVideos;
@@ -400,25 +417,70 @@ export const VideoArenaSection: React.FC = () => {
 
     // If already the active playing center card, toggle play/pause
     if (activeAudioId === video.id && Math.abs(diff) < 0.4) {
-      setIsPlaying((prev) => !prev);
+      setIsPlaying((prev) => {
+        const nextState = !prev;
+        const targetEl = videoRefs.current.get(video.id);
+        if (targetEl) {
+          if (nextState) targetEl.play().catch(() => {});
+          else targetEl.pause();
+        }
+        return nextState;
+      });
     } else {
       // Otherwise activate sound on this card immediately
       setActiveAudioId(video.id);
       setIsAudioMuted(false);
       setIsPlaying(true);
+
+      // Directly unmute and play the video synchronously in the click gesture
+      const targetEl = videoRefs.current.get(video.id);
+      if (targetEl) {
+        targetEl.muted = false;
+        targetEl.volume = 1.0;
+        targetEl.play().catch(() => {});
+      }
+
+      // Mute all other videos
+      videoRefs.current.forEach((el, id) => {
+        if (id !== video.id) {
+          el.muted = true;
+          el.volume = 0;
+          el.play().catch(() => {});
+        }
+      });
     }
   };
 
   // Toggle audio mute on the active center card
   const toggleMute = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsAudioMuted((prev) => !prev);
+    setIsAudioMuted((prev) => {
+      const nextMuted = !prev;
+      if (activeAudioId) {
+        const targetEl = videoRefs.current.get(activeAudioId);
+        if (targetEl) {
+          targetEl.muted = nextMuted;
+          targetEl.volume = nextMuted ? 0 : 1;
+        }
+      }
+      return nextMuted;
+    });
   };
 
   // Toggle play/pause on the active center card
   const togglePlay = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsPlaying((prev) => !prev);
+    setIsPlaying((prev) => {
+      const nextState = !prev;
+      if (activeAudioId) {
+        const targetEl = videoRefs.current.get(activeAudioId);
+        if (targetEl) {
+          if (nextState) targetEl.play().catch(() => {});
+          else targetEl.pause();
+        }
+      }
+      return nextState;
+    });
   };
 
   return (
@@ -637,14 +699,9 @@ export const VideoArenaSection: React.FC = () => {
                         )}
                       </button>
                     ) : isCenter ? (
-                      // Center card not yet playing with sound -> show prominent prompt
-                      <div className="flex flex-col items-center gap-2 group-hover:scale-105 transition-transform">
-                        <div className="w-14 h-14 rounded-full flex items-center justify-center text-white bg-[#FF5E1E] shadow-[0_0_35px_rgba(255,94,30,0.95)]">
-                          <Play className="w-6 h-6 fill-white translate-x-0.5" />
-                        </div>
-                        <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-[#FF5E1E]/50 text-[10px] font-mono tracking-wider font-bold text-white uppercase shadow-lg">
-                          TAP TO PLAY WITH SOUND
-                        </span>
+                      // Center card not yet playing with sound -> clean glowing play trigger
+                      <div className="w-14 h-14 rounded-full flex items-center justify-center text-white bg-[#FF5E1E] shadow-[0_0_35px_rgba(255,94,30,0.95)] group-hover:scale-110 transition-transform">
+                        <Play className="w-6 h-6 fill-white translate-x-0.5" />
                       </div>
                     ) : (
                       // Side card -> compact play trigger
@@ -701,7 +758,7 @@ export const VideoArenaSection: React.FC = () => {
           {/* Scroll & gesture hint */}
           <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-brand-text-muted uppercase">
             <span className="w-2 h-2 rounded-full bg-[#FF5E1E] animate-ping" />
-            <span>INFINITE 360&deg; LOOP &bull; SCROLL TO ROTATE &bull; TAP CARD TO PLAY WITH SOUND</span>
+            <span>INFINITE 360&deg; ARENA &bull; SCROLL TO EXPLORE &bull; SELECT TO PLAY LIVE</span>
           </div>
 
           {/* Interactive Scrub Track */}
