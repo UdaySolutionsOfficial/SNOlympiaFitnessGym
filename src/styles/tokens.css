@@ -14,6 +14,8 @@
   --color-text-inverted: #08090A;
 
   /* Athletic Brand Accent (Electric High-Energy Orange) */
+  --color-brand-volt: #FF5E1E;
+  --color-brand-orange: #FF5E1E;
   --color-accent-primary: #FF5E1E;
   --color-accent-hover: #FF7538;
   --color-accent-active: #E0480C;
