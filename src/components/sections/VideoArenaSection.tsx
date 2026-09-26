@@ -2,10 +2,12 @@ import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
   Play,
+  Pause,
   X,
   ChevronLeft,
   ChevronRight,
   Volume2,
+  VolumeX,
   Sparkles,
   Users,
   Dumbbell,
@@ -149,9 +151,13 @@ export const VideoArenaSection: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<VideoCategory>('all');
   const [displayPos, setDisplayPos] = useState(0);
   const [windowWidth, setWindowWidth] = useState(() => (typeof window !== 'undefined' ? window.innerWidth : 1200));
-  const [modalVideo, setModalVideo] = useState<GalleryVideoItem | null>(null);
-  const modalVideoRef = useRef<HTMLVideoElement | null>(null);
+  const [activeAudioId, setActiveAudioId] = useState<string | null>(null);
+  const [isAudioMuted, setIsAudioMuted] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
   const prefersReducedMotion = useReducedMotion();
+
+  // Video element references for in-place audio management
+  const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
 
   // Animation & Physics Refs
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -174,7 +180,9 @@ export const VideoArenaSection: React.FC = () => {
     return v.category === activeFilter;
   });
   const totalVideos = filteredVideos.length;
-  const activeCenterIndex = Math.max(0, Math.min(totalVideos - 1, Math.round(displayPos)));
+
+  // Active center index (normalized circular index)
+  const activeCenterIndex = ((((Math.round(displayPos)) % totalVideos) + totalVideos) % totalVideos);
 
   // Responsive window resize listener
   useEffect(() => {
@@ -208,6 +216,9 @@ export const VideoArenaSection: React.FC = () => {
     targetPosRef.current = 0;
     currentPosRef.current = 0;
     setDisplayPos(0);
+    setActiveAudioId(null);
+    setIsPlaying(true);
+    setIsAudioMuted(false);
     if (snapTimeoutRef.current) clearTimeout(snapTimeoutRef.current);
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
@@ -215,7 +226,27 @@ export const VideoArenaSection: React.FC = () => {
     }
   }, [activeFilter]);
 
-  // Natural Horizontal Wheel & Trackpad Gesture Scrolling
+  // Synchronize In-Place Audio Playback
+  useEffect(() => {
+    videoRefs.current.forEach((el, id) => {
+      if (id === activeAudioId) {
+        el.muted = isAudioMuted;
+        el.volume = isAudioMuted ? 0 : 1;
+        if (isPlaying) {
+          el.play().catch(() => {});
+        } else {
+          el.pause();
+        }
+      } else {
+        el.muted = true;
+        el.volume = 0;
+        // Keep smooth silent preview loop running
+        el.play().catch(() => {});
+      }
+    });
+  }, [activeAudioId, isAudioMuted, isPlaying]);
+
+  // Infinite Loop Horizontal Wheel & Trackpad Gesture Scrolling
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
@@ -228,19 +259,13 @@ export const VideoArenaSection: React.FC = () => {
         e.preventDefault();
         const delta = isHorizontal ? e.deltaX : e.deltaY;
 
-        // Fluid continuous sensitivity
+        // Fluid continuous sensitivity without boundary clamping (Infinite Loop)
         const step = delta * 0.0032;
-        targetPosRef.current = Math.max(
-          -0.2,
-          Math.min(totalVideos - 0.8, targetPosRef.current + step)
-        );
+        targetPosRef.current += step;
 
         if (snapTimeoutRef.current) clearTimeout(snapTimeoutRef.current);
         snapTimeoutRef.current = setTimeout(() => {
-          targetPosRef.current = Math.max(
-            0,
-            Math.min(totalVideos - 1, Math.round(targetPosRef.current))
-          );
+          targetPosRef.current = Math.round(targetPosRef.current);
           startLoop();
         }, 180);
 
@@ -255,51 +280,56 @@ export const VideoArenaSection: React.FC = () => {
     };
   }, [totalVideos, startLoop]);
 
-  // Arrow navigation
+  // Infinite Loop Arrow navigation
   const handlePrev = useCallback(() => {
-    targetPosRef.current = Math.max(0, Math.round(targetPosRef.current) - 1);
+    targetPosRef.current = Math.round(targetPosRef.current) - 1;
     startLoop();
-  }, [startLoop]);
+
+    // Set new centered card as active sound
+    const newIdx = ((((Math.round(targetPosRef.current)) % totalVideos) + totalVideos) % totalVideos);
+    if (activeAudioId) {
+      setActiveAudioId(filteredVideos[newIdx].id);
+      setIsAudioMuted(false);
+      setIsPlaying(true);
+    }
+  }, [totalVideos, activeAudioId, filteredVideos, startLoop]);
 
   const handleNext = useCallback(() => {
-    targetPosRef.current = Math.min(totalVideos - 1, Math.round(targetPosRef.current) + 1);
+    targetPosRef.current = Math.round(targetPosRef.current) + 1;
     startLoop();
-  }, [totalVideos, startLoop]);
+
+    // Set new centered card as active sound
+    const newIdx = ((((Math.round(targetPosRef.current)) % totalVideos) + totalVideos) % totalVideos);
+    if (activeAudioId) {
+      setActiveAudioId(filteredVideos[newIdx].id);
+      setIsAudioMuted(false);
+      setIsPlaying(true);
+    }
+  }, [totalVideos, activeAudioId, filteredVideos, startLoop]);
 
   // Keyboard navigation
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (modalVideo) {
-        if (e.key === 'Escape') setModalVideo(null);
-        if (e.key === 'ArrowRight') {
-          const currentModalIdx = filteredVideos.findIndex((v) => v.id === modalVideo.id);
-          const nextIdx = (currentModalIdx + 1) % filteredVideos.length;
-          setModalVideo(filteredVideos[nextIdx]);
+      if (e.key === 'ArrowLeft') handlePrev();
+      if (e.key === 'ArrowRight') handleNext();
+      if (e.key === ' ') {
+        if (activeAudioId) {
+          e.preventDefault();
+          setIsPlaying((p) => !p);
         }
-        if (e.key === 'ArrowLeft') {
-          const currentModalIdx = filteredVideos.findIndex((v) => v.id === modalVideo.id);
-          const prevIdx = (currentModalIdx - 1 + filteredVideos.length) % filteredVideos.length;
-          setModalVideo(filteredVideos[prevIdx]);
+      }
+      if (e.key === 'm' || e.key === 'M') {
+        if (activeAudioId) {
+          e.preventDefault();
+          setIsAudioMuted((m) => !m);
         }
-      } else {
-        if (e.key === 'ArrowLeft') handlePrev();
-        if (e.key === 'ArrowRight') handleNext();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [modalVideo, filteredVideos, handlePrev, handleNext]);
+  }, [handlePrev, handleNext, activeAudioId]);
 
-  // Auto-play modal video with sound when open
-  useEffect(() => {
-    if (modalVideo && modalVideoRef.current) {
-      modalVideoRef.current.muted = false;
-      modalVideoRef.current.volume = 1;
-      modalVideoRef.current.play().catch(() => {});
-    }
-  }, [modalVideo]);
-
-  // Pointer drag event handlers with 1:1 real-time tracking & throw inertia
+  // Pointer drag event handlers with 1:1 real-time tracking & infinite flick throw
   const handlePointerDown = (e: React.PointerEvent) => {
     if (e.button !== 0) return;
     isDraggingRef.current = true;
@@ -328,9 +358,10 @@ export const VideoArenaSection: React.FC = () => {
     const totalDeltaX = e.clientX - dragStartXRef.current;
     const cardSpacing = windowWidth < 640 ? 210 : 260;
 
+    // Free continuous tracking in loop
     const newPos = dragStartPosRef.current - totalDeltaX / cardSpacing;
-    targetPosRef.current = Math.max(-0.25, Math.min(totalVideos - 0.75, newPos));
-    currentPosRef.current = targetPosRef.current;
+    targetPosRef.current = newPos;
+    currentPosRef.current = newPos;
     setDisplayPos(currentPosRef.current);
   };
 
@@ -349,24 +380,45 @@ export const VideoArenaSection: React.FC = () => {
       // Natural flick throwing with momentum
       const flickImpulse = -velocityXRef.current * 1.6;
       const projectedPos = targetPosRef.current + flickImpulse;
-      targetPosRef.current = Math.max(0, Math.min(totalVideos - 1, Math.round(projectedPos)));
+      targetPosRef.current = Math.round(projectedPos);
       startLoop();
     }
   };
 
+  // Click card handler: centers selected video and plays directly IN PLACE with sound!
   const handleCardClick = (video: GalleryVideoItem, idx: number) => {
     const wasDraggingDistance = Math.abs(lastXRef.current - dragStartXRef.current);
     if (wasDraggingDistance > 10) return;
 
-    const offset = idx - currentPosRef.current;
-    if (Math.abs(offset) < 0.45) {
-      // Center card -> open popup with unmuted sound!
-      setModalVideo(video);
+    // Calculate shortest circular path to center this card
+    let diff = ((idx - currentPosRef.current) % totalVideos + totalVideos) % totalVideos;
+    if (diff > totalVideos / 2) diff -= totalVideos;
+
+    // Smoothly rotate the ring to bring this card to center
+    targetPosRef.current += diff;
+    startLoop();
+
+    // If already the active playing center card, toggle play/pause
+    if (activeAudioId === video.id && Math.abs(diff) < 0.4) {
+      setIsPlaying((prev) => !prev);
     } else {
-      // Side card -> glide smoothly to center!
-      targetPosRef.current = idx;
-      startLoop();
+      // Otherwise activate sound on this card immediately
+      setActiveAudioId(video.id);
+      setIsAudioMuted(false);
+      setIsPlaying(true);
     }
+  };
+
+  // Toggle audio mute on the active center card
+  const toggleMute = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsAudioMuted((prev) => !prev);
+  };
+
+  // Toggle play/pause on the active center card
+  const togglePlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsPlaying((prev) => !prev);
   };
 
   return (
@@ -394,7 +446,7 @@ export const VideoArenaSection: React.FC = () => {
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-3 shadow-sm">
               <span className="w-1.5 h-1.5 rounded-full bg-[#FF5E1E] animate-pulse" />
               <span className="text-[10px] font-mono tracking-widest text-[#FF5E1E] uppercase font-bold">
-                // 03.5 LIVE ACTION ARENA
+                // 03.5 LIVE ACTION ARENA &bull; INFINITE LOOP
               </span>
             </div>
 
@@ -403,7 +455,7 @@ export const VideoArenaSection: React.FC = () => {
               THE OLYMPIA <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF5E1E] via-[#FF7538] to-[#FFA034] text-glow-orange">ACTION</span> VAULT
             </h2>
             <p className="text-sm sm:text-base text-brand-text-secondary max-w-xl mt-3 font-normal">
-              Portrait media standing on a 3D cylindrical ring curling around the viewer. High-intensity floor workouts captured live across our unisex facility.
+              Continuous 360&deg; cylindrical video ring. Tap any card to bring it to center and play directly in place with sound.
             </p>
           </div>
 
@@ -451,7 +503,7 @@ export const VideoArenaSection: React.FC = () => {
         </div>
 
         {/* ========================================================================= */}
-        {/* 3D CYLINDRICAL CURVED ACTION RING (CONTINUOUS PHYSICS ENGINE)              */}
+        {/* 3D CYLINDRICAL CURVED ACTION RING (INFINITE 360° LOOP ENGINE)              */}
         {/* ========================================================================= */}
         <div
           ref={containerRef}
@@ -459,28 +511,41 @@ export const VideoArenaSection: React.FC = () => {
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerLeave={handlePointerUp}
-          className="relative w-full h-[520px] sm:h-[580px] md:h-[620px] flex items-center justify-center [perspective:1400px] overflow-hidden cursor-grab active:cursor-grabbing select-none"
+          className="relative w-full h-[540px] sm:h-[600px] md:h-[640px] flex items-center justify-center [perspective:1400px] overflow-hidden cursor-grab active:cursor-grabbing select-none"
           style={{ touchAction: 'pan-y' }}
         >
-          {/* Subtle 3D Ring Stage Illumination */}
-          <div className="absolute inset-x-0 bottom-8 h-24 bg-gradient-to-t from-[#FF5E1E]/15 via-transparent to-transparent filter blur-2xl pointer-events-none" />
+          {/* Edge Vignette Fades to make wrap-around perfectly seamless */}
+          <div className="absolute inset-y-0 left-0 w-20 sm:w-36 bg-gradient-to-r from-[#08090A] to-transparent pointer-events-none z-30" />
+          <div className="absolute inset-y-0 right-0 w-20 sm:w-36 bg-gradient-to-l from-[#08090A] to-transparent pointer-events-none z-30" />
 
-          {/* Cards Projection in Cylindrical Space */}
+          {/* Subtle 3D Ring Stage Illumination */}
+          <div className="absolute inset-x-0 bottom-8 h-28 bg-gradient-to-t from-[#FF5E1E]/18 via-transparent to-transparent filter blur-2xl pointer-events-none" />
+
+          {/* Cards Projection in Cylindrical Space with Circular Math */}
           <div className="relative w-full h-full flex items-center justify-center [transform-style:preserve-3d]">
             {filteredVideos.map((video, idx) => {
-              const offset = idx - displayPos;
+              // Circular offset math: wraps start <-> end infinitely
+              let offset = ((idx - displayPos) % totalVideos + totalVideos) % totalVideos;
+              if (offset > totalVideos / 2) {
+                offset -= totalVideos;
+              }
 
-              // Hide cards outside active field of view
-              if (Math.abs(offset) > 3.6) return null;
+              // Maximum visible angular offset on stage
+              const maxVisibleOffset = Math.min(3.8, totalVideos / 2);
+              if (Math.abs(offset) > maxVisibleOffset) return null;
 
               const cardSpacing = windowWidth < 640 ? 210 : 260;
               const rotateY = offset * 18;
               const translateZ = -Math.abs(offset) * 65;
               const translateX = offset * cardSpacing;
-              const scale = Math.max(0.72, 1 - Math.abs(offset) * 0.08);
-              const opacity = Math.max(0.25, 1 - Math.abs(offset) * 0.22);
+              const scale = Math.max(0.70, 1 - Math.abs(offset) * 0.08);
+
+              // Smooth quadratic fade towards back of ring
+              const distanceRatio = Math.abs(offset) / maxVisibleOffset;
+              const opacity = Math.max(0, 1 - Math.pow(distanceRatio, 1.8) * 0.95);
               const zIndex = Math.round(50 - Math.abs(offset) * 10);
               const isCenter = Math.abs(offset) < 0.45;
+              const isCenterActiveAudio = isCenter && activeAudioId === video.id;
 
               return (
                 <div
@@ -491,46 +556,102 @@ export const VideoArenaSection: React.FC = () => {
                     zIndex,
                     opacity,
                   }}
-                  className={`absolute w-56 sm:w-64 md:w-72 aspect-[9/16] rounded-2xl sm:rounded-3xl overflow-hidden border bg-[#0D0F14] cursor-pointer group shadow-[0_25px_60px_rgba(0,0,0,0.9)] select-none will-change-transform ${
-                    isCenter
-                      ? 'border-[#FF5E1E] shadow-[0_0_40px_rgba(255,94,30,0.5),0_25px_70px_rgba(0,0,0,0.95)] ring-2 ring-[#FF5E1E]/40'
+                  className={`absolute w-56 sm:w-64 md:w-72 aspect-[9/16] rounded-2xl sm:rounded-3xl overflow-hidden border bg-[#0D0F14] cursor-pointer group shadow-[0_25px_60px_rgba(0,0,0,0.9)] select-none will-change-transform transition-colors duration-300 ${
+                    isCenterActiveAudio
+                      ? 'border-[#FF5E1E] shadow-[0_0_50px_rgba(255,94,30,0.65),0_25px_70px_rgba(0,0,0,0.95)] ring-2 ring-[#FF5E1E]'
+                      : isCenter
+                      ? 'border-[#FF5E1E]/80 shadow-[0_0_35px_rgba(255,94,30,0.4),0_25px_70px_rgba(0,0,0,0.95)] ring-1 ring-[#FF5E1E]/40'
                       : 'border-white/15 hover:border-white/40'
                   }`}
                 >
-                  {/* Autoplaying Muted Preview Video */}
+                  {/* In-Place Video Player */}
                   <video
+                    ref={(el) => {
+                      if (el) videoRefs.current.set(video.id, el);
+                      else videoRefs.current.delete(video.id);
+                    }}
                     src={video.src}
                     loop
-                    muted
+                    muted={activeAudioId !== video.id || isAudioMuted}
                     autoPlay
                     playsInline
-                    className="w-full h-full object-cover object-center filter brightness-95 group-hover:brightness-105 group-hover:scale-105 transition-all duration-500"
+                    className="w-full h-full object-cover object-center filter brightness-95 group-hover:brightness-105 transition-all duration-500"
                   />
 
                   {/* Top-To-Bottom Vignette Gradients */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/30 to-black/40 pointer-events-none" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/25 to-black/40 pointer-events-none" />
 
-                  {/* Top Header Badge */}
-                  <div className="absolute top-3 left-3 right-3 flex items-center justify-between pointer-events-none z-10">
-                    <span className="px-2.5 py-1 rounded-full bg-black/60 backdrop-blur-md border border-white/15 text-[9px] font-mono tracking-wider font-bold text-white uppercase">
-                      {video.tag}
-                    </span>
-                    <div className="w-6 h-6 rounded-full bg-white/10 backdrop-blur-md flex items-center justify-center text-white/80 group-hover:bg-[#FF5E1E] group-hover:text-white transition-colors">
-                      <Maximize2 className="w-3 h-3" />
-                    </div>
+                  {/* Top Header Bar with Live Audio Badge & Sound Toggle */}
+                  <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-20">
+                    {/* Live Audio Badge or Exercise Category Tag */}
+                    {isCenterActiveAudio ? (
+                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-[#FF5E1E] to-[#FF8C38] text-[#0A0B10] font-black text-[9px] tracking-wider uppercase shadow-[0_0_16px_rgba(255,94,30,0.85)]">
+                        <Volume2 className="w-3 h-3 shrink-0" />
+                        <span className="font-mono">AUDIO LIVE</span>
+                        <span className="flex items-end gap-0.5 h-2.5 ml-0.5">
+                          <span className="w-0.5 h-2 bg-[#0A0B10] rounded-full animate-bounce [animation-delay:0ms]" />
+                          <span className="w-0.5 h-3 bg-[#0A0B10] rounded-full animate-bounce [animation-delay:150ms]" />
+                          <span className="w-0.5 h-1.5 bg-[#0A0B10] rounded-full animate-bounce [animation-delay:300ms]" />
+                        </span>
+                      </div>
+                    ) : (
+                      <span className="px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/15 text-[9px] font-mono tracking-wider font-bold text-white uppercase shadow-sm">
+                        {video.tag}
+                      </span>
+                    )}
+
+                    {/* Mute/Unmute Quick Toggle Button on Center Card */}
+                    {isCenter && (
+                      <button
+                        onClick={toggleMute}
+                        aria-label={isAudioMuted ? 'Unmute video audio' : 'Mute video audio'}
+                        className={`w-7 h-7 rounded-full flex items-center justify-center backdrop-blur-md transition-all ${
+                          isCenterActiveAudio && !isAudioMuted
+                            ? 'bg-[#FF5E1E] text-white shadow-[0_0_12px_rgba(255,94,30,0.8)] hover:scale-110 active:scale-95'
+                            : 'bg-black/70 border border-white/20 text-white/80 hover:bg-[#FF5E1E] hover:text-white'
+                        }`}
+                      >
+                        {isCenterActiveAudio && !isAudioMuted ? (
+                          <Volume2 className="w-3.5 h-3.5" />
+                        ) : (
+                          <VolumeX className="w-3.5 h-3.5" />
+                        )}
+                      </button>
+                    )}
                   </div>
 
-                  {/* Center Glowing Play Trigger */}
-                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div
-                      className={`w-12 h-12 sm:w-14 sm:h-14 rounded-full flex items-center justify-center text-white transition-all duration-300 ${
-                        isCenter
-                          ? 'bg-[#FF5E1E] shadow-[0_0_30px_rgba(255,94,30,0.9)] scale-100 group-hover:scale-110'
-                          : 'bg-black/60 border border-white/20 scale-90 group-hover:scale-100 group-hover:bg-[#FF5E1E]'
-                      }`}
-                    >
-                      <Play className="w-5 h-5 fill-white translate-x-0.5" />
-                    </div>
+                  {/* Center Glowing In-Place Play/Pause Trigger */}
+                  <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-10">
+                    {isCenterActiveAudio ? (
+                      // Currently playing in center with sound -> show pause trigger on hover / pause state
+                      <button
+                        onClick={togglePlay}
+                        className={`pointer-events-auto w-14 h-14 rounded-full flex items-center justify-center text-white bg-black/60 border border-[#FF5E1E] backdrop-blur-md shadow-[0_0_30px_rgba(255,94,30,0.8)] transition-all duration-300 hover:scale-110 active:scale-95 ${
+                          isPlaying ? 'opacity-0 group-hover:opacity-100' : 'opacity-100 bg-[#FF5E1E]'
+                        }`}
+                      >
+                        {isPlaying ? (
+                          <Pause className="w-6 h-6 fill-white text-white" />
+                        ) : (
+                          <Play className="w-6 h-6 fill-white text-white translate-x-0.5" />
+                        )}
+                      </button>
+                    ) : isCenter ? (
+                      // Center card not yet playing with sound -> show prominent prompt
+                      <div className="flex flex-col items-center gap-2 group-hover:scale-105 transition-transform">
+                        <div className="w-14 h-14 rounded-full flex items-center justify-center text-white bg-[#FF5E1E] shadow-[0_0_35px_rgba(255,94,30,0.95)]">
+                          <Play className="w-6 h-6 fill-white translate-x-0.5" />
+                        </div>
+                        <span className="px-3 py-1 rounded-full bg-black/80 backdrop-blur-md border border-[#FF5E1E]/50 text-[10px] font-mono tracking-wider font-bold text-white uppercase shadow-lg">
+                          TAP TO PLAY WITH SOUND
+                        </span>
+                      </div>
+                    ) : (
+                      // Side card -> compact play trigger
+                      <div className="w-11 h-11 rounded-full flex items-center justify-center text-white bg-black/60 border border-white/20 scale-90 group-hover:scale-105 group-hover:bg-[#FF5E1E] transition-all">
+                        <Play className="w-4 h-4 fill-white translate-x-0.5" />
+                      </div>
+                    )}
                   </div>
 
                   {/* Bottom Captions & Info */}
@@ -544,25 +665,29 @@ export const VideoArenaSection: React.FC = () => {
                   </div>
 
                   {/* Glowing Orange Rim along Bottom Edge */}
-                  <div className="absolute bottom-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#FF5E1E] to-transparent opacity-80 group-hover:opacity-100 transition-opacity" />
+                  <div className={`absolute bottom-0 inset-x-0 h-1 transition-opacity ${
+                    isCenterActiveAudio
+                      ? 'bg-gradient-to-r from-transparent via-[#FF5E1E] to-transparent opacity-100 shadow-[0_0_15px_#FF5E1E]'
+                      : 'bg-gradient-to-r from-transparent via-[#FF5E1E] to-transparent opacity-60 group-hover:opacity-100'
+                  }`} />
                 </div>
               );
             })}
           </div>
 
-          {/* Left Arrow Navigation Trigger */}
+          {/* Left Arrow Navigation Trigger (Infinite Loop) */}
           <button
             onClick={handlePrev}
-            aria-label="Previous reel"
+            aria-label="Previous video in loop"
             className="absolute left-2 sm:left-6 z-40 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/70 hover:bg-[#FF5E1E] text-white border border-white/20 hover:border-[#FF5E1E] flex items-center justify-center backdrop-blur-md transition-all hover:scale-110 active:scale-95 shadow-xl"
           >
             <ChevronLeft className="w-6 h-6 -translate-x-0.5" />
           </button>
 
-          {/* Right Arrow Navigation Trigger */}
+          {/* Right Arrow Navigation Trigger (Infinite Loop) */}
           <button
             onClick={handleNext}
-            aria-label="Next reel"
+            aria-label="Next video in loop"
             className="absolute right-2 sm:right-6 z-40 w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-black/70 hover:bg-[#FF5E1E] text-white border border-white/20 hover:border-[#FF5E1E] flex items-center justify-center backdrop-blur-md transition-all hover:scale-110 active:scale-95 shadow-xl"
           >
             <ChevronRight className="w-6 h-6 translate-x-0.5" />
@@ -570,13 +695,13 @@ export const VideoArenaSection: React.FC = () => {
         </div>
 
         {/* ========================================================================= */}
-        {/* INTERACTIVE HORIZONTAL SCRUBBER & GESTURE CONTROLS                        */}
+        {/* INTERACTIVE HORIZONTAL SCRUBBER & INFINITE LOOP CONTROLS                  */}
         {/* ========================================================================= */}
         <div className="flex flex-col sm:flex-row items-center justify-between gap-5 mt-8 px-4 max-w-5xl mx-auto">
           {/* Scroll & gesture hint */}
           <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-brand-text-muted uppercase">
             <span className="w-2 h-2 rounded-full bg-[#FF5E1E] animate-ping" />
-            <span>SCROLL HORIZONTALLY &bull; TRACKPAD SWIPE &bull; DRAG TO EXPLORE</span>
+            <span>INFINITE 360&deg; LOOP &bull; SCROLL TO ROTATE &bull; TAP CARD TO PLAY WITH SOUND</span>
           </div>
 
           {/* Interactive Scrub Track */}
@@ -589,15 +714,23 @@ export const VideoArenaSection: React.FC = () => {
               onClick={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
                 const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-                targetPosRef.current = Math.round(ratio * (totalVideos - 1));
+                const targetIdx = Math.round(ratio * (totalVideos - 1));
+
+                let diff = ((targetIdx - Math.round(currentPosRef.current)) % totalVideos + totalVideos) % totalVideos;
+                if (diff > totalVideos / 2) diff -= totalVideos;
+                targetPosRef.current += diff;
                 startLoop();
+
+                setActiveAudioId(filteredVideos[targetIdx].id);
+                setIsAudioMuted(false);
+                setIsPlaying(true);
               }}
             >
               <div
                 className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-[#FF5E1E] via-[#FF7538] to-[#FFA034] rounded-full shadow-[0_0_12px_rgba(255,94,30,0.8)]"
                 style={{
-                  width: `${Math.min(100, Math.max(10, ((displayPos + 1) / totalVideos) * 100))}%`,
-                  transition: 'width 0.1s linear',
+                  width: `${Math.min(100, Math.max(10, ((activeCenterIndex + 1) / totalVideos) * 100))}%`,
+                  transition: 'width 0.2s cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
               />
             </div>
@@ -612,8 +745,14 @@ export const VideoArenaSection: React.FC = () => {
               <button
                 key={i}
                 onClick={() => {
-                  targetPosRef.current = i;
+                  let diff = ((i - Math.round(currentPosRef.current)) % totalVideos + totalVideos) % totalVideos;
+                  if (diff > totalVideos / 2) diff -= totalVideos;
+                  targetPosRef.current += diff;
                   startLoop();
+
+                  setActiveAudioId(filteredVideos[i].id);
+                  setIsAudioMuted(false);
+                  setIsPlaying(true);
                 }}
                 aria-label={`Jump to video ${i + 1}`}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
@@ -626,99 +765,6 @@ export const VideoArenaSection: React.FC = () => {
           </div>
         </div>
       </div>
-
-      {/* ========================================================================= */}
-      {/* CINEMATIC POPUP MODAL WITH UNMUTED AUDIO                                  */}
-      {/* ========================================================================= */}
-      <AnimatePresence>
-        {modalVideo && (
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label={`${modalVideo.title} Video Player`}
-            className="fixed inset-0 z-[120] bg-black/90 backdrop-blur-2xl flex items-center justify-center p-3 sm:p-6 md:p-8 animate-fadeIn"
-            onClick={() => setModalVideo(null)}
-          >
-            {/* Modal Card */}
-            <div
-              className="relative w-full max-w-lg md:max-w-2xl max-h-[92vh] flex flex-col rounded-3xl overflow-hidden border-2 border-[#FF5E1E]/80 shadow-[0_0_60px_rgba(255,94,30,0.5),0_25px_80px_rgba(0,0,0,0.95)] bg-[#0C0E12]"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* Header Bar */}
-              <div className="flex items-center justify-between px-5 py-3.5 bg-[#12151D] border-b border-white/10">
-                <div className="flex items-center gap-2.5">
-                  <span className="w-2.5 h-2.5 rounded-full bg-[#FF5E1E] shadow-[0_0_8px_#FF5E1E] animate-pulse" />
-                  <div>
-                    <h4 className="font-athletic italic uppercase font-black text-sm sm:text-base text-white leading-tight">
-                      {modalVideo.title}
-                    </h4>
-                    <span className="text-[10px] font-mono text-[#FF5E1E] font-bold uppercase">
-                      {modalVideo.tag}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-1.5 text-xs text-brand-text-muted font-mono">
-                    <Volume2 className="w-3.5 h-3.5 text-[#FF5E1E]" />
-                    <span className="hidden sm:inline">Audio Active</span>
-                  </div>
-                  <button
-                    onClick={() => setModalVideo(null)}
-                    aria-label="Close popup video"
-                    className="w-8 h-8 rounded-full bg-white/10 hover:bg-[#FF5E1E] text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all hover:scale-105 active:scale-95 shadow-md"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Video Player */}
-              <div className="relative flex-1 bg-black flex items-center justify-center max-h-[72vh] overflow-hidden">
-                <video
-                  ref={modalVideoRef}
-                  src={modalVideo.src}
-                  controls
-                  autoPlay
-                  playsInline
-                  className="w-full h-full object-contain max-h-[72vh] bg-black"
-                />
-              </div>
-
-              {/* Modal Footer Controls */}
-              <div className="flex items-center justify-between px-5 py-3 bg-[#12151D] border-t border-white/10">
-                <p className="text-xs text-neutral-400 font-medium truncate pr-4">
-                  {modalVideo.subtitle}
-                </p>
-                <div className="flex items-center gap-2 shrink-0">
-                  <button
-                    onClick={() => {
-                      const curIdx = filteredVideos.findIndex((v) => v.id === modalVideo.id);
-                      const prevIdx = (curIdx - 1 + filteredVideos.length) % filteredVideos.length;
-                      setModalVideo(filteredVideos[prevIdx]);
-                    }}
-                    className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-[#FF5E1E] text-white text-xs font-bold uppercase transition-all flex items-center gap-1"
-                  >
-                    <ChevronLeft className="w-3.5 h-3.5" />
-                    <span>Prev</span>
-                  </button>
-                  <button
-                    onClick={() => {
-                      const curIdx = filteredVideos.findIndex((v) => v.id === modalVideo.id);
-                      const nextIdx = (curIdx + 1) % filteredVideos.length;
-                      setModalVideo(filteredVideos[nextIdx]);
-                    }}
-                    className="px-3 py-1.5 rounded-full bg-white/10 hover:bg-[#FF5E1E] text-white text-xs font-bold uppercase transition-all flex items-center gap-1"
-                  >
-                    <span>Next</span>
-                    <ChevronRight className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </AnimatePresence>
     </section>
   );
 };
