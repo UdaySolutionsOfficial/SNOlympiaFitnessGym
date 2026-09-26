@@ -571,6 +571,13 @@ export const VideoArenaSection: React.FC = () => {
         <div className="absolute top-1/4 -left-48 w-96 h-96 rounded-full bg-[#FF5E1E]/12 filter blur-[120px]" />
         <div className="absolute bottom-1/4 -right-48 w-96 h-96 rounded-full bg-[#FFA034]/10 filter blur-[120px]" />
         <div className="absolute inset-0 bg-[radial-gradient(#ffffff08_1px,transparent_1px)] [background-size:24px_24px] opacity-40" />
+
+        {/* Transparent Super-Typographic Background Watermark */}
+        <div className="absolute top-[18%] md:top-[20%] left-1/2 -translate-x-1/2 w-full text-center select-none overflow-hidden z-0">
+          <span className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter text-white/[0.035] whitespace-nowrap leading-none block">
+            RELENTLESS
+          </span>
+        </div>
       </div>
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

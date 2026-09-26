@@ -23,7 +23,14 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
       {/* Background Ambience */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-brand-volt/5 rounded-full blur-[180px] pointer-events-none" />
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Transparent Super-Typographic Background Watermark */}
+      <div className="absolute top-[16%] md:top-[18%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center pointer-events-none select-none overflow-hidden z-0">
+        <span className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter text-white/[0.035] whitespace-nowrap leading-none block">
+          COMMITMENT
+        </span>
+      </div>
+
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header (Clean: No filter pills as requested) */}
         <ScrollReveal direction="up" delay={0.05} className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-volt/10 border border-brand-volt/30 text-brand-volt text-xs font-mono tracking-widest uppercase mb-4 shadow-sm">

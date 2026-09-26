@@ -43,9 +43,16 @@ export const ProgramsSection: React.FC<ProgramsSectionProps> = ({
   return (
     <section
       id="programs"
-      className={`relative py-24 md:py-36 px-4 md:px-8 max-w-7xl mx-auto border-t border-brand-border ${className}`}
+      className={`relative py-24 md:py-36 px-4 md:px-8 max-w-7xl mx-auto border-t border-brand-border overflow-hidden ${className}`}
     >
-      <div className="space-y-12">
+      {/* Transparent Super-Typographic Background Watermark */}
+      <div className="absolute top-[8%] md:top-[10%] left-1/2 -translate-x-1/2 w-full text-center pointer-events-none select-none overflow-hidden z-0">
+        <span className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter text-white/[0.035] whitespace-nowrap leading-none block">
+          BEYOND LIMITS
+        </span>
+      </div>
+
+      <div className="relative z-10 space-y-12">
         {/* Section Header */}
         <ScrollReveal direction="up" delay={0.05} className="flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div>

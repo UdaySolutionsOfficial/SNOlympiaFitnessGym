@@ -24,6 +24,13 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
       {/* Background Accent Beam */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[300px] bg-brand-volt/5 blur-[140px] pointer-events-none rounded-full" />
 
+      {/* Transparent Super-Typographic Background Watermark */}
+      <div className="absolute top-[22%] md:top-[25%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center pointer-events-none select-none overflow-hidden z-0">
+        <span className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter text-white/[0.04] whitespace-nowrap leading-none block">
+          NO SHORTCUTS
+        </span>
+      </div>
+
       <div className="max-w-7xl mx-auto relative z-10 space-y-12">
         {/* Kinetic Statement Lockup */}
         <ScrollReveal direction="up" className="text-center max-w-4xl mx-auto space-y-4">
