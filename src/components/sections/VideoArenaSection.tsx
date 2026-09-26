@@ -76,22 +76,6 @@ const GALLERY_VIDEOS: readonly GalleryVideoItem[] = [
     subtitle: 'High-intensity athletic conditioning across open turf',
     tag: 'METABOLIC ENGINE',
   },
-  {
-    id: 'men-7',
-    src: '/assets/videos/gallery/men/men-7.mp4',
-    category: 'men',
-    title: 'Overhead DB Shoulder Press',
-    subtitle: 'Strict deltoid hypertrophy with dumbbell rack arsenal',
-    tag: 'DELTOID POWER',
-  },
-  {
-    id: 'men-8',
-    src: '/assets/videos/gallery/men/men-8.mp4',
-    category: 'men',
-    title: 'Dual Cable Tricep Lockouts',
-    subtitle: 'Constant cable tension for horseshoe tricep development',
-    tag: 'CABLE PRECISION',
-  },
 
   // Women's Training Reels (from video assests/gallary videos/Women)
   {
@@ -133,6 +117,14 @@ const GALLERY_VIDEOS: readonly GalleryVideoItem[] = [
     title: 'High-Velocity Battle Ropes',
     subtitle: 'Cardiorespiratory stamina and upper body conditioning',
     tag: "WOMEN'S AGILITY",
+  },
+  {
+    id: 'women-6',
+    src: '/assets/videos/gallery/women/women-6.mp4',
+    category: 'women',
+    title: "Women's Progressive Resistance",
+    subtitle: 'Strict dumbbell form and compound tension control',
+    tag: "WOMEN'S RESISTANCE",
   },
 ];
 
