@@ -147,35 +147,124 @@ const GALLERY_VIDEOS: readonly GalleryVideoItem[] = [
  */
 export const VideoArenaSection: React.FC = () => {
   const [activeFilter, setActiveFilter] = useState<VideoCategory>('all');
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const [displayPos, setDisplayPos] = useState(0);
+  const [windowWidth, setWindowWidth] = useState(() => (typeof window !== 'undefined' ? window.innerWidth : 1200));
   const [modalVideo, setModalVideo] = useState<GalleryVideoItem | null>(null);
   const modalVideoRef = useRef<HTMLVideoElement | null>(null);
   const prefersReducedMotion = useReducedMotion();
 
-  // Drag interaction states
-  const [isDragging, setIsDragging] = useState(false);
-  const [dragStartX, setDragStartX] = useState(0);
-  const [dragDeltaX, setDragDeltaX] = useState(0);
+  // Animation & Physics Refs
+  const containerRef = useRef<HTMLDivElement | null>(null);
+  const targetPosRef = useRef(0);
+  const currentPosRef = useRef(0);
+  const rafRef = useRef<number | null>(null);
+  const snapTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  // Filter videos based on selection
+  // Drag Interaction Tracking
+  const isDraggingRef = useRef(false);
+  const dragStartXRef = useRef(0);
+  const dragStartPosRef = useRef(0);
+  const lastXRef = useRef(0);
+  const lastTimeRef = useRef(0);
+  const velocityXRef = useRef(0);
+
+  // Filtered Video Data
   const filteredVideos = GALLERY_VIDEOS.filter((v) => {
     if (activeFilter === 'all') return true;
     return v.category === activeFilter;
   });
+  const totalVideos = filteredVideos.length;
+  const activeCenterIndex = Math.max(0, Math.min(totalVideos - 1, Math.round(displayPos)));
 
-  // Reset index if out of bounds after filter change
+  // Responsive window resize listener
   useEffect(() => {
-    setCurrentIndex(0);
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize, { passive: true });
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // Smooth RAF Animation Loop with Organic Spring-Lerp
+  const startLoop = useCallback(() => {
+    if (rafRef.current !== null) return;
+
+    const tick = () => {
+      const diff = targetPosRef.current - currentPosRef.current;
+      if (Math.abs(diff) > 0.001) {
+        currentPosRef.current += diff * 0.16;
+        setDisplayPos(currentPosRef.current);
+        rafRef.current = requestAnimationFrame(tick);
+      } else {
+        currentPosRef.current = targetPosRef.current;
+        setDisplayPos(currentPosRef.current);
+        rafRef.current = null;
+      }
+    };
+
+    rafRef.current = requestAnimationFrame(tick);
+  }, []);
+
+  // Reset positions on category filter switch
+  useEffect(() => {
+    targetPosRef.current = 0;
+    currentPosRef.current = 0;
+    setDisplayPos(0);
+    if (snapTimeoutRef.current) clearTimeout(snapTimeoutRef.current);
+    if (rafRef.current) {
+      cancelAnimationFrame(rafRef.current);
+      rafRef.current = null;
+    }
   }, [activeFilter]);
 
-  // Navigate next/prev
+  // Natural Horizontal Wheel & Trackpad Gesture Scrolling
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+
+    const onWheel = (e: WheelEvent) => {
+      const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+      const isShift = e.shiftKey;
+
+      if (isHorizontal || isShift) {
+        e.preventDefault();
+        const delta = isHorizontal ? e.deltaX : e.deltaY;
+
+        // Fluid continuous sensitivity
+        const step = delta * 0.0032;
+        targetPosRef.current = Math.max(
+          -0.2,
+          Math.min(totalVideos - 0.8, targetPosRef.current + step)
+        );
+
+        if (snapTimeoutRef.current) clearTimeout(snapTimeoutRef.current);
+        snapTimeoutRef.current = setTimeout(() => {
+          targetPosRef.current = Math.max(
+            0,
+            Math.min(totalVideos - 1, Math.round(targetPosRef.current))
+          );
+          startLoop();
+        }, 180);
+
+        startLoop();
+      }
+    };
+
+    el.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      el.removeEventListener('wheel', onWheel);
+      if (snapTimeoutRef.current) clearTimeout(snapTimeoutRef.current);
+    };
+  }, [totalVideos, startLoop]);
+
+  // Arrow navigation
   const handlePrev = useCallback(() => {
-    setCurrentIndex((prev) => (prev > 0 ? prev - 1 : filteredVideos.length - 1));
-  }, [filteredVideos.length]);
+    targetPosRef.current = Math.max(0, Math.round(targetPosRef.current) - 1);
+    startLoop();
+  }, [startLoop]);
 
   const handleNext = useCallback(() => {
-    setCurrentIndex((prev) => (prev < filteredVideos.length - 1 ? prev + 1 : 0));
-  }, [filteredVideos.length]);
+    targetPosRef.current = Math.min(totalVideos - 1, Math.round(targetPosRef.current) + 1);
+    startLoop();
+  }, [totalVideos, startLoop]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -210,27 +299,74 @@ export const VideoArenaSection: React.FC = () => {
     }
   }, [modalVideo]);
 
-  // Pointer drag event handlers
+  // Pointer drag event handlers with 1:1 real-time tracking & throw inertia
   const handlePointerDown = (e: React.PointerEvent) => {
-    setIsDragging(true);
-    setDragStartX(e.clientX);
-    setDragDeltaX(0);
+    if (e.button !== 0) return;
+    isDraggingRef.current = true;
+    dragStartXRef.current = e.clientX;
+    dragStartPosRef.current = targetPosRef.current;
+    lastXRef.current = e.clientX;
+    lastTimeRef.current = performance.now();
+    velocityXRef.current = 0;
+
+    if (snapTimeoutRef.current) clearTimeout(snapTimeoutRef.current);
+    if (containerRef.current) {
+      containerRef.current.setPointerCapture(e.pointerId);
+    }
   };
 
   const handlePointerMove = (e: React.PointerEvent) => {
-    if (!isDragging) return;
-    setDragDeltaX(e.clientX - dragStartX);
+    if (!isDraggingRef.current) return;
+    const now = performance.now();
+    const dt = Math.max(1, now - lastTimeRef.current);
+    const dx = e.clientX - lastXRef.current;
+
+    velocityXRef.current = dx / dt;
+    lastXRef.current = e.clientX;
+    lastTimeRef.current = now;
+
+    const totalDeltaX = e.clientX - dragStartXRef.current;
+    const cardSpacing = windowWidth < 640 ? 210 : 260;
+
+    const newPos = dragStartPosRef.current - totalDeltaX / cardSpacing;
+    targetPosRef.current = Math.max(-0.25, Math.min(totalVideos - 0.75, newPos));
+    currentPosRef.current = targetPosRef.current;
+    setDisplayPos(currentPosRef.current);
   };
 
-  const handlePointerUp = () => {
-    if (!isDragging) return;
-    setIsDragging(false);
-    if (dragDeltaX > 50) {
-      handlePrev();
-    } else if (dragDeltaX < -50) {
-      handleNext();
+  const handlePointerUp = (e: React.PointerEvent) => {
+    if (!isDraggingRef.current) return;
+    isDraggingRef.current = false;
+
+    if (containerRef.current) {
+      try {
+        containerRef.current.releasePointerCapture(e.pointerId);
+      } catch {}
     }
-    setDragDeltaX(0);
+
+    const totalDeltaX = e.clientX - dragStartXRef.current;
+    if (Math.abs(totalDeltaX) >= 8) {
+      // Natural flick throwing with momentum
+      const flickImpulse = -velocityXRef.current * 1.6;
+      const projectedPos = targetPosRef.current + flickImpulse;
+      targetPosRef.current = Math.max(0, Math.min(totalVideos - 1, Math.round(projectedPos)));
+      startLoop();
+    }
+  };
+
+  const handleCardClick = (video: GalleryVideoItem, idx: number) => {
+    const wasDraggingDistance = Math.abs(lastXRef.current - dragStartXRef.current);
+    if (wasDraggingDistance > 10) return;
+
+    const offset = idx - currentPosRef.current;
+    if (Math.abs(offset) < 0.45) {
+      // Center card -> open popup with unmuted sound!
+      setModalVideo(video);
+    } else {
+      // Side card -> glide smoothly to center!
+      targetPosRef.current = idx;
+      startLoop();
+    }
   };
 
   return (
@@ -315,14 +451,15 @@ export const VideoArenaSection: React.FC = () => {
         </div>
 
         {/* ========================================================================= */}
-        {/* 3D CYLINDRICAL CURVED REELS RING                                         */}
+        {/* 3D CYLINDRICAL CURVED ACTION RING (CONTINUOUS PHYSICS ENGINE)              */}
         {/* ========================================================================= */}
         <div
+          ref={containerRef}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerLeave={handlePointerUp}
-          className="relative w-full h-[520px] sm:h-[580px] md:h-[620px] flex items-center justify-center [perspective:1400px] overflow-hidden cursor-grab active:cursor-grabbing"
+          className="relative w-full h-[520px] sm:h-[580px] md:h-[620px] flex items-center justify-center [perspective:1400px] overflow-hidden cursor-grab active:cursor-grabbing select-none"
           style={{ touchAction: 'pan-y' }}
         >
           {/* Subtle 3D Ring Stage Illumination */}
@@ -331,47 +468,30 @@ export const VideoArenaSection: React.FC = () => {
           {/* Cards Projection in Cylindrical Space */}
           <div className="relative w-full h-full flex items-center justify-center [transform-style:preserve-3d]">
             {filteredVideos.map((video, idx) => {
-              // Calculate circular offset relative to current center
-              let offset = idx - currentIndex;
-              const total = filteredVideos.length;
+              const offset = idx - displayPos;
 
-              // Wrap-around offset for circular continuity
-              if (offset > total / 2) offset -= total;
-              if (offset < -total / 2) offset += total;
+              // Hide cards outside active field of view
+              if (Math.abs(offset) > 3.6) return null;
 
-              // Hide cards too far from view
-              const isVisible = Math.abs(offset) <= 3;
-              if (!isVisible) return null;
-
-              // Cylindrical projection mathematics (Curling inward toward edges like animation effect.mp4)
-              // Each offset step turns by 16 degrees and steps backward in Z-space
+              const cardSpacing = windowWidth < 640 ? 210 : 260;
               const rotateY = offset * 18;
               const translateZ = -Math.abs(offset) * 65;
-              const translateX = offset * (window.innerWidth < 640 ? 210 : 255);
+              const translateX = offset * cardSpacing;
               const scale = Math.max(0.72, 1 - Math.abs(offset) * 0.08);
-              const opacity = Math.max(0.35, 1 - Math.abs(offset) * 0.22);
-              const zIndex = 50 - Math.abs(offset) * 10;
-              const isCenter = offset === 0;
+              const opacity = Math.max(0.25, 1 - Math.abs(offset) * 0.22);
+              const zIndex = Math.round(50 - Math.abs(offset) * 10);
+              const isCenter = Math.abs(offset) < 0.45;
 
               return (
                 <div
                   key={video.id}
-                  onClick={() => {
-                    if (isCenter) {
-                      setModalVideo(video);
-                    } else {
-                      setCurrentIndex(idx);
-                    }
-                  }}
+                  onClick={() => handleCardClick(video, idx)}
                   style={{
                     transform: `translateX(${translateX}px) translateZ(${translateZ}px) rotateY(${rotateY}deg) scale(${scale})`,
                     zIndex,
                     opacity,
-                    transition: isDragging
-                      ? 'none'
-                      : 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.5s ease-out, filter 0.5s ease-out',
                   }}
-                  className={`absolute w-56 sm:w-64 md:w-72 aspect-[9/16] rounded-2xl sm:rounded-3xl overflow-hidden border bg-[#0D0F14] transition-all cursor-pointer group shadow-[0_25px_60px_rgba(0,0,0,0.9)] ${
+                  className={`absolute w-56 sm:w-64 md:w-72 aspect-[9/16] rounded-2xl sm:rounded-3xl overflow-hidden border bg-[#0D0F14] cursor-pointer group shadow-[0_25px_60px_rgba(0,0,0,0.9)] select-none will-change-transform ${
                     isCenter
                       ? 'border-[#FF5E1E] shadow-[0_0_40px_rgba(255,94,30,0.5),0_25px_70px_rgba(0,0,0,0.95)] ring-2 ring-[#FF5E1E]/40'
                       : 'border-white/15 hover:border-white/40'
@@ -450,21 +570,56 @@ export const VideoArenaSection: React.FC = () => {
         </div>
 
         {/* ========================================================================= */}
-        {/* CAROUSEL PAGINATION DOTS & DRAG HINT                                      */}
+        {/* INTERACTIVE HORIZONTAL SCRUBBER & GESTURE CONTROLS                        */}
         {/* ========================================================================= */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 mt-6 px-4">
-          <span className="text-xs font-mono tracking-widest text-brand-text-muted uppercase">
-            DRAG TO EXPLORE &bull; CLICK ANY REEL TO EXPAND WITH SOUND
-          </span>
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-5 mt-8 px-4 max-w-5xl mx-auto">
+          {/* Scroll & gesture hint */}
+          <div className="flex items-center gap-2 text-xs font-mono tracking-wider text-brand-text-muted uppercase">
+            <span className="w-2 h-2 rounded-full bg-[#FF5E1E] animate-ping" />
+            <span>SCROLL HORIZONTALLY &bull; TRACKPAD SWIPE &bull; DRAG TO EXPLORE</span>
+          </div>
 
+          {/* Interactive Scrub Track */}
+          <div className="flex items-center gap-3 w-full sm:w-80">
+            <span className="text-[11px] font-mono text-[#FF5E1E] font-bold">
+              0{activeCenterIndex + 1}
+            </span>
+            <div
+              className="relative flex-1 h-2.5 bg-white/10 rounded-full overflow-hidden cursor-pointer backdrop-blur-md border border-white/10 hover:border-[#FF5E1E]/50 transition-colors"
+              onClick={(e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const ratio = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+                targetPosRef.current = Math.round(ratio * (totalVideos - 1));
+                startLoop();
+              }}
+            >
+              <div
+                className="absolute top-0 bottom-0 left-0 bg-gradient-to-r from-[#FF5E1E] via-[#FF7538] to-[#FFA034] rounded-full shadow-[0_0_12px_rgba(255,94,30,0.8)]"
+                style={{
+                  width: `${Math.min(100, Math.max(10, ((displayPos + 1) / totalVideos) * 100))}%`,
+                  transition: 'width 0.1s linear',
+                }}
+              />
+            </div>
+            <span className="text-[11px] font-mono text-white/50 font-bold">
+              0{totalVideos}
+            </span>
+          </div>
+
+          {/* Pagination Dots Indicator */}
           <div className="flex items-center gap-1.5">
             {filteredVideos.map((_, i) => (
               <button
                 key={i}
-                onClick={() => setCurrentIndex(i)}
-                aria-label={`Go to slide ${i + 1}`}
+                onClick={() => {
+                  targetPosRef.current = i;
+                  startLoop();
+                }}
+                aria-label={`Jump to video ${i + 1}`}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
-                  currentIndex === i ? 'w-8 bg-[#FF5E1E] shadow-[0_0_10px_#FF5E1E]' : 'w-2 bg-white/20 hover:bg-white/40'
+                  activeCenterIndex === i
+                    ? 'w-7 bg-[#FF5E1E] shadow-[0_0_10px_#FF5E1E]'
+                    : 'w-2 bg-white/20 hover:bg-white/40'
                 }`}
               />
             ))}
