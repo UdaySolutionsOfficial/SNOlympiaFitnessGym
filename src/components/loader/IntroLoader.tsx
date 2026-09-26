@@ -56,71 +56,101 @@ const CRITICAL_PRELOAD_ASSETS = [
 export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
   const prefersReducedMotion = useReducedMotion();
   const [currentQuoteIndex, setCurrentQuoteIndex] = useState(0);
-  const [progress, setProgress] = useState(0);
+  const [progress, setProgress] = useState(12);
   const [isExiting, setIsExiting] = useState(false);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isReadyToComplete, setIsReadyToComplete] = useState(false);
   const assetsLoadedCount = useRef(0);
+  const startTimeRef = useRef(Date.now());
 
-  const QUOTE_DURATION_MS = 4500; // 4.5 seconds per quote
-  const TOTAL_DURATION_MS = FITNESS_QUOTES.length * QUOTE_DURATION_MS; // 18 seconds total
-
-  // Synchronized elapsed-time progression for quotes and neon progress bar
+  // 1. Motivational quote rotation:
+  // Cycles every 3.8s in an engaging loop while loading assets on slow connections.
+  // When loading finishes quickly, the user isn't held back and enters the site promptly.
   useEffect(() => {
-    const startTime = Date.now();
+    const quoteInterval = setInterval(() => {
+      setCurrentQuoteIndex((prev) => (prev + 1) % FITNESS_QUOTES.length);
+    }, 3800);
 
-    const progressInterval = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const currentPct = Math.min(100, (elapsed / TOTAL_DURATION_MS) * 100);
-      setProgress(currentPct);
-
-      const activeIdx = Math.min(
-        FITNESS_QUOTES.length - 1,
-        Math.floor(elapsed / QUOTE_DURATION_MS)
-      );
-      setCurrentQuoteIndex(activeIdx);
-
-      if (elapsed >= TOTAL_DURATION_MS) {
-        clearInterval(progressInterval);
-      }
-    }, 35);
-
-    return () => clearInterval(progressInterval);
+    return () => clearInterval(quoteInterval);
   }, []);
 
-  // Preload real assets in the background while the loader is active
+  // 2. Preload real assets and check document readiness:
   useEffect(() => {
     let isMounted = true;
     const totalAssets = CRITICAL_PRELOAD_ASSETS.length;
 
+    const checkAllLoaded = () => {
+      if (!isMounted) return;
+      assetsLoadedCount.current += 1;
+      if (assetsLoadedCount.current >= totalAssets) {
+        setIsReadyToComplete(true);
+      }
+    };
+
     CRITICAL_PRELOAD_ASSETS.forEach((src) => {
       const img = new Image();
       img.src = src;
-      const onAssetDone = () => {
-        if (!isMounted) return;
-        assetsLoadedCount.current += 1;
-        if (assetsLoadedCount.current >= totalAssets) {
-          setIsLoaded(true);
-        }
-      };
-      img.onload = onAssetDone;
-      img.onerror = onAssetDone;
+      img.onload = checkAllLoaded;
+      img.onerror = checkAllLoaded;
     });
 
     if (typeof document !== 'undefined' && 'fonts' in document) {
-      document.fonts.ready.catch(() => {});
+      document.fonts.ready.then(() => {}).catch(() => {});
     }
+
+    // Safety timeout: if any network asset hangs or connection is slow,
+    // guarantee release after 4.5 seconds maximum so the user is never stuck
+    const safetyTimeout = setTimeout(() => {
+      if (isMounted) setIsReadyToComplete(true);
+    }, 4500);
 
     return () => {
       isMounted = false;
+      clearTimeout(safetyTimeout);
     };
   }, []);
 
-  // When progress reaches 100%, trigger smooth exit sequence
+  // 3. Progressive Neon Bar Engine:
+  // Climbs naturally during loading. Once assets are verified ready (with a subtle 1.4s minimum
+  // aesthetic display to avoid a 50ms strobe on cached reloads), it surges to 100% and opens the site.
+  useEffect(() => {
+    const MIN_LOAD_DISPLAY_MS = 1400; // 1.4s tasteful minimum showcase
+
+    const progressInterval = setInterval(() => {
+      const elapsed = Date.now() - startTimeRef.current;
+      const canFinish = isReadyToComplete && elapsed >= MIN_LOAD_DISPLAY_MS;
+
+      setProgress((prev) => {
+        if (prev >= 100) {
+          clearInterval(progressInterval);
+          return 100;
+        }
+
+        if (canFinish) {
+          // Rapid, satisfying surge to 100% once real assets are ready
+          return Math.min(100, prev + 4.8);
+        }
+
+        // Natural easing progress while waiting for assets
+        if (prev < 45) {
+          return prev + 1.8;
+        } else if (prev < 72) {
+          return prev + 0.85;
+        } else if (prev < 88) {
+          return prev + 0.3;
+        }
+        return prev;
+      });
+    }, 30);
+
+    return () => clearInterval(progressInterval);
+  }, [isReadyToComplete]);
+
+  // 4. When progress reaches 100%, trigger swift exit sequence
   useEffect(() => {
     if (progress >= 100 && !isExiting) {
       const exitTimer = setTimeout(() => {
         handleEnterSite();
-      }, 600);
+      }, 300);
 
       return () => clearTimeout(exitTimer);
     }
@@ -131,10 +161,10 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
     setIsExiting(true);
     setTimeout(() => {
       onComplete();
-    }, 800);
+    }, 500);
   };
 
-  // Keyboard shortcut listener (Space, Enter, Escape)
+  // Keyboard shortcut listener (Space, Enter, Escape) for instant entry
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === ' ' || e.key === 'Enter' || e.key === 'Escape') {
