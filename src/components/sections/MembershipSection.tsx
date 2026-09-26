@@ -44,7 +44,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
         </ScrollReveal>
 
         {/* 3 Tier Cards Grid: 1 Month (Left), 12 Months Recommended (Center), 6 Months (Right) */}
-        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch pt-4">
+        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch pt-8 sm:pt-10">
           {plans.map((plan: MembershipPlan) => {
             const isFeatured = plan.durationKey === 'annual';
 
@@ -52,9 +52,19 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
               <StaggerItem
                 key={plan.id}
                 className={`relative flex flex-col justify-between ${
-                  isFeatured ? 'md:-translate-y-3.5 lg:-translate-y-4 z-20' : 'z-10'
+                  isFeatured ? 'md:-translate-y-4 lg:-translate-y-5 z-20' : 'z-10'
                 }`}
               >
+                {/* Outer Floating Highlight Badge for Featured Card (12 Months Annual) - Sits on outer top side */}
+                {isFeatured && (
+                  <div className="absolute -top-3.5 sm:-top-4 left-1/2 -translate-x-1/2 z-30 pointer-events-none">
+                    <div className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-full bg-gradient-to-r from-amber-400 via-[#FF7538] to-[#FF5E1E] text-brand-dark font-mono text-[11px] sm:text-xs font-black tracking-widest uppercase shadow-[0_0_25px_rgba(255,94,30,0.9)] border border-amber-200/50">
+                      <Flame className="w-3.5 h-3.5 fill-brand-dark animate-pulse" />
+                      <span>RECOMMENDED • BEST VALUE</span>
+                    </div>
+                  </div>
+                )}
+
                 {/* Outer Looping Glowing Edge Border Shell */}
                 <div
                   className={`group/card relative w-full h-full rounded-3xl p-[2px] overflow-hidden transition-all duration-500 flex flex-col justify-between ${
@@ -115,22 +125,12 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
                         : 'bg-[#0C0E12] group-hover/card:bg-[#10131A]'
                     }`}
                   >
-                    {/* Top Floating Highlight Pill for Featured Card (12 Months Annual) */}
-                    {isFeatured && (
-                      <div className="absolute top-0 inset-x-0 flex justify-center">
-                        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-b-xl bg-gradient-to-r from-amber-400 via-[#FF7538] to-[#FF5E1E] text-brand-dark font-mono text-[10px] sm:text-[11px] font-black tracking-widest uppercase shadow-[0_0_20px_rgba(255,94,30,0.8)]">
-                          <Flame className="w-3.5 h-3.5 fill-brand-dark animate-pulse" />
-                          <span>RECOMMENDED • BEST VALUE</span>
-                        </div>
-                      </div>
-                    )}
-
                     {/* Top Radial Flare on hover */}
                     <div className="absolute top-0 right-0 w-36 h-36 bg-brand-volt/10 rounded-full blur-2xl opacity-0 group-hover/card:opacity-100 transition-opacity duration-500 pointer-events-none" />
 
                     <div>
                       {/* Duration & Access Badge */}
-                      <div className={`flex items-center justify-between text-xs font-mono mb-3 ${isFeatured ? 'pt-3' : ''}`}>
+                      <div className="flex items-center justify-between text-xs font-mono mb-3">
                         <span className="text-brand-text-muted uppercase font-bold tracking-wider">
                           {plan.billingCycle}
                         </span>
@@ -150,21 +150,30 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
                         {plan.tagline}
                       </p>
 
-                      {/* Admission Rate State Banner with Neon Accent */}
-                      <div className={`p-4 rounded-xl mb-6 border transition-all ${
+                      {/* Prominent High-Contrast Pricing Display */}
+                      <div className={`p-4 sm:p-5 rounded-2xl mb-6 border transition-all ${
                         isFeatured
-                          ? 'bg-brand-surface/90 border-brand-volt/40 shadow-md'
-                          : 'bg-brand-dark/90 border-brand-border/60 group-hover/card:border-brand-border'
+                          ? 'bg-gradient-to-br from-brand-surface/90 to-brand-volt/10 border-brand-volt/50 shadow-[0_0_30px_rgba(255,94,30,0.15)]'
+                          : 'bg-brand-dark/90 border-brand-border/70 group-hover/card:border-brand-border'
                       }`}>
-                        <div className="text-[10px] font-mono uppercase tracking-wider text-brand-text-muted flex items-center justify-between">
-                          <span>Admission Rate</span>
-                          <Clock className="w-3 h-3 text-brand-volt" />
+                        <div className="flex items-baseline justify-between gap-2">
+                          <div className="flex items-baseline gap-1">
+                            <span className="text-3xl sm:text-4xl font-black text-white font-mono tracking-tight">
+                              {plan.price}
+                            </span>
+                            <span className="text-base sm:text-lg font-bold text-brand-volt font-mono">
+                              /-
+                            </span>
+                          </div>
+                          {plan.savings && (
+                            <span className="px-2.5 py-1 rounded-md bg-brand-volt/20 border border-brand-volt/40 text-brand-volt text-[10px] sm:text-[11px] font-mono font-black uppercase tracking-wider animate-pulse">
+                              {plan.savings}
+                            </span>
+                          )}
                         </div>
-                        <div className="text-sm sm:text-base font-black text-brand-volt mt-1 font-mono tracking-tight">
-                          {plan.priceNote.value}
-                        </div>
-                        <div className="text-[10px] text-brand-text-muted mt-1 leading-snug">
-                          Shift schedules & batch admissions confirmed directly at training desk.
+                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5 text-[11px] font-mono text-brand-text-muted">
+                          <span className="uppercase tracking-wider">{plan.billingCycle}</span>
+                          <span className="text-brand-text-secondary">{plan.breakdown}</span>
                         </div>
                       </div>
 
@@ -205,19 +214,21 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
           })}
         </StaggerContainer>
 
-        {/* Content Truth Guarantee Footer */}
+        {/* Content Truth Guarantee Footer Bar - Sleek capsule matching reference image */}
         <ScrollReveal direction="up" delay={0.15}>
-          <div className="mt-14 p-4.5 rounded-2xl bg-brand-surface/40 border border-brand-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-brand-text-muted shadow-lg">
-            <div className="flex items-center gap-2.5">
-              <Shield className="w-4 h-4 text-brand-volt shrink-0" />
-              <span>NO HIDDEN RENEWAL SURCHARGES • 100% DIRECT DESK TRANSPARENCY</span>
+          <div className="mt-12 sm:mt-16 px-6 py-3.5 sm:py-4 rounded-xl sm:rounded-2xl bg-[#0C0E14]/80 border border-brand-border/70 backdrop-blur-md flex flex-col sm:flex-row items-center justify-between gap-3 text-xs font-mono text-brand-text-muted shadow-lg">
+            <div className="flex items-center gap-2.5 text-brand-text-secondary">
+              <Shield className="w-4 h-4 text-emerald-400 shrink-0" />
+              <span className="tracking-wide">
+                100% DIRECT DESK TRANSPARENCY • NO HIDDEN RENEWAL SURCHARGES
+              </span>
             </div>
             <a
               href={`tel:${SITE_CONTENT.brand.contact.phone.value}`}
-              className="inline-flex items-center gap-1.5 text-brand-volt hover:underline font-bold"
+              className="inline-flex items-center gap-1.5 text-brand-volt hover:text-amber-300 font-bold transition-colors group/inq"
             >
               <span>Direct Inquiry: {SITE_CONTENT.brand.contact.phoneDisplay.value}</span>
-              <ArrowRight className="w-3.5 h-3.5" />
+              <ArrowRight className="w-3.5 h-3.5 group-hover/inq:translate-x-1 transition-transform" />
             </a>
           </div>
         </ScrollReveal>

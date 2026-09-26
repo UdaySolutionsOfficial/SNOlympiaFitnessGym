@@ -37,6 +37,10 @@ export interface MembershipPlan {
   tierName: string;
   billingCycle: string;
   durationKey: 'monthly' | 'annual' | 'half-year' | 'quarterly';
+  price: string;
+  period: string;
+  savings?: string;
+  breakdown: string;
   priceNote: VerifiedField<string>;
   badge?: string;
   tagline?: string;
@@ -284,13 +288,16 @@ export const SITE_CONTENT = {
     {
       id: '1-month-pass',
       tierName: '1 Month Commitment',
-      billingCycle: '1 Month',
+      billingCycle: '1 Month Pass',
       durationKey: 'monthly',
+      price: '₹1,000',
+      period: '/- (1 Month)',
+      breakdown: 'Standard monthly membership',
       tagline: 'Flexible starter month with zero long-term commitment',
       priceNote: createVerifiedField(
-        'Inquire for Monthly Batch Rates',
-        'TO_BE_CONFIRMED',
-        'Pricing not publicly listed; inquiries directed to gym phone'
+        '₹1,000/- per Month',
+        'VERIFIED',
+        'Direct counter admission: ₹1,000/- per month'
       ),
       features: [
         'Full gym floor & commercial free weights access',
@@ -305,12 +312,16 @@ export const SITE_CONTENT = {
       tierName: '12 Months [Annual]',
       billingCycle: '12 Months [Annual]',
       durationKey: 'annual',
+      price: '₹10,000',
+      period: '/- (Annual)',
+      savings: 'SAVE ₹2,000',
+      breakdown: 'Just ₹833 / month equivalent',
       badge: 'RECOMMENDED • BEST VALUE',
       tagline: 'Complete 365-day transformation with maximum savings',
       priceNote: createVerifiedField(
-        'Maximum Long-Term Value',
-        'TO_BE_CONFIRMED',
-        'Annual package rates pending confirmation'
+        '₹10,000/- for 12 Months',
+        'VERIFIED',
+        'Annual package: ₹10,000/- (Save ₹2,000 • ₹833/mo)'
       ),
       features: [
         'Complete 365-day unhindered gym floor access',
@@ -324,13 +335,17 @@ export const SITE_CONTENT = {
     {
       id: '6-months-pass',
       tierName: '6 Months Transformation',
-      billingCycle: '6 Months',
+      billingCycle: '6 Months Pass',
       durationKey: 'half-year',
+      price: '₹5,500',
+      period: '/- (6 Months)',
+      savings: 'SAVE ₹500',
+      breakdown: 'Just ₹916 / month equivalent',
       tagline: 'Dedicated seasonal muscle hypertrophy & conditioning',
       priceNote: createVerifiedField(
-        'Popular Semi-Annual Tier',
-        'TO_BE_CONFIRMED',
-        'Pricing to be confirmed with gym management'
+        '₹5,500/- for 6 Months',
+        'VERIFIED',
+        'Semi-annual package: ₹5,500/- (Save ₹500 • ₹916/mo)'
       ),
       features: [
         'Full 180 days uninterrupted floor & weights access',
