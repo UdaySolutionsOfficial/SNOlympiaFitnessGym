@@ -19,7 +19,7 @@ export const EndPhaseTransition: React.FC = () => {
         {/* Master Invitation Headline */}
         <h2 className="text-3xl sm:text-5xl md:text-6xl font-black uppercase tracking-tight text-white leading-tight">
           READY TO EXPERIENCE <br />
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt via-emerald-300 to-brand-volt">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt via-amber-300 to-brand-volt">
             SN OLYMPIA IN PERSON?
           </span>
         </h2>

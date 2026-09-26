@@ -31,7 +31,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenEnquiry })
               </div>
               <h2 className="text-3xl sm:text-5xl lg:text-6xl font-black uppercase tracking-tight text-white leading-[1.02]">
                 TALK DIRECTLY TO THE{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt to-emerald-400">
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt to-amber-400">
                   OLYMPIA TEAM.
                 </span>
               </h2>
@@ -59,7 +59,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenEnquiry })
                 </div>
               </div>
               <div className="text-[11px] font-mono text-brand-text-muted flex items-center gap-1.5 pt-1">
-                <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                <ShieldCheck className="w-3.5 h-3.5 text-brand-volt" />
                 <span>Sunday: Special Morning Recovery / Conditioning Session</span>
               </div>
             </div>

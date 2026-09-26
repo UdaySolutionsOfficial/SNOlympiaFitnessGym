@@ -74,7 +74,7 @@ export const StickyMobileBar: React.FC<StickyMobileBarProps> = ({
             <button
               onClick={onJoinClick}
               aria-label="Join Olympia Fitness"
-              className="flex-[1.4] py-2.5 px-3 rounded-xl bg-brand-volt text-brand-dark text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1 shadow-glow-volt active:scale-95 transition-transform"
+              className="flex-[1.4] py-2.5 px-3 rounded-xl bg-brand-volt text-white text-xs font-black uppercase tracking-wider flex items-center justify-center gap-1 shadow-glow-volt active:scale-95 transition-transform"
             >
               <span>JOIN NOW</span>
               <ArrowRight className="w-3.5 h-3.5" />

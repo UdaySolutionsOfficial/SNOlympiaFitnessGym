@@ -30,7 +30,7 @@ export const MainFooter: React.FC = () => {
             <p className="text-xs sm:text-sm text-brand-text-secondary leading-relaxed font-light">
               Yemmiganur’s premier unisex strength and conditioning destination. Built on disciplined biomechanics, heavy iron, and an ego-free training environment.
             </p>
-            <div className="pt-2 flex items-center gap-2 text-xs font-mono text-emerald-400">
+            <div className="pt-2 flex items-center gap-2 text-xs font-mono text-brand-volt">
               <ShieldCheck className="w-4 h-4" />
               <span>5.0★ Verified Community Trust Rating</span>
             </div>

@@ -30,7 +30,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onAskQuestion }) => {
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-white leading-[1.08]">
               EVERY DETAIL,{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt to-emerald-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt to-amber-400">
                 CLARIFIED.
               </span>
             </h2>
@@ -101,7 +101,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onAskQuestion }) => {
                     >
                       <div className="px-5 sm:px-6 pb-6 pt-1 text-sm sm:text-base text-brand-text-secondary leading-relaxed font-light border-t border-brand-border/40 mt-1">
                         <p>{item.answer}</p>
-                        <div className="mt-3 flex items-center gap-1.5 text-[11px] font-mono text-emerald-400">
+                        <div className="mt-3 flex items-center gap-1.5 text-[11px] font-mono text-brand-volt">
                           <CheckCircle2 className="w-3.5 h-3.5" />
                           <span>{item.verification.note || 'Verified Operational Protocol'}</span>
                         </div>

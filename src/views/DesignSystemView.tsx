@@ -100,10 +100,10 @@ export const DesignSystemView: React.FC = () => {
                 </div>
               </div>
 
-              <div className="p-4 rounded-xl bg-brand-volt text-brand-dark border border-brand-volt flex flex-col justify-between h-32 shadow-glow-volt">
-                <span className="text-xs font-mono font-bold">#CCFF00</span>
+              <div className="p-4 rounded-xl bg-brand-volt text-white border border-brand-volt flex flex-col justify-between h-32 shadow-glow-volt">
+                <span className="text-xs font-mono font-bold">#FF5E1E</span>
                 <div>
-                  <span className="block text-xs font-black uppercase">Athletic Volt</span>
+                  <span className="block text-xs font-black uppercase">Athletic Orange</span>
                   <span className="text-[10px] font-semibold opacity-80">--color-accent-primary</span>
                 </div>
               </div>

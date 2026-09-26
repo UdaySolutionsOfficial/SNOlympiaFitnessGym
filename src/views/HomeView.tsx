@@ -93,16 +93,7 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
         }}
       />
 
-      {/* 3. Floating Design System QC Switcher */}
-      <div className="fixed bottom-4 right-4 z-[40]">
-        <button
-          onClick={onOpenDesignSystem}
-          className="flex items-center gap-2 px-3.5 py-2 rounded-full bg-brand-surface/90 backdrop-blur-xl border border-brand-volt/40 text-xs font-bold uppercase tracking-wider text-brand-volt shadow-glow-volt hover:bg-brand-volt hover:text-brand-dark transition-all"
-        >
-          <Layers className="w-3.5 h-3.5" />
-          <span>Design System QC</span>
-        </button>
-      </div>
+
 
       {/* 4. Master Narrative Flow */}
       <main>

@@ -49,7 +49,7 @@ export const FinalCTASection: React.FC<FinalCTASectionProps> = ({ onJoinClick })
           className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase tracking-tight text-white leading-[0.94]"
         >
           FORGE YOUR PROGRESS.{' '}
-          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt via-emerald-300 to-brand-volt">
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt via-amber-300 to-brand-volt">
             START TODAY.
           </span>
         </motion.h2>

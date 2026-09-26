@@ -39,7 +39,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-white leading-[1.08]">
               CHOOSE YOUR{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt to-emerald-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt to-amber-400">
                 COMMITMENT.
               </span>
             </h2>
@@ -179,7 +179,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
         {/* Content Truth Guarantee Footer */}
         <div className="mt-12 p-4 rounded-xl bg-brand-surface/40 border border-brand-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-brand-text-muted">
           <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-emerald-400" />
+            <Shield className="w-4 h-4 text-brand-volt" />
             <span>NO HIDDEN RENEWAL SURCHARGES • DIRECT DESK TRANSPARENCY</span>
           </div>
           <a

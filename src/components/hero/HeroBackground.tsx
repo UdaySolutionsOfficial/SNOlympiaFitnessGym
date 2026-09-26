@@ -71,7 +71,7 @@ export const HeroBackground: React.FC<HeroBackgroundProps> = ({ className }) => 
       for (let i = -5; i <= 5; i++) {
         const spreadX = originX + i * (canvas.width * 0.18);
         const grad = ctx.createLinearGradient(originX, horizonY, spreadX, canvas.height);
-        grad.addColorStop(0, 'rgba(204, 255, 0, 0.04)');
+        grad.addColorStop(0, 'rgba(255, 94, 30, 0.08)');
         grad.addColorStop(0.7, 'rgba(255, 255, 255, 0.02)');
         grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
@@ -99,7 +99,7 @@ export const HeroBackground: React.FC<HeroBackgroundProps> = ({ className }) => 
         ctx.beginPath();
         ctx.arc(p.x, p.y, p.radius, 0, Math.PI * 2);
         ctx.fillStyle = p.isVolt
-          ? `rgba(204, 255, 0, ${p.alpha * 0.8})`
+          ? `rgba(255, 94, 30, ${p.alpha * 0.9})`
           : `rgba(244, 246, 248, ${p.alpha * 0.5})`;
         ctx.fill();
       });

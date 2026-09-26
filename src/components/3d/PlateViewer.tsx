@@ -52,7 +52,7 @@ export const PlateViewer: React.FC<PlateViewerProps> = ({
       const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
       scene.add(ambientLight);
 
-      const keyLight = new THREE.DirectionalLight(0xccff00, 1.8); // Volt rim light
+      const keyLight = new THREE.DirectionalLight(0xff5e1e, 2.0); // Orange rim light
       keyLight.position.set(3, 4, 3);
       scene.add(keyLight);
 

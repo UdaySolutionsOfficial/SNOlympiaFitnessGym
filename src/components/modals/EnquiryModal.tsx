@@ -173,7 +173,7 @@ export const EnquiryModal: React.FC<EnquiryModalProps> = ({
           {/* Success State */}
           {status === 'success' ? (
             <div className="py-6 space-y-6 text-center">
-              <div className="w-16 h-16 rounded-full bg-emerald-500/10 border border-emerald-500/30 flex items-center justify-center mx-auto text-emerald-400">
+              <div className="w-16 h-16 rounded-full bg-brand-volt/10 border border-brand-volt/30 flex items-center justify-center mx-auto text-brand-volt">
                 <CheckCircle2 className="w-8 h-8" />
               </div>
               <div className="space-y-2">

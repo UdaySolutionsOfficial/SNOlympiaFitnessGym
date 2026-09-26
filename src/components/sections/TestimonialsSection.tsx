@@ -21,7 +21,7 @@ export const TestimonialsSection: React.FC = () => {
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-white leading-[1.08]">
               5.0★ RATED BY{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt to-emerald-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt to-amber-400">
                 YEMMIGANUR ATHLETES.
               </span>
             </h2>
@@ -78,7 +78,7 @@ export const TestimonialsSection: React.FC = () => {
                 </div>
 
                 <div className="flex items-center gap-1.5 px-2.5 py-1 rounded bg-brand-charcoal text-[11px] font-mono text-brand-text-muted border border-brand-border/60">
-                  <ShieldCheck className="w-3.5 h-3.5 text-emerald-400" />
+                  <ShieldCheck className="w-3.5 h-3.5 text-brand-volt" />
                   <span>{test.source}</span>
                 </div>
               </div>

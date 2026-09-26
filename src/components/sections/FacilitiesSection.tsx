@@ -97,7 +97,7 @@ export const FacilitiesSection: React.FC = () => {
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-white leading-[1.08]">
             BUILT FOR SERIOUS LOADS.{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt to-emerald-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt to-amber-400">
               COMMERCIAL GRADE.
             </span>
           </h2>
@@ -143,7 +143,7 @@ export const FacilitiesSection: React.FC = () => {
                 <h3 className="text-xl sm:text-2xl font-black uppercase text-white tracking-tight group-hover:text-brand-volt transition-colors mb-2">
                   {zone.title}
                 </h3>
-                <p className="text-xs font-mono text-emerald-400 mb-3 font-semibold">
+                <p className="text-xs font-mono text-brand-volt mb-3 font-semibold">
                   {zone.tagline}
                 </p>
                 <p className="text-sm text-brand-text-secondary leading-relaxed mb-6 font-light">
@@ -198,7 +198,7 @@ export const FacilitiesSection: React.FC = () => {
                 <h3 className="text-xl sm:text-2xl font-black uppercase text-white tracking-tight mb-2">
                   {zone.title}
                 </h3>
-                <p className="text-xs font-mono text-emerald-400 mb-3 font-semibold">
+                <p className="text-xs font-mono text-brand-volt mb-3 font-semibold">
                   {zone.tagline}
                 </p>
                 <p className="text-sm text-brand-text-secondary leading-relaxed mb-6 font-light">
@@ -232,7 +232,7 @@ export const FacilitiesSection: React.FC = () => {
         {/* Floor Cleanliness & Safety Badge */}
         <div className="mt-12 p-4 rounded-xl bg-brand-surface/40 border border-brand-border/60 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-brand-text-muted">
           <div className="flex items-center gap-2">
-            <Shield className="w-4 h-4 text-emerald-400" />
+            <Shield className="w-4 h-4 text-brand-volt" />
             <span>DAILY RE-RACKING & HYGIENE PROTOCOLS STRICTLY ENFORCED</span>
           </div>
           <span className="text-brand-text-secondary">Timmappa Colony, Yemmiganur</span>

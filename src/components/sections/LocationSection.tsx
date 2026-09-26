@@ -24,7 +24,7 @@ export const LocationSection: React.FC = () => {
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-white leading-[1.08]">
             TRAIN AT{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt to-emerald-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt to-amber-400">
               TIMMAPPA COLONY.
             </span>
           </h2>
@@ -64,7 +64,7 @@ export const LocationSection: React.FC = () => {
                   <span>Two-wheeler & vehicle parking space available outside</span>
                 </div>
                 <div className="flex items-center gap-2 text-brand-text-primary">
-                  <ShieldCheck className="w-4 h-4 text-emerald-400 shrink-0" />
+                  <ShieldCheck className="w-4 h-4 text-brand-volt shrink-0" />
                   <span>Secure, well-lit street entrance for evening shifts</span>
                 </div>
               </div>
@@ -76,7 +76,7 @@ export const LocationSection: React.FC = () => {
                 href={address.googleShareUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-4 px-6 rounded-xl bg-brand-volt text-brand-dark font-black text-xs uppercase tracking-widest hover:bg-white hover:shadow-glow-volt transition-all flex items-center justify-center gap-2 shadow-lg"
+                className="w-full py-4 px-6 rounded-xl bg-brand-volt text-white font-black text-xs uppercase tracking-widest hover:bg-brand-volt-hover hover:shadow-glow-volt transition-all flex items-center justify-center gap-2 shadow-lg"
               >
                 <Navigation className="w-4 h-4" />
                 <span>Get Driving Directions</span>
@@ -93,7 +93,7 @@ export const LocationSection: React.FC = () => {
             {/* Top Map Bar */}
             <div className="px-5 py-3 bg-brand-surface border-b border-brand-border/60 flex items-center justify-between text-xs font-mono text-brand-text-secondary z-10">
               <div className="flex items-center gap-2">
-                <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-brand-volt animate-pulse" />
                 <span>YEMMIGANUR GEOGRAPHICAL RADAR</span>
               </div>
               <span className="text-brand-volt">15.7725° N, 77.4850° E</span>

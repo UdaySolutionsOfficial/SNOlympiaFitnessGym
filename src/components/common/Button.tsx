@@ -57,8 +57,8 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
 
     const variantStyles: Record<ButtonVariant, string> = {
       primary: cn(
-        'bg-brand-volt text-brand-dark hover:bg-brand-volt-hover active:bg-brand-volt-active',
-        'shadow-[0_0_20px_rgba(204,255,0,0.25)] hover:shadow-[0_0_30px_rgba(204,255,0,0.4)]',
+        'bg-brand-volt text-white hover:bg-brand-volt-hover active:bg-brand-volt-active',
+        'shadow-[0_0_20px_rgba(255,94,30,0.35)] hover:shadow-[0_0_30px_rgba(255,94,30,0.55)]',
         'active:scale-[0.98]'
       ),
       secondary: cn(

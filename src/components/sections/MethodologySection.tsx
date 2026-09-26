@@ -101,7 +101,7 @@ export const MethodologySection: React.FC = () => {
           </div>
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-white leading-[1.08]">
             ENGINEERED PROGRESSION.{' '}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt to-emerald-400">
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt to-amber-400">
               NOT GUESSWORK.
             </span>
           </h2>
@@ -130,7 +130,7 @@ export const MethodologySection: React.FC = () => {
                 {isActive && (
                   <motion.div
                     layoutId="activeMethodTab"
-                    className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-volt to-emerald-400"
+                    className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-brand-volt to-amber-400"
                     transition={{ type: 'spring', stiffness: 380, damping: 30 }}
                   />
                 )}

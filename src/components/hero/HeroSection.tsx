@@ -4,9 +4,8 @@ import { HeroVideoCard } from './HeroVideoCard';
 import { HeroCoachesBadge } from './HeroCoachesBadge';
 import { PlateViewer } from '../3d/PlateViewer';
 import { GlassAiButton } from '../../shaders/glass-ai-button/GlassAiButton';
-import '../../shaders/threeui.css';
 import { ASSET_MANIFEST } from '../../data/assets';
-import { ArrowUpRight, ChevronDown, Sparkles } from 'lucide-react';
+import { ChevronDown, Sparkles } from 'lucide-react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 export interface HeroSectionProps {
@@ -87,41 +86,25 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-center min-h-[580px] sm:min-h-[660px] lg:min-h-[720px] p-6 sm:p-10 lg:p-14">
           
           {/* ========================================================================= */}
-          {/* LEFT COLUMN: "Get Fit", Glassmorphic Card, Buttons & 20 Active Coaches    */}
+          {/* LEFT COLUMN: "Get Fit", Single ThreeUI GlassAiButton & 20 Active Coaches  */}
           {/* ========================================================================= */}
-          <div className="lg:col-span-5 flex flex-col justify-between h-full space-y-6">
+          <div className="lg:col-span-5 flex flex-col justify-between h-full space-y-8">
             <div>
               {/* Giant "Get Fit" Headline */}
               <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black uppercase text-white tracking-tight leading-[0.92] drop-shadow-lg select-none">
                 Get <span className="text-white">Fit</span>
               </h1>
 
-              {/* Glassmorphic Description Card */}
-              <div className="mt-5 p-5 sm:p-6 rounded-2xl bg-black/45 backdrop-blur-xl border border-white/10 shadow-2xl max-w-sm sm:max-w-md">
-                <p className="text-xs sm:text-sm text-brand-text-secondary leading-relaxed font-normal">
-                  Placerat eget Sed leo, malesuada convallis. Donec diam lorem, viverra vehicula, porta
-                  adipiscing maximus consectetur quis nulla, vel elementum nec id Cras in. Welcome to Olympia Fitness.
-                </p>
-              </div>
-
-              {/* Action Buttons: "Explore more" Orange Pill + ThreeUI GlassAiButton */}
-              <div className="flex flex-wrap items-center gap-3.5 mt-6">
-                {/* "Explore more" Orange Button */}
-                <button
-                  onClick={onExploreClick || onJoinClick}
-                  className="px-6 sm:px-8 py-3.5 rounded-full bg-brand-volt hover:bg-brand-volt-hover text-white font-black text-xs uppercase tracking-wider shadow-glow-volt transition-all flex items-center gap-2 active:scale-95"
-                >
-                  <span>Explore more</span>
-                  <ArrowUpRight className="w-4 h-4 text-white/90" />
-                </button>
-
-                {/* Integrated ThreeUI <GlassAiButton /> */}
+              {/* Single ThreeUI Glass AI Button with "Explore more" */}
+              <div className="mt-8 sm:mt-10">
                 <div
-                  onClick={onJoinClick}
-                  title="Experience Glass AI Button"
-                  className="w-44 sm:w-48 h-12 rounded-full overflow-hidden border border-white/20 shadow-lg cursor-pointer hover:scale-105 active:scale-95 transition-transform"
+                  title="Explore More - Interactive Glass AI Button"
+                  className="w-56 sm:w-64 md:w-72 h-14 sm:h-16 md:h-[4.25rem] rounded-full overflow-hidden border border-white/30 shadow-[0_12px_40px_rgba(0,0,0,0.7)] hover:border-brand-volt hover:shadow-[0_0_35px_rgba(255,94,30,0.6)] transition-all duration-300 hover:scale-[1.03] active:scale-95 cursor-pointer"
                 >
-                  <GlassAiButton className="w-full h-full" />
+                  <GlassAiButton
+                    className="w-full h-full"
+                    onClick={onExploreClick || onJoinClick}
+                  />
                 </div>
               </div>
             </div>

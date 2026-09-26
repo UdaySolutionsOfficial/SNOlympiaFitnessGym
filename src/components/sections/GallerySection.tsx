@@ -30,7 +30,7 @@ export const GallerySection: React.FC = () => {
             </div>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black uppercase tracking-tight text-white leading-[1.08]">
               RAW STEEL.{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt to-emerald-400">
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-brand-volt to-amber-400">
                 CHALK DUST.
               </span>
             </h2>
