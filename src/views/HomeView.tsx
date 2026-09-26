@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IntroLoader } from '../components/loader/IntroLoader';
 import { TopDock } from '../components/navigation/TopDock';
 import { HeroSection } from '../components/hero/HeroSection';
