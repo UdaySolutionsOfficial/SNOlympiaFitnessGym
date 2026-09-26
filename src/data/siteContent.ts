@@ -36,9 +36,10 @@ export interface MembershipPlan {
   id: string;
   tierName: string;
   billingCycle: string;
-  durationKey: 'monthly' | 'quarterly' | 'annual';
+  durationKey: 'monthly' | 'annual' | 'half-year' | 'quarterly';
   priceNote: VerifiedField<string>;
   badge?: string;
+  tagline?: string;
   features: string[];
   ctaLabel: string;
 }
@@ -281,47 +282,31 @@ export const SITE_CONTENT = {
 
   membership: [
     {
-      id: 'monthly-pass',
-      tierName: 'Monthly Commitment',
-      billingCycle: 'Per Month',
+      id: '1-month-pass',
+      tierName: '1 Month Commitment',
+      billingCycle: '1 Month',
       durationKey: 'monthly',
+      tagline: 'Flexible starter month with zero long-term commitment',
       priceNote: createVerifiedField(
-        'Inquire for Batch Rates',
+        'Inquire for Monthly Batch Rates',
         'TO_BE_CONFIRMED',
         'Pricing not publicly listed; inquiries directed to gym phone'
       ),
       features: [
-        'Full gym floor & free weights access',
-        'Access to morning or evening batch',
+        'Full gym floor & commercial free weights access',
+        'Choice of dedicated morning or evening batch',
         'Initial equipment & biomechanics orientation',
-        'Locker & water station access',
+        'Locker & chilled RO drinking water access',
       ],
-      ctaLabel: 'INQUIRE BATCH'
+      ctaLabel: 'INQUIRE 1 MONTH'
     },
     {
-      id: 'quarterly-pass',
-      tierName: 'Quarterly Transformation',
-      billingCycle: '3 Months',
-      durationKey: 'quarterly',
-      priceNote: createVerifiedField(
-        'Popular Transformation Tier',
-        'TO_BE_CONFIRMED',
-        'Pricing to be confirmed with gym management'
-      ),
-      badge: 'RECOMMENDED',
-      features: [
-        'Everything in Monthly Commitment',
-        'Body composition benchmark check',
-        'Structured progressive overload tracking',
-        'Form check priority during prime lifting hours',
-      ],
-      ctaLabel: 'JOIN TRANSFORMATION'
-    },
-    {
-      id: 'annual-elite',
-      tierName: 'Annual Athlete',
-      billingCycle: '12 Months',
+      id: '12-months-pass',
+      tierName: '12 Months [Annual]',
+      billingCycle: '12 Months [Annual]',
       durationKey: 'annual',
+      badge: 'RECOMMENDED • BEST VALUE',
+      tagline: 'Complete 365-day transformation with maximum savings',
       priceNote: createVerifiedField(
         'Maximum Long-Term Value',
         'TO_BE_CONFIRMED',
@@ -329,11 +314,32 @@ export const SITE_CONTENT = {
       ),
       features: [
         'Complete 365-day unhindered gym floor access',
-        'Priority coaching form checks & technique audits',
-        'Full access to all training & conditioning zones',
-        'Zero registration / onboarding renewal fee',
+        'Priority coaching form audits & spotter assistance',
+        'Body composition benchmark tracking',
+        'Full morning and evening batch flexibility',
+        'Zero registration or onboarding renewal fee',
       ],
-      ctaLabel: 'CLAIM ANNUAL PLAN'
+      ctaLabel: 'CLAIM 12 MONTHS PASS'
+    },
+    {
+      id: '6-months-pass',
+      tierName: '6 Months Transformation',
+      billingCycle: '6 Months',
+      durationKey: 'half-year',
+      tagline: 'Dedicated seasonal muscle hypertrophy & conditioning',
+      priceNote: createVerifiedField(
+        'Popular Semi-Annual Tier',
+        'TO_BE_CONFIRMED',
+        'Pricing to be confirmed with gym management'
+      ),
+      features: [
+        'Full 180 days uninterrupted floor & weights access',
+        'Structured progressive overload tracking',
+        'Targeted fat loss & hypertrophy guidance',
+        'Form check priority during prime lifting hours',
+        'Locker & changing room privileges',
+      ],
+      ctaLabel: 'JOIN 6 MONTHS'
     }
   ] satisfies MembershipPlan[],
 
