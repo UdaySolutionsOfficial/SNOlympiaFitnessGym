@@ -155,37 +155,37 @@
 
     <div id="root">
       <!-- Instant Zero-Delay Pre-React Loading Screen (Never shows blank white page) -->
-      <div style="position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; justify-content: space-between; align-items: center; background: #07080A; color: #ffffff; padding: 40px 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-sizing: border-box; overflow: hidden; user-select: none;">
+      <div style="position: fixed; inset: 0; z-index: 100; display: flex; flex-direction: column; justify-content: space-between; align-items: center; background: #07080A; color: #ffffff; padding: 24px 16px; font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; box-sizing: border-box; overflow: hidden; user-select: none;">
         <!-- Background Ambient Neon Flares -->
         <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 650px; height: 450px; border-radius: 50%; background: radial-gradient(circle, rgba(255,94,30,0.18) 0%, rgba(255,160,52,0.1) 40%, transparent 70%); filter: blur(90px); pointer-events: none;"></div>
 
         <!-- Top Header -->
-        <div style="position: relative; z-index: 10; display: flex; flex-direction: column; align-items: center; gap: 10px;">
-          <div style="position: relative; width: 54px; height: 54px; border-radius: 50%; background: linear-gradient(180deg, #2A2E3B 0%, #12141A 100%); border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(255,94,30,0.5); animation: prePulse 2s infinite ease-in-out;">
-            <div style="position: absolute; inset: -8px; border-radius: 50%; border: 1px dashed rgba(255,94,30,0.4); animation: preSpin 14s infinite linear;"></div>
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#FF5E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>
+        <div style="position: relative; z-index: 10; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; gap: 8px; margin-bottom: 8px;">
+          <div style="position: relative; width: 48px; height: 48px; border-radius: 50%; background: linear-gradient(180deg, #2A2E3B 0%, #12141A 100%); border: 1px solid rgba(255,255,255,0.2); display: flex; align-items: center; justify-content: center; box-shadow: 0 0 25px rgba(255,94,30,0.5); animation: prePulse 2s infinite ease-in-out;">
+            <div style="position: absolute; inset: -7px; border-radius: 50%; border: 1px dashed rgba(255,94,30,0.4); animation: preSpin 14s infinite linear;"></div>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF5E1E" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6.5 6.5 11 11"/><path d="m21 21-1-1"/><path d="m3 3 1 1"/><path d="m18 22 4-4"/><path d="m2 6 4-4"/><path d="m3 10 7-7"/><path d="m14 21 7-7"/></svg>
           </div>
           <div style="text-align: center;">
-            <div style="font-size: 15px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase;">OLYMPIA <span style="color: #FF5E1E;">GYM</span></div>
+            <div style="font-size: 14px; font-weight: 900; letter-spacing: 0.08em; text-transform: uppercase;">OLYMPIA <span style="color: #FF5E1E;">GYM</span></div>
             <div style="font-size: 9px; font-family: monospace; letter-spacing: 0.25em; color: #8F9CAE; text-transform: uppercase;">YEMMIGANUR • UNISEX FITNESS</div>
           </div>
         </div>
 
         <!-- Center Quotation -->
-        <div style="position: relative; z-index: 10; max-width: 780px; text-align: center; margin: auto; padding: 0 16px;">
-          <div style="display: inline-block; padding: 4px 14px; border-radius: 9999px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,94,30,0.3); font-family: monospace; font-size: 11px; font-weight: 700; letter-spacing: 0.2em; color: #FF5E1E; text-transform: uppercase; margin-bottom: 20px;">
+        <div style="position: relative; z-index: 10; flex: 1; min-height: 0; display: flex; flex-direction: column; justify-content: center; align-items: center; max-width: 780px; text-align: center; margin: 0; padding: 8px 16px;">
+          <div style="display: inline-block; padding: 4px 14px; border-radius: 9999px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,94,30,0.3); font-family: monospace; font-size: 10px; font-weight: 700; letter-spacing: 0.2em; color: #FF5E1E; text-transform: uppercase; margin-bottom: 14px; flex-shrink: 0;">
             CHAMPION MINDSET
           </div>
-          <div style="font-size: 24px; line-height: 1.25; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; color: #ffffff; text-shadow: 0 4px 20px rgba(0,0,0,0.8);">
+          <div style="font-size: 20px; line-height: 1.3; font-weight: 900; text-transform: uppercase; letter-spacing: -0.02em; color: #ffffff; text-shadow: 0 4px 20px rgba(0,0,0,0.8);">
             “THE RESISTANCE THAT YOU FIGHT PHYSICALLY IN THE GYM AND THE RESISTANCE THAT YOU FIGHT IN LIFE CAN ONLY BUILD A STRONG CHARACTER.”
           </div>
-          <div style="margin-top: 18px; font-family: monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.15em; color: #FFA034; text-transform: uppercase;">
+          <div style="margin-top: 14px; font-family: monospace; font-size: 12px; font-weight: 700; letter-spacing: 0.15em; color: #FFA034; text-transform: uppercase;">
             — ARNOLD SCHWARZENEGGER
           </div>
         </div>
 
         <!-- Bottom Neon Progress Bar -->
-        <div style="position: relative; z-index: 10; width: 100%; max-width: 520px; display: flex; flex-direction: column; align-items: center; gap: 12px;">
+        <div style="position: relative; z-index: 10; flex-shrink: 0; width: 100%; max-width: 520px; display: flex; flex-direction: column; align-items: center; gap: 10px; margin-top: 8px;">
           <div style="width: 100%; display: flex; justify-content: space-between; font-family: monospace; font-size: 11px; font-weight: 700; color: #8F9CAE;">
             <span style="display: flex; align-items: center; gap: 6px;"><span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: #FF5E1E; animation: preGlow 1s infinite alternate;"></span> INITIALIZING HIGH-PERFORMANCE ENGINE...</span>
             <span style="color: #FF5E1E; font-weight: 900;">PREPARING...</span>

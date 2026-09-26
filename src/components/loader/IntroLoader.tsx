@@ -175,7 +175,7 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
       aria-modal="true"
       aria-label="Loading SN Olympia Fitness Experience"
       onClick={handleEnterSite}
-      className={`fixed inset-0 z-[100] flex flex-col justify-between items-center bg-[#07080A] text-white px-4 sm:px-8 py-8 sm:py-12 select-none overflow-hidden cursor-pointer transition-all duration-700 ${
+      className={`fixed inset-0 z-[100] flex flex-col justify-between items-center bg-[#07080A] text-white px-4 sm:px-8 py-5 sm:py-8 select-none overflow-hidden cursor-pointer transition-all duration-700 ${
         isExiting
           ? 'opacity-0 scale-105 pointer-events-none filter blur-sm'
           : 'opacity-100 scale-100'
@@ -221,14 +221,14 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
       </div>
 
       {/* 2. TOP HEADER: OLYMPIA BRAND BADGE & SPINNING ORBIT RING */}
-      <header className="relative z-10 flex flex-col items-center gap-3">
+      <header className="relative z-10 shrink-0 flex flex-col items-center gap-2 mb-2 sm:mb-4">
         <div className="relative flex items-center justify-center">
           {/* Outer Rotating Dashed Neon Orbit Ring */}
           <div className="absolute -inset-2.5 rounded-full border border-dashed border-[#FF5E1E]/40 animate-spin [animation-duration:14s] pointer-events-none" />
 
           {/* Glowing Crest Pill */}
-          <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-full bg-gradient-to-b from-[#2A2E3B] to-[#12141A] border border-white/20 flex items-center justify-center shadow-[0_0_25px_rgba(255,94,30,0.5)]">
-            <Dumbbell className="w-6 h-6 sm:w-7 sm:h-7 text-[#FF5E1E] animate-pulse" />
+          <div className="w-11 h-11 sm:w-14 sm:h-14 rounded-full bg-gradient-to-b from-[#2A2E3B] to-[#12141A] border border-white/20 flex items-center justify-center shadow-[0_0_25px_rgba(255,94,30,0.5)]">
+            <Dumbbell className="w-5 h-5 sm:w-7 sm:h-7 text-[#FF5E1E] animate-pulse" />
           </div>
         </div>
 
@@ -245,18 +245,18 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
       </header>
 
       {/* 3. CENTER: SCREEN-OCCUPYING ICONIC FITNESS QUOTATIONS */}
-      <main className="relative z-10 w-full max-w-4xl mx-auto flex flex-col items-center justify-center my-auto px-2 sm:px-4 text-center min-h-[260px] sm:min-h-[320px]">
+      <main className="relative z-10 w-full max-w-4xl mx-auto flex-1 min-h-0 flex flex-col items-center justify-center px-2 sm:px-4 text-center my-0 py-2 sm:py-4">
         <AnimatePresence mode="wait">
           <motion.div
             key={activeQuote.id}
-            initial={{ opacity: 0, y: 28, filter: 'blur(10px)', scale: 0.97 }}
+            initial={{ opacity: 0, y: 12, filter: 'blur(8px)', scale: 0.98 }}
             animate={{ opacity: 1, y: 0, filter: 'blur(0px)', scale: 1 }}
-            exit={{ opacity: 0, y: -24, filter: 'blur(10px)', scale: 1.02 }}
-            transition={{ duration: 0.65, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col items-center space-y-4 sm:space-y-6"
+            exit={{ opacity: 0, y: -10, filter: 'blur(8px)', scale: 0.98 }}
+            transition={{ duration: 0.55, ease: [0.16, 1, 0.3, 1] }}
+            className="flex flex-col items-center space-y-3 sm:space-y-5"
           >
             {/* Category Pill Tag */}
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.04] border border-[#FF5E1E]/30 backdrop-blur-md shadow-sm">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-white/[0.04] border border-[#FF5E1E]/30 backdrop-blur-md shadow-sm shrink-0">
               <Flame className="w-3.5 h-3.5 text-[#FF5E1E] animate-bounce" />
               <span className="text-[10px] sm:text-xs font-mono font-bold tracking-[0.2em] text-[#FF5E1E] uppercase">
                 {activeQuote.category}
@@ -266,21 +266,21 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
             {/* Quote Typography (Occupies Screen) */}
             <div className="relative">
               {/* Massive Decorative Background Quotation Marks */}
-              <span className="absolute -top-8 -left-4 sm:-left-8 text-6xl sm:text-8xl font-serif text-white/5 select-none pointer-events-none">
+              <span className="absolute -top-7 -left-3 sm:-left-8 text-5xl sm:text-8xl font-serif text-white/5 select-none pointer-events-none">
                 “
               </span>
 
-              <h2 className="text-xl sm:text-3xl md:text-4xl lg:text-5xl font-black uppercase tracking-tight text-white leading-[1.12] sm:leading-[1.15] max-w-3xl drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)]">
+              <h2 className="text-lg sm:text-2xl md:text-3xl lg:text-4xl font-black uppercase tracking-tight text-white leading-snug sm:leading-tight max-w-3xl drop-shadow-[0_4px_24px_rgba(0,0,0,0.9)] px-2">
                 {activeQuote.text}
               </h2>
 
-              <span className="absolute -bottom-12 -right-4 sm:-right-8 text-6xl sm:text-8xl font-serif text-white/5 select-none pointer-events-none">
+              <span className="absolute -bottom-10 -right-3 sm:-right-8 text-5xl sm:text-8xl font-serif text-white/5 select-none pointer-events-none">
                 ”
               </span>
             </div>
 
             {/* Author Attribution */}
-            <div className="flex items-center gap-2 pt-2">
+            <div className="flex items-center gap-2 pt-1">
               <span className="w-6 h-px bg-gradient-to-r from-transparent to-[#FF5E1E]" />
               <p className="text-xs sm:text-sm font-mono font-bold tracking-widest text-[#FFA034] uppercase">
                 {activeQuote.author}
@@ -291,7 +291,7 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
         </AnimatePresence>
 
         {/* Quote Index Dot Indicators */}
-        <div className="flex items-center gap-2 mt-8 sm:mt-10">
+        <div className="flex items-center gap-2 mt-4 sm:mt-6 shrink-0">
           {FITNESS_QUOTES.map((_, idx) => (
             <button
               key={idx}
@@ -312,7 +312,7 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
       </main>
 
       {/* 4. BOTTOM: NEON PROGRESSIVE BAR & LIVE TELEMETRY READOUT */}
-      <footer className="relative z-10 w-full max-w-xl mx-auto flex flex-col items-center space-y-4">
+      <footer className="relative z-10 shrink-0 w-full max-w-xl mx-auto flex flex-col items-center space-y-3 sm:space-y-4 mt-2 sm:mt-4">
         {/* Telemetry Status & Live Percentage */}
         <div className="w-full flex items-center justify-between text-xs font-mono font-bold">
           <div className="flex items-center gap-2 text-brand-text-muted truncate pr-2">
