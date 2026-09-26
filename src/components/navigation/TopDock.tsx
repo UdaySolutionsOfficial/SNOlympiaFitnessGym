@@ -249,7 +249,7 @@ export const TopDock: React.FC<TopDockProps> = ({
           {/* THREEUI MODERN COMMAND BAR CONTAINER                                      */}
           {/* ========================================================================= */}
           <div
-            className="relative flex items-center justify-between gap-3 sm:gap-6 lg:gap-8 h-12 sm:h-14 px-3 sm:px-4 rounded-full border border-white/10 shadow-[0_22px_52px_-20px_rgba(0,0,0,0.95),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_35px_rgba(255,94,30,0.1)] transition-all duration-300"
+            className="relative flex items-center justify-between gap-2 sm:gap-4 md:gap-5 lg:gap-8 h-12 sm:h-14 px-3 sm:px-4 md:px-5 rounded-full border border-white/10 shadow-[0_22px_52px_-20px_rgba(0,0,0,0.95),inset_0_1px_1px_rgba(255,255,255,0.12),0_0_35px_rgba(255,94,30,0.1)] transition-all duration-300 w-full max-w-[98vw] md:max-w-[96vw] lg:max-w-fit mx-auto"
             style={{
               background: 'linear-gradient(180deg, rgba(22, 25, 34, 0.88), rgba(12, 14, 20, 0.84))',
               backdropFilter: 'blur(24px) saturate(160%)',
@@ -263,33 +263,28 @@ export const TopDock: React.FC<TopDockProps> = ({
                 e.preventDefault();
                 handleLinkClick('#overview');
               }}
-              className="flex items-center gap-2.5 group focus-visible:outline-none select-none pl-1"
+              className="flex items-center gap-2 group focus-visible:outline-none select-none pl-1 shrink-0"
             >
               {/* Circular Brand Mark Insignia */}
               <div className="flex items-center justify-center w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-gradient-to-b from-[#2A2E3B] to-[#12141A] border border-white/20 shadow-md group-hover:border-[#FF5E1E] group-hover:shadow-[0_0_15px_rgba(255,94,30,0.6)] transition-all">
                 <Dumbbell className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#FF5E1E] group-hover:scale-110 transition-transform" />
               </div>
 
-              {/* Wordmark */}
-              <div className="flex flex-col">
-                <div className="flex items-center gap-1">
-                  <span className="font-athletic italic uppercase font-black text-xs sm:text-sm tracking-tight text-white leading-none">
-                    OLYMPIA <span className="text-[#FF5E1E]">GYM</span>
-                  </span>
-                </div>
-                <span className="text-[8px] font-mono tracking-widest text-brand-text-muted uppercase font-bold hidden sm:inline-block leading-tight">
-                  UNISEX FITNESS
+              {/* Wordmark (Clean & Vertically Centered) */}
+              <div className="flex items-center">
+                <span className="font-athletic italic uppercase font-black text-xs sm:text-sm md:text-base tracking-tight text-white leading-none whitespace-nowrap">
+                  OLYMPIA <span className="text-[#FF5E1E]">GYM</span>
                 </span>
               </div>
             </a>
 
-            {/* 2. CENTER: THREEUI PROXIMITY SPRING DOCK (DESKTOP) */}
+            {/* 2. CENTER: THREEUI PROXIMITY SPRING DOCK (DESKTOP & TABLET DYNAMIC) */}
             <nav
               ref={dockTrackRef}
               onPointerMove={handleDockPointerMove}
               onPointerLeave={handleDockPointerLeave}
               aria-label="Primary Navigation Dock"
-              className="hidden md:flex items-center gap-1 sm:gap-1.5 p-1 rounded-full bg-white/[0.03] border border-white/5"
+              className="hidden md:flex items-center gap-0.5 sm:gap-1 lg:gap-1.5 p-1 rounded-full bg-white/[0.03] border border-white/5"
             >
               {NAV_ITEMS.map((item) => {
                 const isActive = currentActive === item.id;
@@ -312,7 +307,7 @@ export const TopDock: React.FC<TopDockProps> = ({
                         : undefined,
                       transition: 'color 0.16s, border-color 0.18s',
                     }}
-                    className={`relative flex items-center gap-1.5 px-3 sm:px-3.5 py-1.5 rounded-full text-xs uppercase tracking-wider select-none outline-none transition-colors ${
+                    className={`relative flex items-center gap-1 sm:gap-1.5 px-2 sm:px-2.5 md:px-2.5 lg:px-3.5 py-1 sm:py-1.5 rounded-full text-xs uppercase tracking-wider select-none outline-none transition-colors ${
                       isActive
                         ? 'text-[#0A0B10]'
                         : influence > 0.08
@@ -346,7 +341,7 @@ export const TopDock: React.FC<TopDockProps> = ({
                       {item.icon}
                     </span>
                     <span
-                      className={`relative z-10 text-[11px] sm:text-xs whitespace-nowrap transition-all ${
+                      className={`relative z-10 text-[10px] md:text-[11px] lg:text-xs whitespace-nowrap transition-all ${
                         isActive ? 'font-black text-[#0A0B10]' : 'font-medium'
                       }`}
                     >
@@ -357,29 +352,21 @@ export const TopDock: React.FC<TopDockProps> = ({
               })}
             </nav>
 
-            {/* 3. RIGHT: HOTLINE, CTA & PROFILE (ACTIONS) */}
-            <div className="flex items-center gap-2 sm:gap-3">
-              {/* Phone Hotline Ghost Action */}
+            {/* 3. RIGHT: CONTACT US DIALER CTA & PROFILE (ACTIONS) */}
+            <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
+              {/* High-Energy Electric Orange Gradient Phone Dialer CTA Button */}
               <a
                 href={`tel:${SITE_CONTENT.brand.contact.phone.value}`}
-                aria-label={`Call Olympia Gym at ${SITE_CONTENT.brand.contact.phoneDisplay.value}`}
-                className="hidden xl:inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-mono font-bold text-brand-text-secondary hover:text-white hover:bg-white/5 transition-all whitespace-nowrap"
-              >
-                <Phone className="w-3.5 h-3.5 text-[#FF5E1E] shrink-0" />
-                <span>{SITE_CONTENT.brand.contact.phoneDisplay.value}</span>
-              </a>
-
-              {/* High-Energy Electric Orange Gradient CTA Button */}
-              <button
-                onClick={() => handleLinkClick('#contact')}
-                className="inline-flex items-center gap-1.5 px-4 sm:px-5 py-1.5 sm:py-2 rounded-full text-white font-black text-[11px] sm:text-xs uppercase tracking-wider shadow-[0_10px_26px_-10px_rgba(255,94,30,0.95)] hover:shadow-[0_12px_32px_-8px_rgba(255,94,30,1)] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer border border-white/20 select-none"
+                aria-label="Call Olympia Gym"
+                className="inline-flex items-center gap-1.5 px-3.5 sm:px-4 lg:px-5 py-1.5 sm:py-2 rounded-full text-white font-black text-[11px] sm:text-xs uppercase tracking-wider shadow-[0_10px_26px_-10px_rgba(255,94,30,0.95)] hover:shadow-[0_12px_32px_-8px_rgba(255,94,30,1)] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer border border-white/20 select-none whitespace-nowrap"
                 style={{
                   background: 'linear-gradient(180deg, #FF5E1E 0%, #E0480C 100%)',
                 }}
               >
+                <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white shrink-0 fill-current" />
                 <span>Contact us</span>
-                <ArrowUpRight className="w-3.5 h-3.5 text-white stroke-[2.5]" />
-              </button>
+                <ArrowUpRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white/90 stroke-[2.5]" />
+              </a>
 
               {/* Member Profile Avatar Circle */}
               <button
@@ -478,22 +465,16 @@ export const TopDock: React.FC<TopDockProps> = ({
           </ul>
 
           {/* Bottom Mobile Drawer Actions */}
-          <div className="space-y-3 pt-4 border-t border-white/10">
+          <div className="pt-4 border-t border-white/10">
             <a
               href={`tel:${SITE_CONTENT.brand.contact.phone.value}`}
-              className="w-full py-3.5 px-4 rounded-full bg-white/5 border border-white/10 text-white text-xs font-mono font-bold flex items-center justify-center gap-2"
+              aria-label="Call Olympia Gym"
+              className="w-full py-3.5 px-4 rounded-full bg-[#FF5E1E] text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(255,94,30,0.6)] active:scale-[0.98] transition-transform"
             >
-              <Phone className="w-4 h-4 text-[#FF5E1E]" />
-              <span>{SITE_CONTENT.brand.contact.phoneDisplay.value}</span>
-            </a>
-
-            <button
-              onClick={() => handleLinkClick('#contact')}
-              className="w-full py-3.5 px-4 rounded-full bg-[#FF5E1E] text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-1.5 shadow-[0_0_25px_rgba(255,94,30,0.6)]"
-            >
+              <Phone className="w-4 h-4 fill-current" />
               <span>CONTACT US NOW</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </button>
+              <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
+            </a>
           </div>
         </div>
       )}
