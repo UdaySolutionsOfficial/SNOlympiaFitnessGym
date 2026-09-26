@@ -85,7 +85,7 @@ export const HeroContent: React.FC<HeroContentProps> = ({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-6 mt-6 border-t border-white/10 text-xs text-brand-text-muted">
         <div className="flex items-center justify-center gap-2">
           <Star className="w-4 h-4 text-amber-400 fill-amber-400 shrink-0" />
-          <span className="font-bold text-white">5.0★ Google Rating</span>
+          <span className="font-bold text-white">4.9★ Google (126+ Reviews)</span>
         </div>
         <div className="flex items-center justify-center gap-2">
           <ShieldCheck className="w-4 h-4 text-brand-volt shrink-0" />

@@ -30,13 +30,13 @@ export const HeroFloatingCards: React.FC<HeroFloatingCardsProps> = ({
         </div>
         <div>
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-black text-white">5.0 RATING</span>
+            <span className="text-xs font-black text-white">4.9 RATING</span>
             <span className="text-[9px] px-1.5 py-0 rounded bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20">
               VERIFIED
             </span>
           </div>
           <span className="text-[10px] text-brand-text-muted font-medium block">
-            Google & Local Reviews
+            126+ Google Reviews
           </span>
         </div>
       </div>

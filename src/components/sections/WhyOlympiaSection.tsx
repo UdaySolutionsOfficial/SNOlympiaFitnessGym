@@ -116,7 +116,7 @@ export const WhyOlympiaSection: React.FC<WhyOlympiaSectionProps> = ({ className 
             </div>
 
             <div className="pt-4 border-t border-brand-border/40 flex items-center gap-2 text-xs font-mono text-emerald-400">
-              <span>★ 5.0 Star Member Satisfaction</span>
+              <span>★ 4.9★ Google Reputation (126+ Reviews)</span>
             </div>
           </SpotlightCard>
         </StaggerItem>

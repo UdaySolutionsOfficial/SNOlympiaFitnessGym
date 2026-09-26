@@ -7,9 +7,9 @@ import { ScrollReveal } from '../common/ScrollReveal';
 export const LocationSection: React.FC = () => {
   const address = SITE_CONTENT.brand.address;
 
-  // OpenStreetMap embed coordinates for Yemmiganur center / Shiva Priya Theater vicinity
-  const osmEmbedUrl =
-    'https://www.openstreetmap.org/export/embed.html?bbox=77.470%2C15.765%2C77.500%2C15.785&layer=mapnik&marker=15.7725%2C77.485';
+  // Exact Google Maps embed for Olympia Fitness Gym Yemmiganur
+  const googleMapsEmbedUrl =
+    'https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3989.8226025456042!2d77.47717267512941!3d15.760162484875424!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bb641003ef2a611%3A0xaeee89493d07ee92!2sOlympia%20Fitness%20Gym!5e1!3m2!1sen!2sin!4v1790430676663!5m2!1sen!2sin';
 
   return (
     <section id="location" className="relative py-28 md:py-36 bg-brand-dark overflow-hidden border-t border-brand-border/60">
@@ -100,16 +100,18 @@ export const LocationSection: React.FC = () => {
                   <span className="w-2 h-2 rounded-full bg-brand-volt animate-pulse" />
                   <span>YEMMIGANUR GEOGRAPHICAL RADAR</span>
                 </div>
-                <span className="text-brand-volt">15.7725° N, 77.4850° E</span>
+                <span className="text-brand-volt">15.7602° N, 77.4772° E</span>
               </div>
 
               {/* Map Frame */}
               <div className="relative flex-1 w-full h-full min-h-[320px]">
                 <iframe
-                  title="SN Olympia Fitness Location Map"
-                  src={osmEmbedUrl}
-                  className="w-full h-full border-0 filter invert contrast-[1.1] grayscale-[0.3] opacity-80 hover:opacity-100 transition-opacity duration-300"
+                  title="SN Olympia Fitness Official Google Map"
+                  src={googleMapsEmbedUrl}
+                  className="w-full h-full border-0 filter invert contrast-[1.08] grayscale-[0.25] opacity-85 hover:opacity-100 hover:filter-none transition-all duration-300"
                   loading="lazy"
+                  referrerPolicy="strict-origin-when-cross-origin"
+                  allowFullScreen
                 />
 
                 {/* Pin Overlay Card */}

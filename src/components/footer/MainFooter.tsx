@@ -36,7 +36,7 @@ export const MainFooter: React.FC = () => {
             </p>
             <div className="pt-2 flex items-center gap-2 text-xs font-mono text-brand-volt">
               <ShieldCheck className="w-4 h-4" />
-              <span>5.0★ Verified Community Trust Rating</span>
+              <span>4.9★ (126+ Verified Google Reviews)</span>
             </div>
           </StaggerItem>
 

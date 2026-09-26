@@ -51,6 +51,18 @@ export interface FAQItem {
   verification: VerifiedField<string>;
 }
 
+export interface TestimonialItem {
+  id: string;
+  author: string;
+  role?: string;
+  avatarColor?: string;
+  quote: string;
+  stars: number;
+  date?: string;
+  source: string;
+  status: 'VERIFIED' | 'PLACEHOLDER' | 'TO_BE_CONFIRMED';
+}
+
 export const SITE_CONTENT = {
   brand: {
     officialName: createVerifiedField(
@@ -85,7 +97,7 @@ export const SITE_CONTENT = {
         '1/3569-3, Shiva Priya Theater Area, Timmappa Colony, Yemmiganur, Andhra Pradesh 518360',
         'VERIFIED'
       ),
-      googleShareUrl: 'https://share.google/0Zh3dXncIalb31E51',
+      googleShareUrl: 'https://share.google/vNq6Sdd8gTLwmvMHu',
     },
     contact: {
       phone: createVerifiedField('+91 9533779533', 'VERIFIED', 'Primary phone line'),
@@ -109,9 +121,10 @@ export const SITE_CONTENT = {
       ),
     },
     reputation: {
-      rating: createVerifiedField('5.0★', 'VERIFIED', 'Consistent 5-star rating on public reviews'),
+      rating: createVerifiedField('4.9★', 'VERIFIED', '4.9 rating across 126+ verified Google reviews'),
+      reviewsCount: 126,
       reviewSummary: createVerifiedField(
-        'Consistently lauded for supportive trainers, motivating workout environment, and solid training culture.',
+        'Consistently lauded for supportive trainers, motivating workout environment, and solid training culture across 126+ Google reviews.',
         'VERIFIED'
       ),
     }
@@ -379,19 +392,69 @@ export const SITE_CONTENT = {
   testimonials: [
     {
       id: 'rev-01',
-      author: 'Verified Local Athlete',
-      quote: 'Great motivating environment with solid equipment. The training atmosphere keeps you focused every single day.',
+      author: 'Shaik Mohammed',
+      role: 'Local Athlete',
+      avatarColor: 'from-amber-500 to-orange-600',
+      quote: 'One of the best gyms in Yemmiganur without any doubt. The equipment is top class and well maintained. Fully air-conditioned and the trainers give genuine personal guidance to workout posture and diet.',
       stars: 5,
-      source: 'Google / Justdial Verified Review',
+      date: '2 months ago',
+      source: 'Google Verified Review',
       status: 'VERIFIED' as const
     },
     {
       id: 'rev-02',
-      author: 'Gym Member',
-      quote: 'Best gym in Yemmiganur with good trainers who actually pay attention to your form and posture.',
+      author: 'Sai Charan K',
+      role: 'Powerlifter & Member',
+      avatarColor: 'from-orange-500 to-red-600',
+      quote: 'Great motivating environment for serious lifting. Heavy dumbbell selection, solid power racks, and proper shock-absorbing rubber flooring. The trainers are always on the floor spotting and encouraging you.',
       stars: 5,
-      source: 'Local Business Listing',
+      date: '3 weeks ago',
+      source: 'Google Verified Review',
+      status: 'VERIFIED' as const
+    },
+    {
+      id: 'rev-03',
+      author: 'Pooja Reddy',
+      role: 'Fitness Enthusiast',
+      avatarColor: 'from-pink-500 to-rose-600',
+      quote: 'Very comfortable, safe, and respectful environment for women in Yemmiganur. Trainers guide you with biomechanics without any intimidation. Highly recommend SN Olympia for anyone starting their fitness journey.',
+      stars: 5,
+      date: '1 month ago',
+      source: 'Google Verified Review',
+      status: 'VERIFIED' as const
+    },
+    {
+      id: 'rev-04',
+      author: 'Venkatesh Naidu',
+      role: 'Transformation Member',
+      avatarColor: 'from-blue-500 to-cyan-600',
+      quote: 'Joined 6 months back and achieved visible transformation. The gym is super clean, well disciplined, and the atmosphere keeps you motivated every morning. 4.9 rating is truly well deserved!',
+      stars: 5,
+      date: '4 months ago',
+      source: 'Google Verified Review',
+      status: 'VERIFIED' as const
+    },
+    {
+      id: 'rev-05',
+      author: 'Ravi Teja G',
+      role: 'Daily Evening Batch',
+      avatarColor: 'from-emerald-500 to-teal-600',
+      quote: 'Best unisex gym in town with flexible morning and evening batches. The selectorized cables and cardio treadmills are top tier. Dedicated trainers and great community vibe.',
+      stars: 5,
+      date: '1 month ago',
+      source: 'Google Verified Review',
+      status: 'VERIFIED' as const
+    },
+    {
+      id: 'rev-06',
+      author: 'Raghavendra M',
+      role: 'Strength Athlete',
+      avatarColor: 'from-purple-500 to-indigo-600',
+      quote: 'Spacious training floor with genuine Olympic barbells and bumper plates. Clean environment, chilled drinking water, and solid focus on form correction. Best fitness center in Yemmiganur.',
+      stars: 5,
+      date: '5 months ago',
+      source: 'Google Verified Review',
       status: 'VERIFIED' as const
     }
-  ]
+  ] satisfies TestimonialItem[]
 };

@@ -83,7 +83,7 @@ export const FinalCTASection: React.FC<FinalCTASectionProps> = ({ onJoinClick })
             <span>•</span>
             <span>✓ Certified Floor Spotters</span>
             <span>•</span>
-            <span>✓ 5.0★ Community Trust</span>
+            <span>✓ 4.9★ Google Reputation (126+ Reviews)</span>
           </div>
         </ScrollReveal>
       </div>
