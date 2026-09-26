@@ -47,9 +47,9 @@ const NAV_ITEMS: readonly NavItemConfig[] = [
     icon: <Award className="w-3.5 h-3.5" />,
   },
   {
-    id: 'facilities',
+    id: 'about',
     label: 'About',
-    href: '#facilities',
+    href: '#about',
     icon: <Info className="w-3.5 h-3.5" />,
   },
   {
@@ -190,14 +190,13 @@ export const TopDock: React.FC<TopDockProps> = ({
 
   const handleLinkClick = (href: string) => {
     setMobileMenuOpen(false);
-    const targetId = href.replace('#', '');
+    const targetId = href.startsWith('#') ? href.slice(1) : href;
     if (onNavigate) {
       onNavigate(targetId);
-    } else {
-      const el = document.getElementById(targetId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-      }
+    }
+    const el = document.getElementById(targetId);
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth' });
     }
   };
 

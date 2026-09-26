@@ -135,10 +135,44 @@
   animation: borderBeamLoop 12s linear infinite;
 }
 
+/* Continuous 3D Pop-Out Levitation for Hero Video Containers */
+@keyframes float3DLeft {
+  0%, 100% {
+    transform: perspective(1200px) rotateY(10deg) rotateX(-4deg) translateZ(28px) translateY(0px);
+    box-shadow: 0 25px 50px -15px rgba(0, 0, 0, 0.95), 0 10px 25px -5px rgba(255, 94, 30, 0.35), 0 0 35px rgba(255, 94, 30, 0.15);
+  }
+  50% {
+    transform: perspective(1200px) rotateY(6deg) rotateX(-1deg) translateZ(48px) translateY(-10px);
+    box-shadow: 0 40px 75px -15px rgba(0, 0, 0, 0.98), 0 18px 40px -5px rgba(255, 94, 30, 0.5), 0 0 55px rgba(255, 94, 30, 0.3);
+  }
+}
+
+@keyframes float3DRight {
+  0%, 100% {
+    transform: perspective(1200px) rotateY(-10deg) rotateX(-4deg) translateZ(28px) translateY(0px);
+    box-shadow: 0 25px 50px -15px rgba(0, 0, 0, 0.95), 0 10px 25px -5px rgba(255, 94, 30, 0.35), 0 0 35px rgba(255, 94, 30, 0.15);
+  }
+  50% {
+    transform: perspective(1200px) rotateY(-6deg) rotateX(-1deg) translateZ(48px) translateY(-10px);
+    box-shadow: 0 40px 75px -15px rgba(0, 0, 0, 0.98), 0 18px 40px -5px rgba(255, 94, 30, 0.5), 0 0 55px rgba(255, 94, 30, 0.3);
+  }
+}
+
+.animate-3d-float-left {
+  animation: float3DLeft 7s ease-in-out infinite;
+}
+
+.animate-3d-float-right {
+  animation: float3DRight 7s ease-in-out infinite 0.8s;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .animate-border-beam {
+  .animate-border-beam,
+  .animate-3d-float-left,
+  .animate-3d-float-right {
     animation: none;
   }
 }
+
 
 

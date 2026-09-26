@@ -182,6 +182,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <HeroVideoCard
                   videoSrc={ASSET_MANIFEST.hero.introVideo2.path}
                   title="SN Olympia Energy & Coaching"
+                  alignment="left"
                 />
               </div>
             </div>
@@ -217,6 +218,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   <HeroVideoCard
                     videoSrc={ASSET_MANIFEST.hero.introVideo.path}
                     title="SN Olympia Facility Showcase"
+                    alignment="right"
                   />
                 </div>
               </div>

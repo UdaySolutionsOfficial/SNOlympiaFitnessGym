@@ -82,13 +82,11 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
 
       {/* 2. Responsive Sable-Inspired Top Navigation Dock */}
       <TopDock
-        onNavigate={(href) => {
-          if (href === '#membership') {
-            const target = document.querySelector(href);
-            target?.scrollIntoView({ behavior: 'smooth' });
-          } else {
-            const target = document.querySelector(href);
-            target?.scrollIntoView({ behavior: 'smooth' });
+        onNavigate={(targetId) => {
+          const id = targetId.startsWith('#') ? targetId.slice(1) : targetId;
+          const target = document.getElementById(id);
+          if (target) {
+            target.scrollIntoView({ behavior: 'smooth' });
           }
         }}
       />

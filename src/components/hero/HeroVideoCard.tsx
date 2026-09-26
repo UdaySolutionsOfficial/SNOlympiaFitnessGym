@@ -7,23 +7,18 @@ export interface HeroVideoCardProps {
   title?: string;
   tag?: string;
   className?: string;
+  alignment?: 'left' | 'right';
 }
 
 /**
- * Sleek 3D Floating Video Card with Mouse Parallax, Bottom Animated "Explore" Button & Modal Popup
- *
- * Requirements fulfilled:
- * 1. Reduced video container size: sleek, modern, balanced.
- * 2. Play button size reduced & placed at the BOTTOM of the video.
- * 3. On hover: Play button smoothly animates and reveals "Explore" text with vivid orange background, white text, and neon orange shadow.
- * 4. 3D Mouse Parallax: Card smoothly tilts in 3D following mouse coordinates with ambient light reflection.
- * 5. On click: Opens a centered responsive popup modal (not forced full screen).
+ * High-End 3D Floating Video Card with Continuous Pop-Out Levitation,
+ * Stereoscopic Inward Tilt, Interactive 3D Parallax & Modal Popup.
  */
 export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
   videoSrc = ASSET_MANIFEST.hero.introVideo.path,
   title = 'SN Olympia Experience',
-  tag = 'TRAINING PREVIEW',
   className = '',
+  alignment = 'right',
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -82,9 +77,9 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
     const x = (e.clientX - rect.left) / rect.width;
     const y = (e.clientY - rect.top) / rect.height;
 
-    // Rotate up to 14 degrees
-    const rotateY = (x - 0.5) * 16;
-    const rotateX = (0.5 - y) * 16;
+    // Rotate up to 16 degrees
+    const rotateY = (x - 0.5) * 18;
+    const rotateX = (0.5 - y) * 18;
 
     setTilt({
       x: rotateX,
@@ -105,7 +100,7 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
 
   return (
     <>
-      {/* 3D Floating & Tilting Card Container */}
+      {/* 3D Floating & Tilting Card Container with True Stereoscopic Depth */}
       <div
         ref={cardRef}
         onMouseMove={handleMouseMove}
@@ -121,18 +116,31 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
             handleOpenModal();
           }
         }}
-        className={`group/vid relative select-none [perspective:900px] cursor-pointer ${className}`}
+        className={`group/vid relative select-none [perspective:1200px] [transform-style:preserve-3d] cursor-pointer ${className}`}
       >
+        {/* Soft Ambient Floating Shadow on Ground Plane */}
+        <div
+          className={`absolute -bottom-3 inset-x-4 h-6 rounded-full bg-[#FF5E1E]/20 blur-xl pointer-events-none transition-all duration-500 ${
+            isHovered ? 'scale-115 opacity-80' : 'opacity-40 animate-pulse'
+          }`}
+        />
+
         <div
           style={{
             transform: isHovered
-              ? `rotateX(${tilt.x}deg) rotateY(${tilt.y}deg) scale3d(1.04, 1.04, 1.04)`
-              : 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)',
+              ? `perspective(1200px) rotateX(${tilt.x}deg) rotateY(${tilt.y + (alignment === 'left' ? 7 : -7)}deg) translateZ(52px) scale3d(1.05, 1.05, 1.05)`
+              : undefined,
             transition: isHovered
-              ? 'transform 0.12s ease-out'
-              : 'transform 0.5s cubic-bezier(0.16, 1, 0.3, 1)',
+              ? 'transform 0.12s ease-out, box-shadow 0.25s ease-out'
+              : 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease-out',
           }}
-          className="relative w-52 sm:w-60 md:w-64 aspect-[16/10] rounded-2xl bg-black/75 backdrop-blur-xl border border-white/20 overflow-hidden shadow-[0_15px_40px_rgba(0,0,0,0.85)] group-hover/vid:border-[#FF5E1E] group-hover/vid:shadow-[0_0_35px_rgba(255,94,30,0.65),0_0_65px_rgba(255,94,30,0.25),0_20px_50px_rgba(0,0,0,0.95)]"
+          className={`relative w-52 sm:w-60 md:w-64 aspect-[16/10] rounded-2xl bg-black/80 backdrop-blur-2xl border border-white/20 overflow-hidden ${
+            !isHovered
+              ? alignment === 'left'
+                ? 'animate-3d-float-left'
+                : 'animate-3d-float-right'
+              : 'shadow-[0_35px_80px_-10px_rgba(0,0,0,0.95),0_0_50px_rgba(255,94,30,0.85),0_0_80px_rgba(255,94,30,0.35)] border-[#FF5E1E]'
+          }`}
         >
           {/* Looping Muted Preview Video */}
           <video
