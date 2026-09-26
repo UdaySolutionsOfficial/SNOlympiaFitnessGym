@@ -55,6 +55,12 @@ const NAV_ITEMS: readonly NavItemConfig[] = [
     icon: <Zap className="w-3.5 h-3.5" />,
   },
   {
+    id: 'facilities',
+    label: 'Facilities',
+    href: '#facilities',
+    icon: <Dumbbell className="w-3.5 h-3.5" />,
+  },
+  {
     id: 'membership',
     label: 'Membership',
     href: '#membership',

@@ -565,9 +565,6 @@ export const VideoArenaSection: React.FC = () => {
       id="action"
       className="relative py-28 sm:py-36 md:py-44 bg-[#08090A] overflow-hidden border-t border-brand-border/60 select-none"
     >
-      {/* Anchor for backwards compatibility */}
-      <div id="reels" className="absolute -top-24 pointer-events-none" />
-
       {/* 1. Ambient Background Atmosphere */}
       <div className="absolute inset-0 pointer-events-none">
         <div className="absolute top-1/4 -left-48 w-96 h-96 rounded-full bg-[#FF5E1E]/12 filter blur-[120px]" />

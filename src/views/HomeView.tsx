@@ -99,11 +99,10 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
       { id: 'benefits', target: 'about' },
       { id: 'programs', target: 'programs' },
       { id: 'action', target: 'action' },
-      { id: 'reels', target: 'action' },
       { id: 'methodology', target: 'action' },
-      { id: 'facilities', target: 'action' },
-      { id: 'atmosphere', target: 'action' },
-      { id: 'gallery', target: 'action' },
+      { id: 'facilities', target: 'facilities' },
+      { id: 'atmosphere', target: 'facilities' },
+      { id: 'gallery', target: 'facilities' },
       { id: 'testimonials', target: 'membership' },
       { id: 'membership', target: 'membership' },
       { id: 'faq', target: 'membership' },
@@ -114,30 +113,50 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
     const handleScroll = () => {
       if (isNavClickRef.current) return;
 
-      // Bottom of page detection -> contact
+      // 1. Bottom of page detection -> lock to contact
       const isBottom =
-        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 140;
+        window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 120;
       if (isBottom) {
         setActiveSection('contact');
         return;
       }
 
-      // Top of page detection -> overview
-      if (window.scrollY < 200) {
+      // 2. Top of page detection -> lock to overview
+      if (window.scrollY < 120) {
         setActiveSection('overview');
         return;
       }
 
-      const scrollPos = window.scrollY + 280;
-      let matched = 'overview';
+      // 3. Viewport focal line at 35% from the top
+      const focalLine = window.innerHeight * 0.35;
+      let matchedSection: string | null = null;
 
+      // Find section enclosing the focal line
       for (const sec of navSections) {
         const el = document.getElementById(sec.id);
-        if (el && el.offsetTop <= scrollPos) {
-          matched = sec.target;
+        if (!el) continue;
+        const rect = el.getBoundingClientRect();
+        if (rect.top <= focalLine && rect.bottom > focalLine) {
+          matchedSection = sec.target;
+          break;
         }
       }
-      setActiveSection(matched);
+
+      // Fallback: If in a transition zone, take the last section whose top passed focal line
+      if (!matchedSection) {
+        for (const sec of navSections) {
+          const el = document.getElementById(sec.id);
+          if (!el) continue;
+          const rect = el.getBoundingClientRect();
+          if (rect.top <= focalLine) {
+            matchedSection = sec.target;
+          }
+        }
+      }
+
+      if (matchedSection) {
+        setActiveSection(matchedSection);
+      }
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
