@@ -156,6 +156,18 @@ export const VideoArenaSection: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(true);
   const prefersReducedMotion = useReducedMotion();
 
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const isScrubbingRef = useRef(false);
+
+  // Time format helper (m:ss)
+  const formatTime = (secs: number) => {
+    if (isNaN(secs) || !isFinite(secs) || secs < 0) return '0:00';
+    const m = Math.floor(secs / 60);
+    const s = Math.floor(secs % 60);
+    return `${m}:${s < 10 ? '0' : ''}${s}`;
+  };
+
   // Video element references for in-place audio management
   const videoRefs = useRef<Map<string, HTMLVideoElement>>(new Map());
 
@@ -184,6 +196,34 @@ export const VideoArenaSection: React.FC = () => {
 
   // Active center index (normalized circular index)
   const activeCenterIndex = ((((Math.round(displayPos)) % totalVideos) + totalVideos) % totalVideos);
+
+  // Play selected video directly from the beginning (00:00) with sound
+  const playVideoFromBeginning = useCallback((videoId: string) => {
+    setActiveAudioId(videoId);
+    setIsAudioMuted(false);
+    setIsPlaying(true);
+    setCurrentTime(0);
+
+    const targetEl = videoRefs.current.get(videoId);
+    if (targetEl) {
+      targetEl.currentTime = 0;
+      if (targetEl.duration) {
+        setDuration(targetEl.duration);
+      }
+      targetEl.muted = false;
+      targetEl.volume = 1.0;
+      targetEl.play().catch(() => {});
+    }
+
+    // Keep all other videos silent
+    videoRefs.current.forEach((el, id) => {
+      if (id !== videoId) {
+        el.muted = true;
+        el.volume = 0;
+        el.play().catch(() => {});
+      }
+    });
+  }, []);
 
   // Responsive window resize listener
   useEffect(() => {
@@ -220,6 +260,8 @@ export const VideoArenaSection: React.FC = () => {
     setActiveAudioId(null);
     setIsPlaying(true);
     setIsAudioMuted(false);
+    setCurrentTime(0);
+    setDuration(0);
     if (snapTimeoutRef.current) clearTimeout(snapTimeoutRef.current);
     if (rafRef.current) {
       cancelAnimationFrame(rafRef.current);
@@ -287,27 +329,23 @@ export const VideoArenaSection: React.FC = () => {
     targetPosRef.current = Math.round(targetPosRef.current) - 1;
     startLoop();
 
-    // Set new centered card as active sound
+    // Set new centered card as active sound starting from beginning
     const newIdx = ((((Math.round(targetPosRef.current)) % totalVideos) + totalVideos) % totalVideos);
     if (activeAudioId) {
-      setActiveAudioId(filteredVideos[newIdx].id);
-      setIsAudioMuted(false);
-      setIsPlaying(true);
+      playVideoFromBeginning(filteredVideos[newIdx].id);
     }
-  }, [totalVideos, activeAudioId, filteredVideos, startLoop]);
+  }, [totalVideos, activeAudioId, filteredVideos, startLoop, playVideoFromBeginning]);
 
   const handleNext = useCallback(() => {
     targetPosRef.current = Math.round(targetPosRef.current) + 1;
     startLoop();
 
-    // Set new centered card as active sound
+    // Set new centered card as active sound starting from beginning
     const newIdx = ((((Math.round(targetPosRef.current)) % totalVideos) + totalVideos) % totalVideos);
     if (activeAudioId) {
-      setActiveAudioId(filteredVideos[newIdx].id);
-      setIsAudioMuted(false);
-      setIsPlaying(true);
+      playVideoFromBeginning(filteredVideos[newIdx].id);
     }
-  }, [totalVideos, activeAudioId, filteredVideos, startLoop]);
+  }, [totalVideos, activeAudioId, filteredVideos, startLoop, playVideoFromBeginning]);
 
   // Keyboard navigation
   useEffect(() => {
@@ -424,7 +462,7 @@ export const VideoArenaSection: React.FC = () => {
     }
   };
 
-  // Click card handler: centers selected video and plays directly IN PLACE with sound!
+  // Click card handler: centers selected video and plays directly IN PLACE with sound from beginning!
   const handleCardClick = (video: GalleryVideoItem, idx: number) => {
     // If was actively dragging, ignore
     if (isDraggingRef.current) return;
@@ -449,27 +487,8 @@ export const VideoArenaSection: React.FC = () => {
         return nextState;
       });
     } else {
-      // Otherwise activate sound on this card immediately
-      setActiveAudioId(video.id);
-      setIsAudioMuted(false);
-      setIsPlaying(true);
-
-      // Directly unmute and play the video synchronously in the click gesture
-      const targetEl = videoRefs.current.get(video.id);
-      if (targetEl) {
-        targetEl.muted = false;
-        targetEl.volume = 1.0;
-        targetEl.play().catch(() => {});
-      }
-
-      // Mute all other videos
-      videoRefs.current.forEach((el, id) => {
-        if (id !== video.id) {
-          el.muted = true;
-          el.volume = 0;
-          el.play().catch(() => {});
-        }
-      });
+      // Otherwise activate sound on this card immediately from beginning (00:00)
+      playVideoFromBeginning(video.id);
     }
   };
 
@@ -503,6 +522,50 @@ export const VideoArenaSection: React.FC = () => {
       }
       return nextState;
     });
+  };
+
+  // Timeline Scrubber Seeking & Scrubbing Handlers (Strictly stop propagation to prevent carousel drag)
+  const handleTimelinePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (!activeAudioId) return;
+    const targetEl = videoRefs.current.get(activeAudioId);
+    if (!targetEl || !targetEl.duration) return;
+
+    isScrubbingRef.current = true;
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {}
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+    const ratio = clickX / rect.width;
+    const newTime = ratio * targetEl.duration;
+    targetEl.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
+  const handleTimelinePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isScrubbingRef.current || !activeAudioId) return;
+    e.stopPropagation();
+    const targetEl = videoRefs.current.get(activeAudioId);
+    if (!targetEl || !targetEl.duration) return;
+
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = Math.max(0, Math.min(e.clientX - rect.left, rect.width));
+    const ratio = clickX / rect.width;
+    const newTime = ratio * targetEl.duration;
+    targetEl.currentTime = newTime;
+    setCurrentTime(newTime);
+  };
+
+  const handleTimelinePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (isScrubbingRef.current) {
+      e.stopPropagation();
+      isScrubbingRef.current = false;
+      try {
+        e.currentTarget.releasePointerCapture(e.pointerId);
+      } catch {}
+    }
   };
 
   return (
@@ -659,30 +722,35 @@ export const VideoArenaSection: React.FC = () => {
                     muted={activeAudioId !== video.id || isAudioMuted}
                     autoPlay
                     playsInline
+                    onTimeUpdate={(e) => {
+                      if (activeAudioId === video.id && !isScrubbingRef.current) {
+                        setCurrentTime(e.currentTarget.currentTime);
+                      }
+                    }}
+                    onLoadedMetadata={(e) => {
+                      if (activeAudioId === video.id) {
+                        setDuration(e.currentTarget.duration);
+                      }
+                    }}
                     className="w-full h-full object-cover object-center filter brightness-95 group-hover:brightness-105 transition-all duration-500"
                   />
 
                   {/* Top-To-Bottom Vignette Gradients */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/25 to-black/40 pointer-events-none" />
 
-                  {/* Top Header Bar with Live Audio Badge & Sound Toggle */}
+                  {/* Top Header Bar with Clean Tag & Sound Toggle (NO AUDIO LIVE text) */}
                   <div className="absolute top-3 left-3 right-3 flex items-center justify-between z-20">
-                    {/* Live Audio Badge or Exercise Category Tag */}
-                    {isCenterActiveAudio ? (
-                      <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-gradient-to-r from-[#FF5E1E] to-[#FF8C38] text-[#0A0B10] font-black text-[9px] tracking-wider uppercase shadow-[0_0_16px_rgba(255,94,30,0.85)]">
-                        <Volume2 className="w-3 h-3 shrink-0" />
-                        <span className="font-mono">AUDIO LIVE</span>
-                        <span className="flex items-end gap-0.5 h-2.5 ml-0.5">
-                          <span className="w-0.5 h-2 bg-[#0A0B10] rounded-full animate-bounce [animation-delay:0ms]" />
-                          <span className="w-0.5 h-3 bg-[#0A0B10] rounded-full animate-bounce [animation-delay:150ms]" />
-                          <span className="w-0.5 h-1.5 bg-[#0A0B10] rounded-full animate-bounce [animation-delay:300ms]" />
-                        </span>
-                      </div>
-                    ) : (
-                      <span className="px-2.5 py-1 rounded-full bg-black/70 backdrop-blur-md border border-white/15 text-[9px] font-mono tracking-wider font-bold text-white uppercase shadow-sm">
-                        {video.tag}
-                      </span>
-                    )}
+                    {/* Clean Exercise Category Tag */}
+                    <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full backdrop-blur-md text-[9px] font-mono tracking-wider font-bold uppercase shadow-sm transition-all duration-300 ${
+                      isCenterActiveAudio
+                        ? 'bg-black/80 border border-[#FF5E1E] text-white shadow-[0_0_12px_rgba(255,94,30,0.5)]'
+                        : 'bg-black/70 border border-white/15 text-white/90'
+                    }`}>
+                      {isCenterActiveAudio && (
+                        <span className="w-1.5 h-1.5 rounded-full bg-[#FF5E1E] shadow-[0_0_6px_#FF5E1E] animate-pulse" />
+                      )}
+                      <span>{video.tag}</span>
+                    </div>
 
                     {/* Mute/Unmute Quick Toggle Button on Center Card */}
                     {isCenter && (
@@ -734,14 +802,64 @@ export const VideoArenaSection: React.FC = () => {
                   </div>
 
                   {/* Bottom Captions & Info */}
-                  <div className="absolute bottom-4 inset-x-4 pointer-events-none z-10">
+                  <div className={`absolute inset-x-4 pointer-events-none z-10 transition-all duration-300 ${
+                    isCenterActiveAudio ? 'bottom-11' : 'bottom-4'
+                  }`}>
                     <h3 className="font-athletic italic uppercase font-black text-base sm:text-lg text-white leading-tight drop-shadow-md">
                       {video.title}
                     </h3>
-                    <p className="text-[11px] text-neutral-300 line-clamp-2 mt-1 leading-snug font-medium">
+                    <p className="text-[11px] text-neutral-300 line-clamp-1 mt-0.5 leading-snug font-medium">
                       {video.subtitle}
                     </p>
                   </div>
+
+                  {/* Customized Interactive Video Timeline Scrubber */}
+                  {isCenterActiveAudio && (
+                    <div
+                      className="absolute bottom-2.5 inset-x-3.5 z-30 flex flex-col gap-1 pointer-events-auto select-none"
+                      onClick={(e) => e.stopPropagation()}
+                      onPointerDown={(e) => e.stopPropagation()}
+                    >
+                      {/* Scrubbing Track */}
+                      <div
+                        role="slider"
+                        aria-label="Video timeline scrubber"
+                        aria-valuemin={0}
+                        aria-valuemax={duration || 100}
+                        aria-valuenow={currentTime}
+                        onPointerDown={handleTimelinePointerDown}
+                        onPointerMove={handleTimelinePointerMove}
+                        onPointerUp={handleTimelinePointerUp}
+                        onPointerCancel={handleTimelinePointerUp}
+                        className="group/timeline relative w-full h-3.5 flex items-center cursor-pointer touch-none"
+                      >
+                        {/* Background Track */}
+                        <div className="w-full h-1 group-hover/timeline:h-1.5 bg-white/25 rounded-full overflow-hidden backdrop-blur-md transition-all">
+                          {/* Filled Progress Bar */}
+                          <div
+                            className="h-full bg-gradient-to-r from-[#FF5E1E] via-[#FF7538] to-[#FFA034] rounded-full shadow-[0_0_8px_#FF5E1E]"
+                            style={{
+                              width: `${duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0}%`,
+                            }}
+                          />
+                        </div>
+
+                        {/* Scrubber Knob / Thumb */}
+                        <div
+                          className="absolute top-1/2 -translate-y-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-white border-2 border-[#FF5E1E] shadow-[0_0_10px_rgba(255,94,30,1)] opacity-90 group-hover/timeline:opacity-100 group-hover/timeline:scale-125 transition-transform pointer-events-none"
+                          style={{
+                            left: `${duration > 0 ? Math.min(100, Math.max(0, (currentTime / duration) * 100)) : 0}%`,
+                          }}
+                        />
+                      </div>
+
+                      {/* Time stamps */}
+                      <div className="flex items-center justify-between text-[10px] font-mono font-bold text-white/70 px-0.5 leading-none">
+                        <span className="text-[#FFA034]">{formatTime(currentTime)}</span>
+                        <span>{formatTime(duration)}</span>
+                      </div>
+                    </div>
+                  )}
 
                   {/* Glowing Orange Rim along Bottom Edge */}
                   <div className={`absolute bottom-0 inset-x-0 h-1 transition-opacity ${
@@ -800,9 +918,7 @@ export const VideoArenaSection: React.FC = () => {
                 targetPosRef.current += diff;
                 startLoop();
 
-                setActiveAudioId(filteredVideos[targetIdx].id);
-                setIsAudioMuted(false);
-                setIsPlaying(true);
+                playVideoFromBeginning(filteredVideos[targetIdx].id);
               }}
             >
               <div
@@ -829,9 +945,7 @@ export const VideoArenaSection: React.FC = () => {
                   targetPosRef.current += diff;
                   startLoop();
 
-                  setActiveAudioId(filteredVideos[i].id);
-                  setIsAudioMuted(false);
-                  setIsPlaying(true);
+                  playVideoFromBeginning(filteredVideos[i].id);
                 }}
                 aria-label={`Jump to video ${i + 1}`}
                 className={`h-1.5 rounded-full transition-all duration-300 ${
