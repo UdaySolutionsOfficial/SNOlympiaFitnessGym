@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { Play, X, Volume2 } from 'lucide-react';
+import { createPortal } from 'react-dom';
+import { Play, X, Volume2, VolumeX } from 'lucide-react';
 import { ASSET_MANIFEST } from '../../data/assets';
 
 export interface HeroVideoCardProps {
@@ -10,9 +11,23 @@ export interface HeroVideoCardProps {
   alignment?: 'left' | 'right';
 }
 
+const formatTime = (seconds: number): string => {
+  if (isNaN(seconds) || seconds < 0) return '0:00';
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+};
+
 /**
  * High-End 3D Floating Video Card with Continuous Pop-Out Levitation,
- * Stereoscopic Inward Tilt, Interactive 3D Parallax & Modal Popup.
+ * Interactive 3D Parallax & Portal-Based Blurred Backdrop Modal Popup.
+ * 
+ * Features requested by user:
+ * 1. Popup rendered via React Portal so top navbar is blurred in the background.
+ * 2. Reduced, professional cinema-grade popup container dimensions.
+ * 3. Native controls removed completely.
+ * 4. Only animated progress bar and customized mute/unmute button.
+ * 5. Controls only revealed on hover over the video.
  */
 export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
   videoSrc = ASSET_MANIFEST.hero.introVideo.path,
@@ -22,6 +37,10 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
   const [tilt, setTilt] = useState({ x: 0, y: 0, glareX: 50, glareY: 50 });
 
   const cardRef = useRef<HTMLDivElement | null>(null);
@@ -35,16 +54,24 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
     }
   }, [videoSrc]);
 
-  // Handle opening popup video modal with sound
+  // Handle opening popup video modal with sound and locking body scroll
   const handleOpenModal = () => {
     if (previewVideoRef.current) {
       previewVideoRef.current.pause();
     }
     setIsModalOpen(true);
+    setIsPlaying(true);
+    setIsMuted(false);
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
   };
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = 'unset';
+    }
     if (previewVideoRef.current) {
       previewVideoRef.current.play().catch(() => {});
     }
@@ -64,11 +91,60 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
   // Autoplay modal video with sound once open
   useEffect(() => {
     if (isModalOpen && modalVideoRef.current) {
-      modalVideoRef.current.muted = false;
+      modalVideoRef.current.muted = isMuted;
       modalVideoRef.current.volume = 1;
-      modalVideoRef.current.play().catch(() => {});
+      modalVideoRef.current.play().then(() => setIsPlaying(true)).catch(() => {
+        // Fallback to muted if browser blocks unmuted autoplay
+        if (modalVideoRef.current) {
+          modalVideoRef.current.muted = true;
+          setIsMuted(true);
+          modalVideoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+        }
+      });
     }
   }, [isModalOpen]);
+
+  // Toggle play/pause on video frame click
+  const handleTogglePlay = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (!modalVideoRef.current) return;
+    if (modalVideoRef.current.paused) {
+      modalVideoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+    } else {
+      modalVideoRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  // Toggle sound mute/unmute
+  const handleToggleMute = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    if (!modalVideoRef.current) return;
+    const nextMuted = !isMuted;
+    modalVideoRef.current.muted = nextMuted;
+    setIsMuted(nextMuted);
+  };
+
+  // Video time update
+  const handleTimeUpdate = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+    setCurrentTime(e.currentTarget.currentTime);
+  };
+
+  const handleLoadedMetadata = (e: React.SyntheticEvent<HTMLVideoElement>) => {
+    setDuration(e.currentTarget.duration);
+  };
+
+  // Scrub on animated progress bar
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    if (!modalVideoRef.current || duration <= 0) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+    const targetTime = ratio * duration;
+    modalVideoRef.current.currentTime = targetTime;
+    setCurrentTime(targetTime);
+  };
 
   // 3D Mouse Parallax Tracker
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -78,8 +154,8 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
     const y = (e.clientY - rect.top) / rect.height;
 
     // Rotate up to 16 degrees
-    const rotateY = (x - 0.5) * 18;
-    const rotateX = (0.5 - y) * 18;
+    const rotateY = (x - 0.5) * 16;
+    const rotateX = (0.5 - y) * 16;
 
     setTilt({
       x: rotateX,
@@ -97,6 +173,8 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
     setIsHovered(false);
     setTilt({ x: 0, y: 0, glareX: 50, glareY: 50 });
   };
+
+  const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
 
   return (
     <>
@@ -128,18 +206,18 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
         <div
           style={{
             transform: isHovered
-              ? `perspective(1200px) rotateX(${tilt.x}deg) rotateY(${tilt.y + (alignment === 'left' ? 7 : -7)}deg) translateZ(52px) scale3d(1.05, 1.05, 1.05)`
+              ? `perspective(1200px) rotateX(${tilt.x}deg) rotateY(${tilt.y + (alignment === 'left' ? 6 : -6)}deg) translateZ(48px) scale3d(1.04, 1.04, 1.04)`
               : undefined,
             transition: isHovered
               ? 'transform 0.12s ease-out, box-shadow 0.25s ease-out'
               : 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease-out',
           }}
-          className={`relative w-52 sm:w-60 md:w-64 aspect-[16/10] rounded-2xl bg-black/80 backdrop-blur-2xl border border-white/20 overflow-hidden ${
+          className={`relative w-48 sm:w-56 md:w-60 aspect-[16/10] rounded-2xl bg-black/85 backdrop-blur-2xl border border-white/20 overflow-hidden ${
             !isHovered
               ? alignment === 'left'
                 ? 'animate-3d-float-left'
                 : 'animate-3d-float-right'
-              : 'shadow-[0_35px_80px_-10px_rgba(0,0,0,0.95),0_0_50px_rgba(255,94,30,0.85),0_0_80px_rgba(255,94,30,0.35)] border-[#FF5E1E]'
+              : 'shadow-[0_30px_70px_-10px_rgba(0,0,0,0.95),0_0_45px_rgba(255,94,30,0.8),0_0_70px_rgba(255,94,30,0.3)] border-[#FF5E1E]'
           }`}
         >
           {/* Looping Muted Preview Video */}
@@ -166,9 +244,7 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
           {/* Cinematic Vignettes */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30 pointer-events-none" />
 
-          {/* ========================================================================= */}
-          {/* BOTTOM PLAY BUTTON WITH ANIMATED "EXPLORE" HOVER EXPANSION                 */}
-          {/* ========================================================================= */}
+          {/* BOTTOM PLAY BUTTON WITH ANIMATED "EXPLORE" HOVER EXPANSION */}
           <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 z-20 pointer-events-none">
             <div className="flex items-center">
               <div
@@ -201,58 +277,126 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
       </div>
 
       {/* ========================================================================= */}
-      {/* POPUP MODAL VIDEO PLAYER (Not Immediate Fullscreen)                       */}
+      {/* POPUP MODAL VIDEO PLAYER (Rendered via Portal to blur entire page & navbar)*/}
       {/* ========================================================================= */}
-      {isModalOpen && (
+      {isModalOpen && typeof document !== 'undefined' && createPortal(
         <div
           role="dialog"
           aria-modal="true"
           aria-label={`${title} Video Player`}
-          className="fixed inset-0 z-[120] bg-black/85 backdrop-blur-xl flex items-center justify-center p-4 sm:p-6 md:p-8 animate-fadeIn"
+          className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-6 md:p-8 animate-fadeIn"
           onClick={handleCloseModal}
         >
-          {/* Floating Responsive Popup Card */}
+          {/* Floating Responsive Popup Card (Reduced Professional Cinema Size) */}
           <div
-            className="relative w-full max-w-4xl rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-[#FF5E1E]/80 shadow-[0_0_60px_rgba(255,94,30,0.45),0_25px_80px_rgba(0,0,0,0.95)] bg-[#0C0E12] transition-transform duration-200"
+            className="relative w-full max-w-3xl md:max-w-[780px] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#FF5E1E]/60 shadow-[0_0_60px_rgba(255,94,30,0.35),0_25px_80px_rgba(0,0,0,0.95)] bg-[#0C0E12] transition-transform duration-200 group/player select-none"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Modal Header Bar */}
-            <div className="flex items-center justify-between px-4 sm:px-6 py-3 bg-[#11141A] border-b border-white/10">
-              <div className="flex items-center gap-2.5">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#FF5E1E] shadow-[0_0_8px_#FF5E1E]" />
-                <h3 className="text-sm sm:text-base font-bold text-white uppercase tracking-wider">
-                  {title}
-                </h3>
-              </div>
-              <div className="flex items-center gap-3">
-                <div className="hidden sm:flex items-center gap-1.5 text-xs text-brand-text-muted font-mono">
-                  <Volume2 className="w-3.5 h-3.5 text-[#FF5E1E]" />
-                  <span>Audio Enabled</span>
-                </div>
-                {/* Close Button */}
-                <button
-                  onClick={handleCloseModal}
-                  aria-label="Close popup video"
-                  className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-[#FF5E1E] text-white flex items-center justify-center backdrop-blur-md border border-white/20 transition-all hover:scale-105 active:scale-95 shadow-md"
-                >
-                  <X className="w-4 h-4 sm:w-5 sm:h-5" />
-                </button>
-              </div>
-            </div>
+            {/* Top Close Button (Discreet & Hover-Elevated) */}
+            <button
+              onClick={handleCloseModal}
+              aria-label="Close popup video"
+              className="absolute top-3.5 right-3.5 z-40 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/60 hover:bg-[#FF5E1E] text-white flex items-center justify-center backdrop-blur-xl border border-white/20 hover:border-[#FF5E1E] transition-all hover:scale-105 active:scale-95 shadow-xl opacity-80 hover:opacity-100"
+            >
+              <X className="w-4 h-4" />
+            </button>
 
-            {/* Video Player */}
-            <div className="relative aspect-video bg-black flex items-center justify-center">
+            {/* Video Container Frame */}
+            <div
+              className="relative w-full aspect-video bg-black flex items-center justify-center cursor-pointer overflow-hidden"
+              onClick={handleTogglePlay}
+            >
+              {/* Video Element without any native buttons */}
               <video
                 ref={modalVideoRef}
                 src={videoSrc}
-                controls
                 autoPlay
                 playsInline
-                className="w-full h-full object-contain bg-black"
+                loop
+                muted={isMuted}
+                onTimeUpdate={handleTimeUpdate}
+                onLoadedMetadata={handleLoadedMetadata}
+                className="w-full h-full object-cover sm:object-contain bg-black"
               />
+
+              {/* Momentary Play/Pause Status Indicator Ripple */}
+              {!isPlaying && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none transition-opacity">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#FF5E1E] text-white flex items-center justify-center shadow-[0_0_35px_#FF5E1E] border border-white/30 animate-pulse">
+                    <Play className="w-6 h-6 sm:w-7 sm:h-7 fill-white translate-x-0.5" />
+                  </div>
+                </div>
+              )}
+
+              {/* ========================================================================= */}
+              {/* HOVER-ONLY OVERLAY CONTROLS (Progress Bar + Sound Mute/Unmute Button)      */}
+              {/* ========================================================================= */}
+              <div className="absolute inset-0 pointer-events-none opacity-0 group-hover/player:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4 sm:p-5 bg-gradient-to-t from-black/85 via-transparent to-black/35">
+                
+                {/* Top Video Title Badge */}
+                <div className="flex items-center gap-2 pointer-events-auto">
+                  <span className="w-2 h-2 rounded-full bg-[#FF5E1E] shadow-[0_0_8px_#FF5E1E] animate-pulse" />
+                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-white drop-shadow-md">
+                    {title}
+                  </span>
+                </div>
+
+                {/* Bottom Interactive Area */}
+                <div className="space-y-3 pointer-events-auto w-full">
+                  <div className="flex items-center justify-between text-xs">
+                    {/* Timestamp */}
+                    <span className="text-[11px] font-mono font-semibold text-white/85 drop-shadow">
+                      {formatTime(currentTime)} / {formatTime(duration)}
+                    </span>
+
+                    {/* Customized Sound Mute/Unmute Button */}
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        handleToggleMute();
+                      }}
+                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/65 hover:bg-black/95 backdrop-blur-xl border border-white/20 hover:border-[#FF5E1E] text-white hover:text-[#FF5E1E] shadow-lg transition-all active:scale-95 group/sound"
+                    >
+                      {isMuted ? (
+                        <>
+                          <VolumeX className="w-3.5 h-3.5 text-red-400" />
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-red-400">
+                            Muted
+                          </span>
+                        </>
+                      ) : (
+                        <>
+                          <Volume2 className="w-3.5 h-3.5 text-[#FF5E1E]" />
+                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-white group-hover/sound:text-[#FF5E1E]">
+                            Sound On
+                          </span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
+                  {/* Customized Animated Progress Bar */}
+                  <div
+                    className="relative w-full h-1.5 sm:h-2 bg-white/25 hover:h-2.5 rounded-full overflow-hidden cursor-pointer backdrop-blur-md transition-all duration-150 group/bar"
+                    onClick={handleSeek}
+                    role="slider"
+                    aria-label="Video playback progress"
+                    aria-valuenow={Math.round(progressPercent)}
+                  >
+                    <div
+                      className="h-full bg-gradient-to-r from-amber-400 via-[#FF7538] to-[#FF5E1E] shadow-[0_0_12px_#FF5E1E] rounded-full relative transition-[width] duration-100 ease-linear"
+                      style={{ width: `${progressPercent}%` }}
+                    >
+                      {/* Leading Glow Dot */}
+                      <span className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white shadow-[0_0_8px_#FFFFFF]" />
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </>
   );
