@@ -9,6 +9,7 @@ export interface HeroVideoCardProps {
   tag?: string;
   className?: string;
   alignment?: 'left' | 'right';
+  compact?: boolean;
 }
 
 const formatTime = (seconds: number): string => {
@@ -34,6 +35,7 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
   title = 'SN Olympia Experience',
   className = '',
   alignment = 'right',
+  compact = false,
 }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
@@ -205,20 +207,28 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
 
         <div
           style={{
-            transform: isHovered
+            transform: isHovered && !compact
               ? `perspective(1200px) rotateX(${tilt.x}deg) rotateY(${tilt.y + (alignment === 'left' ? 6 : -6)}deg) translateZ(48px) scale3d(1.04, 1.04, 1.04)`
               : undefined,
             transition: isHovered
               ? 'transform 0.12s ease-out, box-shadow 0.25s ease-out'
               : 'transform 0.6s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.6s ease-out',
           }}
-          className={`relative w-48 sm:w-56 md:w-60 aspect-[16/10] rounded-2xl bg-black/85 backdrop-blur-2xl border border-white/20 overflow-hidden ${
-            !isHovered
-              ? alignment === 'left'
-                ? 'animate-3d-float-left'
-                : 'animate-3d-float-right'
-              : 'shadow-[0_30px_70px_-10px_rgba(0,0,0,0.95),0_0_45px_rgba(255,94,30,0.8),0_0_70px_rgba(255,94,30,0.3)] border-[#FF5E1E]'
-          }`}
+          className={
+            compact
+              ? `relative w-full aspect-[16/9] rounded-xl bg-black/90 border border-white/20 overflow-hidden transition-all duration-300 ${
+                  isHovered
+                    ? 'border-[#FF5E1E] shadow-[0_0_25px_rgba(255,94,30,0.6)]'
+                    : 'shadow-md'
+                }`
+              : `relative w-48 sm:w-56 md:w-60 aspect-[16/10] rounded-2xl bg-black/85 backdrop-blur-2xl border border-white/20 overflow-hidden ${
+                  !isHovered
+                    ? alignment === 'left'
+                      ? 'animate-3d-float-left'
+                      : 'animate-3d-float-right'
+                    : 'shadow-[0_30px_70px_-10px_rgba(0,0,0,0.95),0_0_45px_rgba(255,94,30,0.8),0_0_70px_rgba(255,94,30,0.3)] border-[#FF5E1E]'
+                }`
+          }
         >
           {/* Looping Muted Preview Video */}
           <video
@@ -230,6 +240,14 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
             autoPlay
             className="w-full h-full object-cover object-center filter brightness-90 group-hover/vid:brightness-100 transition-all duration-500 scale-100 group-hover/vid:scale-105"
           />
+
+          {/* Compact Mode Title Badge */}
+          {compact && (
+            <div className="absolute top-2 left-2 z-20 px-2 py-0.5 rounded-md bg-black/80 backdrop-blur-md border border-white/15 text-[10px] font-mono font-bold uppercase tracking-wider text-white flex items-center gap-1.5 shadow-sm pointer-events-none">
+              <span className="w-1.5 h-1.5 rounded-full bg-[#FF5E1E] animate-pulse" />
+              <span className="truncate max-w-[200px]">{title}</span>
+            </div>
+          )}
 
           {/* Interactive Mouse Glare Reflection */}
           {isHovered && (

@@ -250,7 +250,7 @@ export const TopDock: React.FC<TopDockProps> = ({
           {/* THREEUI ULTRA-LUXURY GLASSMORPHIC COMMAND BAR CONTAINER                    */}
           {/* ========================================================================= */}
           <div
-            className="relative flex items-center justify-between gap-2 sm:gap-4 md:gap-5 lg:gap-8 h-13 sm:h-15 md:h-16 px-3.5 sm:px-4 md:px-5 rounded-full border border-white/[0.18] shadow-[0_24px_50px_-15px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_-1px_1px_rgba(255,255,255,0.06),0_0_35px_rgba(255,94,30,0.14)] transition-all duration-300 w-full max-w-[98vw] md:max-w-[96vw] lg:max-w-fit mx-auto"
+            className="relative flex items-center justify-between gap-2.5 sm:gap-4 md:gap-5 lg:gap-8 h-15 sm:h-15 md:h-16 px-4 sm:px-4.5 md:px-5 rounded-full border border-white/[0.18] shadow-[0_24px_50px_-15px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_-1px_1px_rgba(255,255,255,0.06),0_0_35px_rgba(255,94,30,0.14)] transition-all duration-300 w-full max-w-[98vw] md:max-w-[96vw] lg:max-w-fit mx-auto"
             style={{
               background: 'linear-gradient(135deg, rgba(20, 24, 33, 0.58) 0%, rgba(10, 12, 18, 0.68) 100%)',
               backdropFilter: 'blur(30px) saturate(190%) contrast(105%)',
@@ -264,10 +264,10 @@ export const TopDock: React.FC<TopDockProps> = ({
                 e.preventDefault();
                 handleLinkClick('#overview');
               }}
-              className="flex items-center gap-2.5 group focus-visible:outline-none select-none pl-1 shrink-0"
+              className="flex items-center gap-2.5 group focus-visible:outline-none select-none pl-0.5 shrink-0"
             >
               {/* Official Transparent SN Logo Icon — Pure Floating Monogram */}
-              <SNOlympiaLogo className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 group-hover:scale-105 transition-transform" priority />
+              <SNOlympiaLogo className="w-9 h-9 sm:w-9 sm:h-9 shrink-0 group-hover:scale-105 transition-transform" priority />
 
               {/* Wordmark (Clean & Vertically Centered) */}
               <div className="flex items-center">
@@ -353,11 +353,11 @@ export const TopDock: React.FC<TopDockProps> = ({
 
             {/* 3. RIGHT: CONTACT US DIALER CTA & PROFILE (ACTIONS) */}
             <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-              {/* High-Energy Electric Orange Gradient Phone Dialer CTA Button */}
+              {/* High-Energy Electric Orange Gradient Phone Dialer CTA Button (Hidden on Mobile screens, visible on md+) */}
               <a
                 href={`tel:${SITE_CONTENT.brand.contact.phone.value}`}
                 aria-label="Call Olympia Gym"
-                className="inline-flex items-center gap-1.5 px-4 sm:px-5 lg:px-6 py-2 sm:py-2.5 rounded-full text-white font-black text-[11px] sm:text-xs uppercase tracking-wider shadow-[0_10px_26px_-10px_rgba(255,94,30,0.95)] hover:shadow-[0_12px_32px_-8px_rgba(255,94,30,1)] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer border border-white/20 select-none whitespace-nowrap"
+                className="hidden md:inline-flex items-center gap-1.5 px-4 sm:px-5 lg:px-6 py-2 sm:py-2.5 rounded-full text-white font-black text-[11px] sm:text-xs uppercase tracking-wider shadow-[0_10px_26px_-10px_rgba(255,94,30,0.95)] hover:shadow-[0_12px_32px_-8px_rgba(255,94,30,1)] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer border border-white/20 select-none whitespace-nowrap"
                 style={{
                   background: 'linear-gradient(180deg, #FF5E1E 0%, #E0480C 100%)',
                 }}
@@ -371,9 +371,9 @@ export const TopDock: React.FC<TopDockProps> = ({
               <button
                 onClick={() => handleLinkClick('#membership')}
                 aria-label="Member Area & Profile"
-                className="w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-[#FF5E1E] text-white flex items-center justify-center border border-white/20 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,94,30,0.7)] transition-all shadow-sm active:scale-95 shrink-0"
+                className="w-9 h-9 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-[#FF5E1E] text-white flex items-center justify-center border border-white/20 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,94,30,0.7)] transition-all shadow-sm active:scale-95 shrink-0"
               >
-                <User className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-white text-white" />
+                <User className="w-4 h-4 fill-white text-white" />
               </button>
 
               {/* Mobile Hamburger Toggle Button */}
@@ -381,9 +381,9 @@ export const TopDock: React.FC<TopDockProps> = ({
                 onClick={() => setMobileMenuOpen(true)}
                 aria-label="Open mobile navigation menu"
                 aria-expanded={mobileMenuOpen}
-                className="inline-flex md:hidden p-1.5 rounded-full bg-white/10 border border-white/15 text-white hover:bg-[#FF5E1E] transition-colors"
+                className="inline-flex md:hidden p-2 rounded-full bg-white/10 border border-white/15 text-white hover:bg-[#FF5E1E] transition-colors"
               >
-                <Menu className="w-4 h-4" />
+                <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
             </div>
           </div>

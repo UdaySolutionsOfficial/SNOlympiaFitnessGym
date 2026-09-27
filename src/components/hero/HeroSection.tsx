@@ -5,7 +5,8 @@ import { HeroCoachesBadge } from './HeroCoachesBadge';
 import { PlateViewer } from '../3d/PlateViewer';
 import { HeroExplore3DButton } from './HeroExplore3DButton';
 import { ASSET_MANIFEST } from '../../data/assets';
-import { ChevronDown, Sparkles } from 'lucide-react';
+import { ChevronDown, Sparkles, Play, X } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 export interface HeroSectionProps {
@@ -58,6 +59,29 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
     window.addEventListener('mousemove', handleMouseMove, { passive: true });
     return () => window.removeEventListener('mousemove', handleMouseMove);
   }, [handleMouseMove]);
+
+  const [mobileTooltipOpen, setMobileTooltipOpen] = useState(false);
+  const tooltipRef = useRef<HTMLDivElement | null>(null);
+
+  // Close mobile video tooltip when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (tooltipRef.current && !tooltipRef.current.contains(e.target as Node)) {
+        const target = e.target as HTMLElement;
+        if (!target.closest('button[data-reel-toggle="true"]')) {
+          setMobileTooltipOpen(false);
+        }
+      }
+    };
+    if (mobileTooltipOpen) {
+      document.addEventListener('mousedown', handleClickOutside);
+      document.addEventListener('touchstart', handleClickOutside as any);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener('touchstart', handleClickOutside as any);
+    };
+  }, [mobileTooltipOpen]);
 
   const scrollToNext = () => {
     const nextSection = document.getElementById('section-transition') || document.getElementById('programs');
@@ -148,7 +172,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
 
           {/* CONTENT GRID: LEFT (Get Fit) & RIGHT (Stay Fit + Video) */}
-          <div className="relative z-10 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-center min-h-[580px] sm:min-h-[660px] lg:min-h-[720px] p-6 sm:p-10 lg:p-14">
+          <div className="relative z-20 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-center min-h-[580px] sm:min-h-[660px] lg:min-h-[720px] p-6 sm:p-10 lg:p-14">
             
             {/* ========================================================================= */}
             {/* LEFT COLUMN: "Get Fit", Coaches Badge, and Bottom-Left Video Container     */}
@@ -171,14 +195,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   </h1>
                 </div>
 
-                {/* 20 Active Coaches Credential Badge */}
-                <div>
+                {/* 20 Active Coaches Credential Badge (Hidden on mobile <md) */}
+                <div className="hidden md:block">
                   <HeroCoachesBadge />
                 </div>
               </div>
 
-              {/* Bottom Left: Second Video Card (Clean: only preview + animated explore play button) */}
-              <div className="pt-2">
+              {/* Bottom Left: Second Video Card (Hidden on mobile <md) */}
+              <div className="hidden md:block pt-2">
                 <HeroVideoCard
                   videoSrc={ASSET_MANIFEST.hero.introVideo2.path}
                   title="SN Olympia Energy & Coaching"
@@ -213,8 +237,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   </h2>
                 </div>
 
-                {/* Floating Translucent Video Card (Clean: only preview + animated explore play button) */}
-                <div className="mt-1">
+                {/* Floating Translucent Video Card (Hidden on mobile <md) */}
+                <div className="hidden md:block mt-1">
                   <HeroVideoCard
                     videoSrc={ASSET_MANIFEST.hero.introVideo.path}
                     title="SN Olympia Facility Showcase"
@@ -224,8 +248,8 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               </div>
 
             {/* Bottom Right: Circular Scroll Down Button & 3D Plate Satellite */}
-            <div className="flex items-center gap-4 pt-2 w-full justify-between lg:justify-end">
-              {/* Free-Floating 3D Olympic Plate Medallion */}
+            <div className="flex items-center gap-4 pt-2 w-full justify-end lg:justify-end">
+              {/* Free-Floating 3D Olympic Plate Medallion (Hidden on mobile <md) */}
               <div
                 style={{
                   transform: !prefersReducedMotion
@@ -233,7 +257,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                     : undefined,
                   transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
                 }}
-                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-[#FF5E1E]/40 shadow-md cursor-grab active:cursor-grabbing group"
+                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-[#FF5E1E]/40 shadow-md cursor-grab active:cursor-grabbing group"
               >
                 <div className="w-7 h-7 relative">
                   <PlateViewer className="w-full h-full" autoRotate />
@@ -244,20 +268,96 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 </div>
               </div>
 
-              {/* Circular Scroll Down Button */}
+              {/* Circular Scroll Down Button (Desktop / Tablet >=md) */}
               <button
                 onClick={scrollToNext}
                 aria-label="Scroll down to classes"
-                className="w-11 h-11 rounded-full bg-white/10 hover:bg-[#FF5E1E] hover:text-white border border-white/20 text-[#FF5E1E] flex items-center justify-center shadow-lg transition-all active:scale-95 group"
+                className="hidden md:flex w-11 h-11 rounded-full bg-white/10 hover:bg-[#FF5E1E] hover:text-white border border-white/20 text-[#FF5E1E] flex items-center justify-center shadow-lg transition-all active:scale-95 group"
               >
                 <ChevronDown className="w-5 h-5 group-hover:translate-y-0.5 transition-transform" />
               </button>
+
+              {/* Mobile Animated Neon Play Button + Floating Video Tooltip (<md) */}
+              <div className="relative md:hidden flex items-center justify-end z-40">
+                {/* Neon Animated Circular Play Button (No text, pulsing neon rings) */}
+                <button
+                  type="button"
+                  data-reel-toggle="true"
+                  onClick={() => setMobileTooltipOpen((prev) => !prev)}
+                  aria-label={mobileTooltipOpen ? 'Close video reels' : 'Open video reels'}
+                  aria-expanded={mobileTooltipOpen}
+                  className="relative w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-95 cursor-pointer shadow-[0_0_28px_rgba(255,94,30,0.9),0_0_55px_rgba(255,94,30,0.45)] border border-white/30"
+                  style={{
+                    background: 'linear-gradient(135deg, #FF5E1E 0%, #FF7A18 50%, #FFA034 100%)',
+                  }}
+                >
+                  {/* Subtle Expanding Outer Radar Wave / Pulse Ping */}
+                  <span className="absolute -inset-2 rounded-full bg-[#FF5E1E]/35 animate-ping opacity-60 pointer-events-none" />
+                  <span className="absolute -inset-1 rounded-full border border-[#FF5E1E]/70 animate-pulse pointer-events-none" />
+
+                  {/* Pure Neon Play Icon (No text) */}
+                  <Play className="relative z-10 w-5 h-5 text-white fill-white translate-x-0.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]" />
+                </button>
+
+                {/* Floating Video Tooltip Card Anchored Above */}
+                <AnimatePresence>
+                  {mobileTooltipOpen && (
+                    <motion.div
+                      ref={tooltipRef}
+                      initial={{ opacity: 0, y: 12, scale: 0.94 }}
+                      animate={{ opacity: 1, y: 0, scale: 1 }}
+                      exit={{ opacity: 0, y: 10, scale: 0.94 }}
+                      transition={{ type: 'spring', damping: 25, stiffness: 350 }}
+                      className="absolute bottom-15 right-0 w-[min(calc(100vw-2.5rem),320px)] rounded-2xl bg-[#0C0E14]/95 backdrop-blur-2xl border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_35px_rgba(255,94,30,0.25)] p-3 space-y-2.5 z-50 text-left"
+                      role="tooltip"
+                      aria-label="Hero Video Reels"
+                    >
+                      {/* Downward Indicator Caret */}
+                      <div className="absolute -bottom-1.5 right-4 w-3.5 h-3.5 bg-[#0C0E14] border-r border-b border-white/20 rotate-45 pointer-events-none" />
+
+                      {/* Tooltip Header Bar */}
+                      <div className="flex items-center justify-between pb-1.5 border-b border-white/10">
+                        <div className="flex items-center gap-1.5">
+                          <span className="w-2 h-2 rounded-full bg-[#FF5E1E] shadow-[0_0_8px_#FF5E1E] animate-pulse" />
+                          <span className="font-mono text-[10px] font-black uppercase tracking-wider text-[#FFA034]">
+                            SN OLYMPIA REELS
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => setMobileTooltipOpen(false)}
+                          aria-label="Close tooltip"
+                          className="p-1 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                        >
+                          <X className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+
+                      {/* Tooltip Videos (Same styling with live preview & cinema modal trigger) */}
+                      <div className="space-y-2">
+                        <HeroVideoCard
+                          videoSrc={ASSET_MANIFEST.hero.introVideo2.path}
+                          title="SN Olympia Energy & Coaching"
+                          alignment="left"
+                          compact={true}
+                        />
+                        <HeroVideoCard
+                          videoSrc={ASSET_MANIFEST.hero.introVideo.path}
+                          title="SN Olympia Facility Showcase"
+                          alignment="right"
+                          compact={true}
+                        />
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             </div>
           </div>
         </div>
 
         {/* Signature Centered 3D "Explore More" Button (Placed at Bottom of Hero Image) */}
-        <div className="relative lg:absolute lg:bottom-7 inset-x-0 flex justify-center items-center z-30 pointer-events-auto pb-6 lg:pb-0">
+        <div className="relative lg:absolute lg:bottom-7 inset-x-0 flex justify-center items-center z-10 pointer-events-auto pb-6 lg:pb-0">
           <HeroExplore3DButton onClick={onExploreClick || onJoinClick} />
         </div>
       </div>
