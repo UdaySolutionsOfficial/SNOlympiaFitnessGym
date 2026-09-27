@@ -22,6 +22,7 @@ import { MainFooter } from '../components/footer/MainFooter';
 import { StickyMobileBar } from '../components/navigation/StickyMobileBar';
 import { EnquiryModal } from '../components/modals/EnquiryModal';
 import { SectionDividerWatermark } from '../components/common/SectionDividerWatermark';
+import { FireEmberParticles } from '../components/common/FireEmberParticles';
 import { Layers } from 'lucide-react';
 
 export interface HomeViewProps {
@@ -175,6 +176,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
 
   return (
     <div className="relative min-h-screen bg-brand-dark text-brand-text-primary selection:bg-brand-volt selection:text-brand-dark overflow-x-hidden">
+      {/* Ambient 3D Fire Ember Particle Field (Atmospheric Gym Forge Sparks) */}
+      <FireEmberParticles />
+
       {/* 1. Cinematic Initial Loader */}
       {!introFinished && (
         <IntroLoader onComplete={() => setIntroFinished(true)} />

@@ -4,6 +4,7 @@ import { HeroVideoCard } from './HeroVideoCard';
 import { HeroCoachesBadge } from './HeroCoachesBadge';
 import { PlateViewer } from '../3d/PlateViewer';
 import { HeroExplore3DButton } from './HeroExplore3DButton';
+import { AthleteBodySmoke } from './AthleteBodySmoke';
 import { ASSET_MANIFEST } from '../../data/assets';
 import { ChevronDown, Sparkles, Play, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -93,7 +94,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section
       id="overview"
-      className="relative min-h-screen flex flex-col justify-between pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 px-0 md:px-6 lg:px-8 max-w-[1400px] mx-auto overflow-hidden"
+      className="relative min-h-screen flex flex-col justify-between pt-20 sm:pt-24 md:pt-28 pb-10 sm:pb-16 px-3 sm:px-6 lg:px-8 max-w-[1400px] mx-auto overflow-hidden"
     >
       {/* 1. Ambient Background Layer */}
       <HeroBackground />
@@ -104,14 +105,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         onMouseMove={handleHeroPointerMove}
         onMouseEnter={() => setIsHeroHovered(true)}
         onMouseLeave={() => setIsHeroHovered(false)}
-        className="relative z-10 w-full rounded-none md:rounded-[2.5rem] p-0 md:p-[2px] overflow-hidden my-auto shadow-[0_25px_80px_rgba(0,0,0,0.95)] group/herocard transition-shadow duration-500 hover:shadow-[0_0_60px_rgba(255,94,30,0.3),0_25px_90px_rgba(0,0,0,0.95)]"
+        className="relative z-10 w-full rounded-[1.75rem] sm:rounded-[2.5rem] p-[2px] overflow-hidden my-auto shadow-[0_25px_80px_rgba(0,0,0,0.95)] group/herocard transition-shadow duration-500 hover:shadow-[0_0_60px_rgba(255,94,30,0.3),0_25px_90px_rgba(0,0,0,0.95)]"
       >
-        {/* Border Layer 1: Base Dark Edge Outline (Desktop/Tablet) */}
-        <div className="hidden md:block absolute inset-0 rounded-[2.5rem] bg-white/10 pointer-events-none" />
+        {/* Border Layer 1: Base Dark Edge Outline */}
+        <div className="absolute inset-0 rounded-[1.75rem] sm:rounded-[2.5rem] bg-white/10 pointer-events-none" />
 
-        {/* Border Layer 2: Dual Opposite-Sided Looping Border Beam (Desktop/Tablet) */}
+        {/* Border Layer 2: Dual Opposite-Sided Looping Border Beam */}
         <div
-          className="hidden md:block absolute inset-[-150%] pointer-events-none animate-border-beam"
+          className="absolute inset-[-150%] pointer-events-none animate-border-beam"
           style={{
             background: `conic-gradient(
               from 0deg at 50% 50%,
@@ -152,9 +153,59 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         )}
 
         {/* Inner Surface of Hero Card */}
-        <div className="relative w-full h-full rounded-none md:rounded-[calc(2.5rem-2px)] bg-[#0C0E12] overflow-hidden">
+        <div className="relative w-full h-full rounded-[calc(1.75rem-2px)] sm:rounded-[calc(2.5rem-2px)] bg-[#0C0E12] overflow-hidden">
           {/* Top Subtle Amber Ambient Highlight */}
           <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#FF5E1E] to-transparent opacity-80 shadow-[0_0_15px_#FF5E1E]" />
+
+          {/* Mobile Top Video Tooltip (<md) - Shows on Top with Autoplaying Video Previews */}
+          <AnimatePresence>
+            {mobileTooltipOpen && (
+              <motion.div
+                ref={tooltipRef}
+                initial={{ opacity: 0, y: -18, scale: 0.94 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -14, scale: 0.94 }}
+                transition={{ type: 'spring', damping: 25, stiffness: 350 }}
+                className="absolute top-3 sm:top-4 inset-x-3 sm:inset-x-auto sm:right-4 md:hidden w-[min(calc(100vw-2.5rem),340px)] mx-auto rounded-2xl bg-[#0C0E14]/98 backdrop-blur-2xl border border-white/20 shadow-[0_25px_70px_rgba(0,0,0,0.95),0_0_40px_rgba(255,94,30,0.35)] p-3 space-y-2.5 z-50 text-left pointer-events-auto"
+                role="tooltip"
+                aria-label="Hero Video Reels"
+              >
+                {/* Tooltip Header Bar */}
+                <div className="flex items-center justify-between pb-1.5 border-b border-white/10">
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-2 h-2 rounded-full bg-[#FF5E1E] shadow-[0_0_8px_#FF5E1E] animate-pulse" />
+                    <span className="font-mono text-[10px] font-black uppercase tracking-wider text-[#FFA034]">
+                      SN OLYMPIA REELS (AUTOPLAYING)
+                    </span>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setMobileTooltipOpen(false)}
+                    aria-label="Close tooltip"
+                    className="p-1 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+
+                {/* Tooltip Videos (Autoplaying live previews; tap to play from beginning with sound) */}
+                <div className="space-y-2">
+                  <HeroVideoCard
+                    videoSrc={ASSET_MANIFEST.hero.introVideo2.path}
+                    title="SN Olympia Energy & Coaching"
+                    alignment="left"
+                    compact={true}
+                  />
+                  <HeroVideoCard
+                    videoSrc={ASSET_MANIFEST.hero.introVideo.path}
+                    title="SN Olympia Facility Showcase"
+                    alignment="right"
+                    compact={true}
+                  />
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* HERO ATHLETE WITH BACKGROUND "OLAMPIYA" TEXT */}
           <div className="absolute inset-0 z-0 flex items-center justify-center pointer-events-none select-none overflow-hidden">
@@ -165,6 +216,10 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               decoding="async"
               className="w-full h-full object-cover object-center filter contrast-[1.05] brightness-[0.95]"
             />
+
+            {/* Realistic Muscle Heat & Steam Vapor Rising from Athlete's Body */}
+            <AthleteBodySmoke />
+
             {/* Subtle Lateral Vignettes for Crystal-Clear Text Contrast */}
             <div className="absolute inset-y-0 left-0 w-2/5 sm:w-1/3 bg-gradient-to-r from-[#0C0E12]/95 via-[#0C0E12]/70 to-transparent" />
             <div className="absolute inset-y-0 right-0 w-2/5 sm:w-1/3 bg-gradient-to-l from-[#0C0E12]/95 via-[#0C0E12]/70 to-transparent" />
@@ -279,7 +334,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 <ChevronDown className="w-5 h-5 group-hover:translate-y-0.5 transition-transform" />
               </button>
 
-              {/* Mobile Animated Neon Play Button + Floating Video Tooltip (<md) */}
+              {/* Mobile Animated Neon Play Button (<md) */}
               <div className="relative md:hidden flex items-center justify-end z-40">
                 {/* Neon Animated Circular Play Button (No text, pulsing neon rings) */}
                 <button
@@ -300,59 +355,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   {/* Pure Neon Play Icon (No text) */}
                   <Play className="relative z-10 w-5 h-5 text-white fill-white translate-x-0.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]" />
                 </button>
-
-                {/* Floating Video Tooltip Card Anchored Above */}
-                <AnimatePresence>
-                  {mobileTooltipOpen && (
-                    <motion.div
-                      ref={tooltipRef}
-                      initial={{ opacity: 0, y: 12, scale: 0.94 }}
-                      animate={{ opacity: 1, y: 0, scale: 1 }}
-                      exit={{ opacity: 0, y: 10, scale: 0.94 }}
-                      transition={{ type: 'spring', damping: 25, stiffness: 350 }}
-                      className="absolute bottom-15 right-0 w-[min(calc(100vw-2.5rem),320px)] rounded-2xl bg-[#0C0E14]/95 backdrop-blur-2xl border border-white/20 shadow-[0_25px_60px_rgba(0,0,0,0.95),0_0_35px_rgba(255,94,30,0.25)] p-3 space-y-2.5 z-50 text-left"
-                      role="tooltip"
-                      aria-label="Hero Video Reels"
-                    >
-                      {/* Downward Indicator Caret */}
-                      <div className="absolute -bottom-1.5 right-4 w-3.5 h-3.5 bg-[#0C0E14] border-r border-b border-white/20 rotate-45 pointer-events-none" />
-
-                      {/* Tooltip Header Bar */}
-                      <div className="flex items-center justify-between pb-1.5 border-b border-white/10">
-                        <div className="flex items-center gap-1.5">
-                          <span className="w-2 h-2 rounded-full bg-[#FF5E1E] shadow-[0_0_8px_#FF5E1E] animate-pulse" />
-                          <span className="font-mono text-[10px] font-black uppercase tracking-wider text-[#FFA034]">
-                            SN OLYMPIA REELS
-                          </span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setMobileTooltipOpen(false)}
-                          aria-label="Close tooltip"
-                          className="p-1 rounded-lg text-neutral-400 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-                        >
-                          <X className="w-3.5 h-3.5" />
-                        </button>
-                      </div>
-
-                      {/* Tooltip Videos (Same styling with live preview & cinema modal trigger) */}
-                      <div className="space-y-2">
-                        <HeroVideoCard
-                          videoSrc={ASSET_MANIFEST.hero.introVideo2.path}
-                          title="SN Olympia Energy & Coaching"
-                          alignment="left"
-                          compact={true}
-                        />
-                        <HeroVideoCard
-                          videoSrc={ASSET_MANIFEST.hero.introVideo.path}
-                          title="SN Olympia Facility Showcase"
-                          alignment="right"
-                          compact={true}
-                        />
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
               </div>
             </div>
           </div>

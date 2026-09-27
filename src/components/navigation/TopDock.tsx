@@ -225,22 +225,21 @@ export const TopDock: React.FC<TopDockProps> = ({
 
   return (
     <>
-      {/* Centered Floating Header Shell — Positioned flush at top on mobile, floating dock on desktop */}
+      {/* Centered Floating Header Shell — Positioned gracefully with gentle spacing */}
       <header
         role="banner"
-        className={`fixed top-0 md:top-3 inset-x-0 z-[60] flex justify-center px-0 md:px-6 pointer-events-none transition-all duration-300 ${
+        className={`fixed top-2.5 sm:top-3 md:top-3 inset-x-0 z-[60] flex justify-center px-3 sm:px-4 md:px-6 pointer-events-none transition-all duration-300 ${
           isScrolled ? 'translate-y-0 scale-98 sm:scale-100' : 'translate-y-0'
         }`}
       >
         <div className="relative pointer-events-auto w-full md:w-auto">
-          {/* Ambient Aurora Glow Behind Dock (Desktop Enhanced Glass Refraction) */}
+          {/* Ambient Aurora Glow Behind Dock */}
           <div
-            className="hidden md:block absolute -inset-x-8 -top-5 -bottom-5 pointer-events-none opacity-70 filter blur-2xl transition-opacity duration-500"
+            className="absolute -inset-x-4 -top-3 -bottom-3 pointer-events-none opacity-60 filter blur-2xl transition-opacity duration-500"
             style={{
               background: `
-                radial-gradient(55% 75% at 20% 30%, rgba(255, 94, 30, 0.32), transparent 70%),
-                radial-gradient(45% 65% at 80% 25%, rgba(255, 160, 52, 0.25), transparent 70%),
-                radial-gradient(40% 50% at 50% 10%, rgba(255, 94, 30, 0.18), transparent 75%)
+                radial-gradient(55% 75% at 20% 30%, rgba(255, 94, 30, 0.28), transparent 70%),
+                radial-gradient(45% 65% at 80% 25%, rgba(255, 160, 52, 0.22), transparent 70%)
               `,
             }}
             aria-hidden="true"
@@ -250,9 +249,9 @@ export const TopDock: React.FC<TopDockProps> = ({
           {/* THREEUI ULTRA-LUXURY GLASSMORPHIC COMMAND BAR CONTAINER                    */}
           {/* ========================================================================= */}
           <div
-            className="relative flex items-center justify-between gap-2.5 sm:gap-4 md:gap-5 lg:gap-8 h-[68px] md:h-16 px-4.5 sm:px-6 md:px-5 rounded-none md:rounded-full border-b md:border border-white/[0.18] shadow-[0_24px_50px_-15px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_-1px_1px_rgba(255,255,255,0.06),0_0_35px_rgba(255,94,30,0.14)] transition-all duration-300 w-full md:max-w-fit mx-auto"
+            className="relative flex items-center justify-between gap-3 sm:gap-4 md:gap-5 lg:gap-8 h-14 sm:h-15 md:h-16 px-4 sm:px-5 md:px-5 rounded-2xl md:rounded-full border border-white/[0.18] shadow-[0_16px_40px_-10px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_-1px_1px_rgba(255,255,255,0.06),0_0_25px_rgba(255,94,30,0.12)] transition-all duration-300 w-full md:max-w-fit mx-auto"
             style={{
-              background: 'linear-gradient(135deg, rgba(20, 24, 33, 0.85) 0%, rgba(10, 12, 18, 0.95) 100%)',
+              background: 'linear-gradient(135deg, rgba(20, 24, 33, 0.78) 0%, rgba(10, 12, 18, 0.88) 100%)',
               backdropFilter: 'blur(30px) saturate(190%) contrast(105%)',
               WebkitBackdropFilter: 'blur(30px) saturate(190%) contrast(105%)',
             }}
@@ -264,10 +263,10 @@ export const TopDock: React.FC<TopDockProps> = ({
                 e.preventDefault();
                 handleLinkClick('#overview');
               }}
-              className="flex items-center gap-2.5 group focus-visible:outline-none select-none pl-0.5 shrink-0"
+              className="flex items-center gap-2.5 group focus-visible:outline-none select-none pl-1 shrink-0"
             >
               {/* Official Transparent SN Logo Icon — Pure Floating Monogram */}
-              <SNOlympiaLogo className="w-9 h-9 sm:w-9 sm:h-9 shrink-0 group-hover:scale-105 transition-transform" priority />
+              <SNOlympiaLogo className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 group-hover:scale-105 transition-transform" priority />
 
               {/* Wordmark (Clean & Vertically Centered) */}
               <div className="flex items-center">

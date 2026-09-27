@@ -52,6 +52,7 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
   // Auto-play the card preview muted on loop
   useEffect(() => {
     if (previewVideoRef.current) {
+      previewVideoRef.current.muted = true;
       previewVideoRef.current.play().catch(() => {});
     }
   }, [videoSrc]);
@@ -90,13 +91,15 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [isModalOpen, handleCloseModal]);
 
-  // Autoplay modal video with sound once open
+  // Autoplay modal video from the beginning with sound once open
   useEffect(() => {
     if (isModalOpen && modalVideoRef.current) {
-      modalVideoRef.current.muted = isMuted;
+      modalVideoRef.current.currentTime = 0;
+      modalVideoRef.current.muted = false;
       modalVideoRef.current.volume = 1;
+      setIsMuted(false);
       modalVideoRef.current.play().then(() => setIsPlaying(true)).catch(() => {
-        // Fallback to muted if browser blocks unmuted autoplay
+        // Fallback to muted only if browser blocks unmuted audio
         if (modalVideoRef.current) {
           modalVideoRef.current.muted = true;
           setIsMuted(true);
