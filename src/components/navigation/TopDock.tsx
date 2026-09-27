@@ -225,17 +225,17 @@ export const TopDock: React.FC<TopDockProps> = ({
 
   return (
     <>
-      {/* Centered Floating Header Shell — Positioned higher up near top edge */}
+      {/* Centered Floating Header Shell — Positioned flush at top on mobile, floating dock on desktop */}
       <header
         role="banner"
-        className={`fixed top-1.5 sm:top-2.5 md:top-3 inset-x-0 z-[60] flex justify-center px-2 sm:px-4 md:px-6 pointer-events-none transition-all duration-300 ${
+        className={`fixed top-0 md:top-3 inset-x-0 z-[60] flex justify-center px-0 md:px-6 pointer-events-none transition-all duration-300 ${
           isScrolled ? 'translate-y-0 scale-98 sm:scale-100' : 'translate-y-0'
         }`}
       >
-        <div className="relative pointer-events-auto">
-          {/* Ambient Aurora Glow Behind Dock (Enhanced Glass Refraction Backdrop) */}
+        <div className="relative pointer-events-auto w-full md:w-auto">
+          {/* Ambient Aurora Glow Behind Dock (Desktop Enhanced Glass Refraction) */}
           <div
-            className="absolute -inset-x-8 -top-5 -bottom-5 pointer-events-none opacity-70 filter blur-2xl transition-opacity duration-500"
+            className="hidden md:block absolute -inset-x-8 -top-5 -bottom-5 pointer-events-none opacity-70 filter blur-2xl transition-opacity duration-500"
             style={{
               background: `
                 radial-gradient(55% 75% at 20% 30%, rgba(255, 94, 30, 0.32), transparent 70%),
@@ -250,9 +250,9 @@ export const TopDock: React.FC<TopDockProps> = ({
           {/* THREEUI ULTRA-LUXURY GLASSMORPHIC COMMAND BAR CONTAINER                    */}
           {/* ========================================================================= */}
           <div
-            className="relative flex items-center justify-between gap-2.5 sm:gap-4 md:gap-5 lg:gap-8 h-15 sm:h-15 md:h-16 px-4 sm:px-4.5 md:px-5 rounded-full border border-white/[0.18] shadow-[0_24px_50px_-15px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_-1px_1px_rgba(255,255,255,0.06),0_0_35px_rgba(255,94,30,0.14)] transition-all duration-300 w-full max-w-[98vw] md:max-w-[96vw] lg:max-w-fit mx-auto"
+            className="relative flex items-center justify-between gap-2.5 sm:gap-4 md:gap-5 lg:gap-8 h-[68px] md:h-16 px-4.5 sm:px-6 md:px-5 rounded-none md:rounded-full border-b md:border border-white/[0.18] shadow-[0_24px_50px_-15px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_-1px_1px_rgba(255,255,255,0.06),0_0_35px_rgba(255,94,30,0.14)] transition-all duration-300 w-full md:max-w-fit mx-auto"
             style={{
-              background: 'linear-gradient(135deg, rgba(20, 24, 33, 0.58) 0%, rgba(10, 12, 18, 0.68) 100%)',
+              background: 'linear-gradient(135deg, rgba(20, 24, 33, 0.85) 0%, rgba(10, 12, 18, 0.95) 100%)',
               backdropFilter: 'blur(30px) saturate(190%) contrast(105%)',
               WebkitBackdropFilter: 'blur(30px) saturate(190%) contrast(105%)',
             }}
@@ -367,11 +367,11 @@ export const TopDock: React.FC<TopDockProps> = ({
                 <ArrowUpRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white/90 stroke-[2.5]" />
               </a>
 
-              {/* Member Profile Avatar Circle */}
+              {/* Member Profile Avatar Circle (Hidden on mobile <md) */}
               <button
                 onClick={() => handleLinkClick('#membership')}
                 aria-label="Member Area & Profile"
-                className="w-9 h-9 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-[#FF5E1E] text-white flex items-center justify-center border border-white/20 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,94,30,0.7)] transition-all shadow-sm active:scale-95 shrink-0"
+                className="hidden md:flex w-9 h-9 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-[#FF5E1E] text-white items-center justify-center border border-white/20 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,94,30,0.7)] transition-all shadow-sm active:scale-95 shrink-0"
               >
                 <User className="w-4 h-4 fill-white text-white" />
               </button>

@@ -93,7 +93,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section
       id="overview"
-      className="relative min-h-screen flex flex-col justify-between pt-24 pb-12 sm:pt-28 sm:pb-16 px-3 sm:px-6 lg:px-8 max-w-[1400px] mx-auto overflow-hidden"
+      className="relative min-h-screen flex flex-col justify-between pt-20 sm:pt-24 md:pt-28 pb-12 sm:pb-16 px-0 md:px-6 lg:px-8 max-w-[1400px] mx-auto overflow-hidden"
     >
       {/* 1. Ambient Background Layer */}
       <HeroBackground />
@@ -104,14 +104,14 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         onMouseMove={handleHeroPointerMove}
         onMouseEnter={() => setIsHeroHovered(true)}
         onMouseLeave={() => setIsHeroHovered(false)}
-        className="relative z-10 w-full rounded-[2rem] sm:rounded-[2.5rem] p-[2px] overflow-hidden my-auto shadow-[0_25px_80px_rgba(0,0,0,0.95)] group/herocard transition-shadow duration-500 hover:shadow-[0_0_60px_rgba(255,94,30,0.3),0_25px_90px_rgba(0,0,0,0.95)]"
+        className="relative z-10 w-full rounded-none md:rounded-[2.5rem] p-0 md:p-[2px] overflow-hidden my-auto shadow-[0_25px_80px_rgba(0,0,0,0.95)] group/herocard transition-shadow duration-500 hover:shadow-[0_0_60px_rgba(255,94,30,0.3),0_25px_90px_rgba(0,0,0,0.95)]"
       >
-        {/* Border Layer 1: Base Dark Edge Outline */}
-        <div className="absolute inset-0 rounded-[2rem] sm:rounded-[2.5rem] bg-white/10 pointer-events-none" />
+        {/* Border Layer 1: Base Dark Edge Outline (Desktop/Tablet) */}
+        <div className="hidden md:block absolute inset-0 rounded-[2.5rem] bg-white/10 pointer-events-none" />
 
-        {/* Border Layer 2: Dual Opposite-Sided Looping Border Beam (180deg apart) */}
+        {/* Border Layer 2: Dual Opposite-Sided Looping Border Beam (Desktop/Tablet) */}
         <div
-          className="absolute inset-[-150%] pointer-events-none animate-border-beam"
+          className="hidden md:block absolute inset-[-150%] pointer-events-none animate-border-beam"
           style={{
             background: `conic-gradient(
               from 0deg at 50% 50%,
@@ -152,7 +152,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         )}
 
         {/* Inner Surface of Hero Card */}
-        <div className="relative w-full h-full rounded-[calc(2rem-2px)] sm:rounded-[calc(2.5rem-2px)] bg-[#0C0E12] overflow-hidden">
+        <div className="relative w-full h-full rounded-none md:rounded-[calc(2.5rem-2px)] bg-[#0C0E12] overflow-hidden">
           {/* Top Subtle Amber Ambient Highlight */}
           <div className="absolute top-0 inset-x-0 h-[1.5px] bg-gradient-to-r from-transparent via-[#FF5E1E] to-transparent opacity-80 shadow-[0_0_15px_#FF5E1E]" />
 
@@ -172,22 +172,23 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
 
           {/* CONTENT GRID: LEFT (Get Fit) & RIGHT (Stay Fit + Video) */}
-          <div className="relative z-20 grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-4 items-center min-h-[580px] sm:min-h-[660px] lg:min-h-[720px] p-6 sm:p-10 lg:p-14">
+          <div className="relative z-20 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-4 items-center min-h-[560px] sm:min-h-[660px] lg:min-h-[720px] p-5 sm:p-8 lg:p-14">
             
             {/* ========================================================================= */}
             {/* LEFT COLUMN: "Get Fit", Coaches Badge, and Bottom-Left Video Container     */}
             {/* ========================================================================= */}
-            <div className="lg:col-span-5 flex flex-col justify-between h-full space-y-6">
+            <div className="lg:col-span-5 flex flex-col justify-between h-full space-y-4 sm:space-y-6">
               <div className="space-y-4">
                 {/* Giant Energetic Athletic "Get Fit" Headline */}
-                <div className="group/headline cursor-default select-none">
-                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-2 shadow-sm">
+                <div className="group/headline cursor-default select-none text-left">
+                  {/* Discipline • Hypertrophy Pill (Hidden on mobile <md) */}
+                  <div className="hidden md:inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-2 shadow-sm">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#FF5E1E] animate-pulse" />
                     <span className="text-[10px] font-mono tracking-widest text-[#FF5E1E] uppercase font-bold">
                       DISCIPLINE &bull; HYPERTROPHY
                     </span>
                   </div>
-                  <h1 className="font-athletic italic uppercase font-black tracking-tight leading-[0.85] text-5xl sm:text-6xl md:text-7xl lg:text-8xl drop-shadow-2xl transition-transform duration-300 group-hover/headline:translate-x-1">
+                  <h1 className="font-athletic italic uppercase font-black tracking-tight leading-[0.85] text-3xl sm:text-4xl md:text-7xl lg:text-8xl drop-shadow-2xl transition-transform duration-300 group-hover/headline:translate-x-1 text-left">
                     <span className="text-sheen-effect inline-block">GET</span>{' '}
                     <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#FF5E1E] via-[#FF7538] to-[#FFA034] text-glow-orange">
                       FIT
@@ -219,17 +220,18 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
             {/* ========================================================================= */}
             {/* RIGHT COLUMN: "Stay Fit", First Video Card, Scroll Down Button & 3D Plate */}
             {/* ========================================================================= */}
-            <div className="lg:col-span-5 flex flex-col justify-between items-start lg:items-end h-full space-y-6">
-              <div className="flex flex-col items-start lg:items-end w-full space-y-4">
+            <div className="lg:col-span-5 flex flex-col justify-between items-end h-full space-y-4 sm:space-y-6">
+              <div className="flex flex-col items-end w-full space-y-4">
                 {/* Giant Energetic Athletic "Stay Fit" Headline */}
-                <div className="group/stayline cursor-default select-none flex flex-col items-start lg:items-end">
-                  <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-2 shadow-sm">
+                <div className="group/stayline cursor-default select-none flex flex-col items-end text-right">
+                  {/* Performance • Resilience Pill (Hidden on mobile <md) */}
+                  <div className="hidden md:inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-2 shadow-sm">
                     <span className="w-1.5 h-1.5 rounded-full bg-[#FF5E1E] animate-pulse" />
                     <span className="text-[10px] font-mono tracking-widest text-[#FF5E1E] uppercase font-bold">
                       PERFORMANCE &bull; RESILIENCE
                     </span>
                   </div>
-                  <h2 className="font-athletic italic uppercase font-black tracking-tight leading-[0.85] text-5xl sm:text-6xl md:text-7xl lg:text-8xl drop-shadow-2xl transition-transform duration-300 group-hover/stayline:-translate-x-1 text-left lg:text-right">
+                  <h2 className="font-athletic italic uppercase font-black tracking-tight leading-[0.85] text-3xl sm:text-4xl md:text-7xl lg:text-8xl drop-shadow-2xl transition-transform duration-300 text-right">
                     <span className="text-sheen-effect inline-block">STAY</span>{' '}
                     <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#FF5E1E] via-[#FF7538] to-[#FFA034] text-glow-orange">
                       FIT
