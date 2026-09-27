@@ -264,18 +264,17 @@ export const TopDock: React.FC<TopDockProps> = ({
                 e.preventDefault();
                 handleLinkClick('#overview');
               }}
-              className="flex items-center gap-2.5 group focus-visible:outline-none select-none pl-1 shrink-0"
+              className="flex items-center gap-3 group focus-visible:outline-none select-none pl-1 shrink-0"
             >
               {/* Circular Brand Mark Insignia — Official SN Emblem */}
-              <SNOlympiaLogo variant="mark" className="w-9 h-9 sm:w-10 sm:h-10 md:w-11 md:h-11" glow={true} />
+              <div className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 transition-transform duration-300 group-hover:scale-105">
+                <SNOlympiaLogo className="w-full h-full" glow={true} />
+              </div>
 
-              {/* Wordmark (Matches official media_1790486436015.png) */}
-              <div className="flex items-center tracking-normal">
-                <span className="font-athletic font-black uppercase text-xs sm:text-sm md:text-[15px] tracking-wider text-white leading-none">
-                  OLYMPIA
-                </span>
-                <span className="font-athletic italic font-black uppercase text-xs sm:text-sm md:text-[15px] tracking-wider text-[#FF5E1E] ml-1.5 leading-none">
-                  GYM
+              {/* Wordmark (Clean & Vertically Centered) */}
+              <div className="flex items-center">
+                <span className="font-athletic italic uppercase font-black text-sm sm:text-base md:text-lg tracking-tight text-white leading-none whitespace-nowrap">
+                  OLYMPIA <span className="text-[#FF5E1E]">GYM</span>
                 </span>
               </div>
             </a>
@@ -406,15 +405,12 @@ export const TopDock: React.FC<TopDockProps> = ({
           {/* Top Bar with Brand & Close */}
           <div className="flex items-center justify-between border-b border-white/10 pb-5">
             <div className="flex items-center gap-2.5">
-              <SNOlympiaLogo variant="mark" className="w-9 h-9" glow={true} />
-              <div className="flex items-center tracking-normal">
-                <span className="font-athletic font-black uppercase text-base tracking-wider text-white">
-                  OLYMPIA
-                </span>
-                <span className="font-athletic italic font-black uppercase text-base tracking-wider text-[#FF5E1E] ml-1.5">
-                  GYM
-                </span>
+              <div className="w-8 h-8 flex items-center justify-center">
+                <SNOlympiaLogo className="w-full h-full" />
               </div>
+              <span className="font-athletic italic uppercase font-black text-white text-base tracking-tight">
+                OLYMPIA <span className="text-[#FF5E1E]">GYM</span>
+              </span>
             </div>
 
             <button
