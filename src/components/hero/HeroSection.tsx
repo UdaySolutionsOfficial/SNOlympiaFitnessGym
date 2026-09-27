@@ -1,7 +1,7 @@
 import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { HeroBackground } from './HeroBackground';
 import { HeroVideoCard } from './HeroVideoCard';
-import { HeroCoachesBadge } from './HeroCoachesBadge';
+import { HeroTrustRatingBadge } from './HeroTrustRatingBadge';
 import { PlateViewer } from '../3d/PlateViewer';
 import { HeroExplore3DButton } from './HeroExplore3DButton';
 import { AthleteBodySmoke } from './AthleteBodySmoke';
@@ -251,9 +251,9 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   </h1>
                 </div>
 
-                {/* 20 Active Coaches Credential Badge (Hidden on mobile <md) */}
-                <div className="hidden md:block">
-                  <HeroCoachesBadge />
+                {/* 5.0 Google Rating & Member Reviews Credential Badge (Desktop only, moved down with animation) */}
+                <div className="hidden md:block mt-6 lg:mt-8 pt-1">
+                  <HeroTrustRatingBadge />
                 </div>
               </div>
 
