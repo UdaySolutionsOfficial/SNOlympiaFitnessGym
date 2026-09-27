@@ -5,7 +5,7 @@ import { ScrollReveal, StaggerContainer, StaggerItem } from '../common/ScrollRev
 
 export const AtmosphereSection: React.FC = () => {
   return (
-    <section id="atmosphere" className="relative py-32 md:py-44 bg-brand-dark overflow-hidden border-t border-brand-border/60">
+    <section id="atmosphere" className="relative py-32 md:py-44 bg-brand-dark overflow-hidden">
       {/* Background Cinematic Atmosphere Image with Heavy Vignette */}
       <div className="absolute inset-0 pointer-events-none">
         <img

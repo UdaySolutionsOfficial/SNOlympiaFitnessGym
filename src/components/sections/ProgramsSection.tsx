@@ -43,7 +43,7 @@ export const ProgramsSection: React.FC<ProgramsSectionProps> = ({
   return (
     <section
       id="programs"
-      className={`relative py-24 md:py-36 px-4 md:px-8 max-w-7xl mx-auto border-t border-brand-border overflow-hidden ${className}`}
+      className={`relative py-24 md:py-36 px-4 md:px-8 max-w-7xl mx-auto overflow-hidden ${className}`}
     >
       <div className="relative z-10 space-y-12">
         {/* Section Header */}

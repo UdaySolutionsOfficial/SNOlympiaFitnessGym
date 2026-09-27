@@ -564,7 +564,7 @@ export const VideoArenaSection: React.FC = () => {
   return (
     <section
       id="action"
-      className="relative py-28 sm:py-36 md:py-44 bg-[#08090A] overflow-hidden border-t border-brand-border/60 select-none"
+      className="relative py-28 sm:py-36 md:py-44 bg-[#08090A] overflow-hidden select-none"
     >
       {/* 1. Ambient Background Atmosphere */}
       <div className="absolute inset-0 pointer-events-none">

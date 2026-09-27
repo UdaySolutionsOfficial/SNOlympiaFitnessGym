@@ -19,7 +19,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
   };
 
   return (
-    <section id="membership" className="relative py-28 md:py-36 bg-brand-surface/30 overflow-hidden border-t border-brand-border/60">
+    <section id="membership" className="relative py-28 md:py-36 bg-brand-surface/30 overflow-hidden">
       {/* Background Ambience */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-brand-volt/5 rounded-full blur-[180px] pointer-events-none" />
 

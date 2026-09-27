@@ -10,7 +10,7 @@ export interface FinalCTASectionProps {
 
 export const FinalCTASection: React.FC<FinalCTASectionProps> = ({ onJoinClick }) => {
   return (
-    <section className="relative py-36 md:py-48 bg-brand-dark overflow-hidden border-t border-brand-border/60">
+    <section className="relative py-36 md:py-48 bg-brand-dark overflow-hidden">
       {/* Background High-Impact Photography with Dark Vignette */}
       <div className="absolute inset-0 pointer-events-none">
         <img
