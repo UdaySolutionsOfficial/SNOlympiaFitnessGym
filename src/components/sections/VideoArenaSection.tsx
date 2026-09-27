@@ -564,7 +564,7 @@ export const VideoArenaSection: React.FC = () => {
   return (
     <section
       id="action"
-      className="relative py-28 sm:py-36 md:py-44 bg-[#08090A] overflow-hidden select-none"
+      className="relative py-16 sm:py-28 md:py-44 bg-[#08090A] overflow-hidden select-none"
     >
       {/* 1. Ambient Background Atmosphere */}
       <div className="absolute inset-0 pointer-events-none">
@@ -577,7 +577,7 @@ export const VideoArenaSection: React.FC = () => {
         {/* ========================================================================= */}
         {/* SECTION HEADER WITH CATEGORY FILTER                                       */}
         {/* ========================================================================= */}
-        <ScrollReveal direction="up" delay={0.05} className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-12 sm:mb-16">
+        <ScrollReveal direction="up" delay={0.05} className="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-4 sm:mb-8 md:mb-16">
           <div>
             {/* Section Tag */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-3 shadow-sm">
@@ -596,8 +596,8 @@ export const VideoArenaSection: React.FC = () => {
             </p>
           </div>
 
-          {/* Interactive Category Filter Pills (All | Men | Women) */}
-          <div className="flex items-center p-1.5 rounded-full bg-black/60 border border-white/15 backdrop-blur-xl shadow-lg self-start md:self-auto">
+          {/* Interactive Category Filter Pills (Vertical stack on mobile, horizontal row on desktop) */}
+          <div className="flex flex-col md:flex-row items-stretch md:items-center gap-1.5 md:gap-0 p-1.5 rounded-2xl md:rounded-full bg-black/70 border border-white/15 backdrop-blur-xl shadow-lg w-full max-w-sm sm:max-w-md md:w-auto md:max-w-none self-start md:self-auto">
             {(
               [
                 { id: 'all', label: 'All Action', count: 13, icon: <Sparkles className="w-3.5 h-3.5" /> },
@@ -610,7 +610,7 @@ export const VideoArenaSection: React.FC = () => {
                 <button
                   key={filter.id}
                   onClick={() => setActiveFilter(filter.id)}
-                  className={`relative flex items-center gap-2 px-4 py-2 rounded-full text-xs font-bold uppercase tracking-wider outline-none transition-colors ${
+                  className={`relative flex items-center justify-between md:justify-start gap-2.5 px-4 py-2.5 md:py-2 rounded-xl md:rounded-full text-xs font-bold uppercase tracking-wider outline-none transition-all ${
                     isActive ? 'text-[#0A0B10]' : 'text-neutral-400 hover:text-white'
                   }`}
                 >
@@ -619,16 +619,18 @@ export const VideoArenaSection: React.FC = () => {
                     <motion.div
                       layoutId="activeReelFilterPill"
                       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                      className="absolute inset-0 rounded-full bg-gradient-to-b from-white via-[#F4F6FB] to-[#E2E6EE] shadow-[0_4px_20px_rgba(255,94,30,0.6)] z-0"
+                      className="absolute inset-0 rounded-xl md:rounded-full bg-gradient-to-b from-white via-[#F4F6FB] to-[#E2E6EE] shadow-[0_4px_20px_rgba(255,94,30,0.6)] z-0"
                     />
                   )}
-                  <span className={`relative z-10 ${isActive ? 'text-[#FF5E1E]' : 'opacity-70'}`}>
-                    {filter.icon}
-                  </span>
-                  <span className="relative z-10 whitespace-nowrap">{filter.label}</span>
+                  <div className="relative z-10 flex items-center gap-2.5">
+                    <span className={isActive ? 'text-[#FF5E1E]' : 'opacity-70'}>
+                      {filter.icon}
+                    </span>
+                    <span className="whitespace-nowrap font-extrabold tracking-wide">{filter.label}</span>
+                  </div>
                   <span
-                    className={`relative z-10 text-[10px] font-mono px-1.5 py-0.2 rounded-full ${
-                      isActive ? 'bg-[#0A0B10]/10 text-[#0A0B10] font-black' : 'bg-white/10 text-white/70'
+                    className={`relative z-10 text-[10px] font-mono px-2 py-0.5 rounded-full ${
+                      isActive ? 'bg-[#0A0B10]/15 text-[#0A0B10] font-black' : 'bg-white/10 text-white/70'
                     }`}
                   >
                     {filter.count}
@@ -648,7 +650,7 @@ export const VideoArenaSection: React.FC = () => {
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerLeave={handlePointerLeave}
-          className="relative w-full h-[540px] sm:h-[600px] md:h-[640px] flex items-center justify-center [perspective:1400px] overflow-hidden cursor-grab active:cursor-grabbing select-none"
+          className="relative w-full h-[490px] sm:h-[560px] md:h-[640px] flex items-center justify-center [perspective:1400px] overflow-hidden cursor-grab active:cursor-grabbing select-none"
           style={{ touchAction: 'pan-y' }}
         >
           {/* Edge Vignette Fades to make wrap-around perfectly seamless */}
