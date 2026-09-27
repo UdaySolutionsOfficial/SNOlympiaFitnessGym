@@ -14,6 +14,7 @@ import {
   Info,
   Send,
   Zap,
+} from 'lucide-react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { SNOlympiaLogo } from '../common/SNOlympiaLogo';
 
