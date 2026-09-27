@@ -12,7 +12,7 @@ export interface AssetMeta {
   aspectRatio: string;
   alt: string;
   description: string;
-  targetFormat: 'webp' | 'avif' | 'glb' | 'mp4' | 'svg' | 'jpg';
+  targetFormat: 'webp' | 'avif' | 'glb' | 'mp4' | 'svg' | 'jpg' | 'png';
   status: 'PENDING_GENERATION' | 'READY';
 }
 

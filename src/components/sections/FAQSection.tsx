@@ -104,7 +104,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ onAskQuestion }) => {
                           <p>{item.answer}</p>
                           <div className="mt-3 flex items-center gap-1.5 text-[11px] font-mono text-brand-volt">
                             <CheckCircle2 className="w-3.5 h-3.5" />
-                            <span>{item.verification.note || 'Verified Operational Protocol'}</span>
+                            <span>{item.verification.notes || 'Verified Operational Protocol'}</span>
                           </div>
                         </div>
                       </motion.div>

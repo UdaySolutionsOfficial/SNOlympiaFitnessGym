@@ -1,7 +1,8 @@
 import React from 'react';
-import { ArrowUp, MapPin, Phone, Instagram, ShieldCheck, Heart } from 'lucide-react';
+import { ArrowUp, MapPin, Instagram, ShieldCheck } from 'lucide-react';
 import { ScrollReveal, StaggerContainer, StaggerItem } from '../common/ScrollReveal';
 import { SNOlympiaLogo } from '../common/SNOlympiaLogo';
+import { SITE_CONTENT } from '../../data/siteContent';
 
 export const MainFooter: React.FC = () => {
   const brand = SITE_CONTENT.brand;

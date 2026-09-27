@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { SNOlympiaLogo } from '../common/SNOlympiaLogo';
+import { Flame, ArrowUpRight } from 'lucide-react';
 
 export interface IntroLoaderProps {
   onComplete: () => void;
