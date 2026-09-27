@@ -132,13 +132,6 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ className }) => {
       id="about"
       className={`relative py-24 md:py-36 px-4 md:px-8 max-w-7xl mx-auto overflow-hidden ${className}`}
     >
-      {/* Transparent Super-Typographic Background Watermark */}
-      <div className="absolute top-[6%] md:top-[8%] left-1/2 -translate-x-1/2 w-full text-center pointer-events-none select-none overflow-hidden z-0">
-        <span className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter text-white/[0.035] whitespace-nowrap leading-none block">
-          TRUE STRENGTH
-        </span>
-      </div>
-
       <div className="relative z-10 space-y-16">
         {/* Section Header with Eyebrow */}
         <ScrollReveal direction="up" delay={0.05} className="space-y-4 max-w-4xl">

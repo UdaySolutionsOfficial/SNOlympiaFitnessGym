@@ -27,13 +27,6 @@ export const FinalCTASection: React.FC<FinalCTASectionProps> = ({ onJoinClick })
       {/* Central Volt Ambient Light Halo */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-brand-volt/10 rounded-full blur-[180px] pointer-events-none" />
 
-      {/* Transparent Super-Typographic Background Watermark */}
-      <div className="absolute top-[28%] md:top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center pointer-events-none select-none overflow-hidden z-0">
-        <span className="text-[16vw] md:text-[14vw] font-black uppercase tracking-tighter text-white/[0.04] whitespace-nowrap leading-none block">
-          OLYMPIA
-        </span>
-      </div>
-
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Eyebrow Badge */}
         <ScrollReveal direction="up" delay={0.05}>

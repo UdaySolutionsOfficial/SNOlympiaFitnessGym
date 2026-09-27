@@ -89,13 +89,6 @@ export const FacilitiesSection: React.FC = () => {
       {/* Background Ambience */}
       <div className="absolute top-1/3 left-0 w-[600px] h-[600px] bg-brand-volt/5 rounded-full blur-[160px] pointer-events-none" />
 
-      {/* Transparent Super-Typographic Background Watermark */}
-      <div className="absolute top-[16%] md:top-[18%] left-1/2 -translate-x-1/2 w-full text-center pointer-events-none select-none overflow-hidden z-0">
-        <span className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter text-white/[0.035] whitespace-nowrap leading-none block">
-          HEAVY IRON
-        </span>
-      </div>
-
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
         <ScrollReveal direction="up" delay={0.05} className="max-w-3xl mb-16 md:mb-20">

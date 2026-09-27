@@ -22,13 +22,6 @@ export const AtmosphereSection: React.FC = () => {
       {/* Central Volt Ambient Light Core */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[350px] bg-brand-volt/10 rounded-full blur-[160px] pointer-events-none" />
 
-      {/* Transparent Super-Typographic Background Watermark */}
-      <div className="absolute top-[28%] md:top-[30%] left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center pointer-events-none select-none overflow-hidden z-0">
-        <span className="text-[14vw] md:text-[12vw] font-black uppercase tracking-tighter text-white/[0.045] whitespace-nowrap leading-none block">
-          RAW DISCIPLINE
-        </span>
-      </div>
-
       <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
         {/* Subtle Tagline */}
         <ScrollReveal direction="up" delay={0.05}>

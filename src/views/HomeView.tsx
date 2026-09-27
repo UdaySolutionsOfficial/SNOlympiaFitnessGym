@@ -21,6 +21,7 @@ import { FinalCTASection } from '../components/sections/FinalCTASection';
 import { MainFooter } from '../components/footer/MainFooter';
 import { StickyMobileBar } from '../components/navigation/StickyMobileBar';
 import { EnquiryModal } from '../components/modals/EnquiryModal';
+import { SectionDividerWatermark } from '../components/common/SectionDividerWatermark';
 import { Layers } from 'lucide-react';
 
 export interface HomeViewProps {
@@ -194,11 +195,20 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
         {/* Act II: Identity & Ethos */}
         <AboutSection />
 
+        {/* Inter-Section Typographic Gradient Bridge */}
+        <SectionDividerWatermark quote="UNSTOPPABLE" />
+
         {/* Act III: Bento Competitive Advantage */}
         <WhyOlympiaSection />
 
+        {/* Inter-Section Typographic Gradient Bridge */}
+        <SectionDividerWatermark quote="BEYOND LIMITS" />
+
         {/* Act IV: Disciplines & Training Architecture */}
         <ProgramsSection onInquireBatch={(progId) => handleOpenEnquiry(`Program: ${progId}`)} />
+
+        {/* Inter-Section Typographic Gradient Bridge */}
+        <SectionDividerWatermark quote="RELENTLESS" />
 
         {/* Act IV.B: Live 3D Curved Video Arena & Training Reels */}
         <VideoArenaSection />
@@ -206,8 +216,14 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
         {/* Act V: The 4-Stage Progressive Methodology */}
         <MethodologySection />
 
+        {/* Inter-Section Typographic Gradient Bridge */}
+        <SectionDividerWatermark quote="HEAVY IRON" />
+
         {/* Act VI: Commercial Iron Arsenal & Equipment */}
         <FacilitiesSection />
+
+        {/* Inter-Section Typographic Gradient Bridge */}
+        <SectionDividerWatermark quote="RAW DISCIPLINE" />
 
         {/* Act VIII: High-Contrast Floor Atmosphere */}
         <AtmosphereSection />
@@ -217,6 +233,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
 
         {/* Act X: Community Proof & 5.0★ Verified Trust */}
         <TestimonialsSection />
+
+        {/* Inter-Section Typographic Gradient Bridge */}
+        <SectionDividerWatermark quote="COMMITMENT" />
 
         {/* Act XI: Admissions & Membership Commitments */}
         <MembershipSection onSelectPlan={(plan) => handleOpenEnquiry(`Membership Plan: ${plan}`)} />
@@ -229,6 +248,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
 
         {/* Act XIV: Physical Ground & Directions */}
         <LocationSection />
+
+        {/* Inter-Section Typographic Gradient Bridge */}
+        <SectionDividerWatermark quote="OLYMPIA" />
 
         {/* Act XV: The Final Cinematic Climax */}
         <FinalCTASection onJoinClick={() => handleOpenEnquiry('Final Commitment Admission')} />
