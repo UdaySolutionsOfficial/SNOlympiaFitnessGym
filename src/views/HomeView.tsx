@@ -54,7 +54,12 @@ export interface HomeViewProps {
  * 22. EnquiryModal (Contextual, accessible modal for direct admissions & inquiries)
  */
 export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
-  const [introFinished, setIntroFinished] = useState(false);
+  const [introFinished, setIntroFinished] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.location.search.includes('no-intro') || window.location.hash.includes('no-intro');
+    }
+    return false;
+  });
   const [enquiryModalOpen, setEnquiryModalOpen] = useState(false);
   const [modalInterest, setModalInterest] = useState('General Membership Inquiry');
 
