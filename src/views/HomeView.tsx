@@ -60,7 +60,12 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
     }
     return false;
   });
-  const [enquiryModalOpen, setEnquiryModalOpen] = useState(false);
+  const [enquiryModalOpen, setEnquiryModalOpen] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.location.search.includes('enquiry') || window.location.hash.includes('enquiry');
+    }
+    return false;
+  });
   const [modalInterest, setModalInterest] = useState('General Membership Inquiry');
 
   const handleOpenEnquiry = (interestSubject: string = 'General Membership Inquiry') => {

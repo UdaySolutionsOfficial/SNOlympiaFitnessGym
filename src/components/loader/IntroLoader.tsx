@@ -251,16 +251,10 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
           ))}
       </div>
 
-      {/* 2. TOP HEADER: OLYMPIA BRAND BADGE & SPINNING ORBIT RING */}
+      {/* 2. TOP HEADER: OFFICIAL SN OLYMPIA LOGO (Pure Transparent Icon) */}
       <header className="relative z-10 shrink-0 flex flex-col items-center gap-2 mb-2 sm:mb-4">
         <div className="relative flex items-center justify-center">
-          {/* Outer Rotating Dashed Neon Orbit Ring */}
-          <div className="absolute -inset-2.5 rounded-full border border-dashed border-[#FF5E1E]/40 animate-spin [animation-duration:14s] pointer-events-none" />
-
-          {/* Glowing Official SN Crest Medallion */}
-          <div className="w-14 h-14 sm:w-16 sm:h-16 flex items-center justify-center">
-            <SNOlympiaLogo className="w-full h-full" glow={true} />
-          </div>
+          <SNOlympiaLogo className="w-16 h-16 sm:w-20 sm:h-20" priority />
         </div>
 
         <div className="flex flex-col items-center text-center">

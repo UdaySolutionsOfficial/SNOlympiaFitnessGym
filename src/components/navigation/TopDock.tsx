@@ -264,16 +264,14 @@ export const TopDock: React.FC<TopDockProps> = ({
                 e.preventDefault();
                 handleLinkClick('#overview');
               }}
-              className="flex items-center gap-3 group focus-visible:outline-none select-none pl-1 shrink-0"
+              className="flex items-center gap-2.5 group focus-visible:outline-none select-none pl-1 shrink-0"
             >
-              {/* Circular Brand Mark Insignia — Official SN Emblem */}
-              <div className="flex items-center justify-center w-9 h-9 sm:w-10 sm:h-10 transition-transform duration-300 group-hover:scale-105">
-                <SNOlympiaLogo className="w-full h-full" glow={true} />
-              </div>
+              {/* Official Transparent SN Logo Icon — Pure Floating Monogram */}
+              <SNOlympiaLogo className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 group-hover:scale-105 transition-transform" priority />
 
               {/* Wordmark (Clean & Vertically Centered) */}
               <div className="flex items-center">
-                <span className="font-athletic italic uppercase font-black text-sm sm:text-base md:text-lg tracking-tight text-white leading-none whitespace-nowrap">
+                <span className="font-athletic italic uppercase font-black text-xs sm:text-sm md:text-base tracking-tight text-white leading-none whitespace-nowrap">
                   OLYMPIA <span className="text-[#FF5E1E]">GYM</span>
                 </span>
               </div>
@@ -405,9 +403,7 @@ export const TopDock: React.FC<TopDockProps> = ({
           {/* Top Bar with Brand & Close */}
           <div className="flex items-center justify-between border-b border-white/10 pb-5">
             <div className="flex items-center gap-2.5">
-              <div className="w-8 h-8 flex items-center justify-center">
-                <SNOlympiaLogo className="w-full h-full" />
-              </div>
+              <SNOlympiaLogo className="w-8 h-8 shrink-0" />
               <span className="font-athletic italic uppercase font-black text-white text-base tracking-tight">
                 OLYMPIA <span className="text-[#FF5E1E]">GYM</span>
               </span>

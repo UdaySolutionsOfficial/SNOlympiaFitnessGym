@@ -1,46 +1,45 @@
 import React from 'react';
 
 export interface SNOlympiaLogoProps {
-  /**
-   * 'mark': The circular medallion containing the official SN emblem.
-   * 'full': Complete emblem with extended glow.
-   */
   variant?: 'mark' | 'full';
   className?: string;
-  size?: number | string;
-  /**
-   * Optional custom glow intensity
-   */
-  glow?: boolean;
   alt?: string;
+  size?: number | string;
+  glow?: boolean;
+  priority?: boolean;
 }
 
 /**
  * Official SN Olympia Fitness Logo Component
- * Renders the brand's official 3D metallic embossed SN logo icon
- * customized with the website's dark graphite & neon orange/volt palette.
+ * Renders the authentic official metallic chrome interlocking SN monogram
+ * with transparent alpha background and zero background container.
  */
 export const SNOlympiaLogo: React.FC<SNOlympiaLogoProps> = ({
-  className = 'w-9 h-9',
-  glow = true,
+  className = 'w-8 h-8',
   alt = 'SN Olympia Fitness Official Logo',
+  size,
+  priority = false,
 }) => {
+  const inlineStyle: React.CSSProperties = {};
+  if (typeof size === 'number') {
+    inlineStyle.width = `${size}px`;
+    inlineStyle.height = `${size}px`;
+  } else if (typeof size === 'string') {
+    inlineStyle.width = size;
+    inlineStyle.height = size;
+  }
+
   return (
-    <div
-      className={`relative inline-flex items-center justify-center shrink-0 select-none ${className}`}
-    >
-      <img
-        src="/assets/brand/sn-logo-icon.png"
-        alt={alt}
-        loading="eager"
-        decoding="async"
-        className={`w-full h-full object-contain pointer-events-none transition-all duration-300 ${
-          glow
-            ? 'drop-shadow-[0_0_10px_rgba(255,94,30,0.55)] group-hover:drop-shadow-[0_0_18px_rgba(255,94,30,0.85)]'
-            : ''
-        }`}
-      />
-    </div>
+    <img
+      src="/assets/images/logo/sn-olympia-logo.png"
+      alt={alt}
+      width={100}
+      height={100}
+      loading={priority ? 'eager' : 'lazy'}
+      decoding="async"
+      className={`shrink-0 object-contain select-none drop-shadow-[0_2px_10px_rgba(0,0,0,0.7)] ${className}`}
+      style={inlineStyle}
+    />
   );
 };
 

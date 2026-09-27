@@ -27,9 +27,9 @@ export const MainFooter: React.FC = () => {
           {/* Brand Info (Span 4) */}
           <StaggerItem className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
-              <SNOlympiaLogo className="w-9 h-9 shrink-0" />
-              <span className="font-athletic italic uppercase font-black text-white tracking-wider text-base sm:text-lg">
-                OLYMPIA <span className="text-[#FF5E1E]">GYM</span>
+              <SNOlympiaLogo className="w-9 h-9 sm:w-10 sm:h-10 shrink-0" />
+              <span className="font-black text-white uppercase tracking-wider text-base sm:text-lg">
+                SN OLYMPIA FITNESS
               </span>
             </div>
             <p className="text-xs sm:text-sm text-brand-text-secondary leading-relaxed font-light">
