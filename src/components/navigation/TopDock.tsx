@@ -249,7 +249,7 @@ export const TopDock: React.FC<TopDockProps> = ({
           {/* THREEUI ULTRA-LUXURY GLASSMORPHIC COMMAND BAR CONTAINER                    */}
           {/* ========================================================================= */}
           <div
-            className="relative flex items-center justify-between gap-3 sm:gap-4 md:gap-5 lg:gap-8 h-14 sm:h-15 md:h-16 px-4 sm:px-5 md:px-5 rounded-2xl md:rounded-full border border-white/[0.18] shadow-[0_16px_40px_-10px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_-1px_1px_rgba(255,255,255,0.06),0_0_25px_rgba(255,94,30,0.12)] transition-all duration-300 w-full md:max-w-fit mx-auto"
+            className="relative flex items-center justify-between gap-3 sm:gap-4 md:gap-5 lg:gap-8 h-[60px] sm:h-[62px] md:h-16 px-4.5 sm:px-5 md:px-5 rounded-2xl md:rounded-full border border-white/[0.18] shadow-[0_16px_40px_-10px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_-1px_1px_rgba(255,255,255,0.06),0_0_25px_rgba(255,94,30,0.12)] transition-all duration-300 w-full md:max-w-fit mx-auto"
             style={{
               background: 'linear-gradient(135deg, rgba(20, 24, 33, 0.78) 0%, rgba(10, 12, 18, 0.88) 100%)',
               backdropFilter: 'blur(30px) saturate(190%) contrast(105%)',
@@ -263,14 +263,14 @@ export const TopDock: React.FC<TopDockProps> = ({
                 e.preventDefault();
                 handleLinkClick('#overview');
               }}
-              className="flex items-center gap-2.5 group focus-visible:outline-none select-none pl-1 shrink-0"
+              className="flex items-center gap-2.5 sm:gap-3 group focus-visible:outline-none select-none pl-1 shrink-0"
             >
               {/* Official Transparent SN Logo Icon — Pure Floating Monogram */}
-              <SNOlympiaLogo className="w-8 h-8 sm:w-9 sm:h-9 shrink-0 group-hover:scale-105 transition-transform" priority />
+              <SNOlympiaLogo className="w-10 h-10 sm:w-10.5 sm:h-10.5 md:w-11 md:h-11 shrink-0 group-hover:scale-105 transition-transform" priority />
 
               {/* Wordmark (Clean & Vertically Centered) */}
               <div className="flex items-center">
-                <span className="font-athletic italic uppercase font-black text-xs sm:text-sm md:text-base tracking-tight text-white leading-none whitespace-nowrap">
+                <span className="font-athletic italic uppercase font-black text-sm sm:text-base md:text-lg tracking-tight text-white leading-none whitespace-nowrap">
                   OLYMPIA <span className="text-[#FF5E1E]">GYM</span>
                 </span>
               </div>

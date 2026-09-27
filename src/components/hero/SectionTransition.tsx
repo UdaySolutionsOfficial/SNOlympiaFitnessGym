@@ -19,7 +19,7 @@ export const SectionTransition: React.FC<SectionTransitionProps> = ({
   return (
     <section
       id="section-transition"
-      className={`relative py-24 md:py-36 px-4 bg-brand-surface/40 border-y border-brand-border overflow-hidden ${className}`}
+      className={`relative py-10 sm:py-16 md:py-28 px-4 bg-brand-surface/40 border-y border-brand-border overflow-hidden ${className}`}
     >
       {/* Background Accent Beam */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[300px] bg-brand-volt/5 blur-[140px] pointer-events-none rounded-full" />

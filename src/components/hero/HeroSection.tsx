@@ -94,7 +94,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   return (
     <section
       id="overview"
-      className="relative min-h-screen flex flex-col justify-between pt-20 sm:pt-24 md:pt-28 pb-10 sm:pb-16 px-3 sm:px-6 lg:px-8 max-w-[1400px] mx-auto overflow-hidden"
+      className="relative flex flex-col items-center pt-20 sm:pt-24 md:pt-28 pb-4 sm:pb-8 md:pb-12 px-3 sm:px-6 lg:px-8 max-w-[1400px] mx-auto overflow-hidden"
     >
       {/* 1. Ambient Background Layer */}
       <HeroBackground />
@@ -366,16 +366,6 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         </div>
       </div>
     </div>
-
-      {/* 3. Teaser Headline Below Hero Frame (Matching Reference Mockup) */}
-      <div className="relative z-10 pt-10 sm:pt-14 px-2 select-none">
-        <span className="text-xs sm:text-sm font-mono tracking-[0.25em] text-brand-text-muted uppercase font-bold block mb-1">
-          CLASSES DESIGNED
-        </span>
-        <h2 className="text-4xl sm:text-6xl md:text-7xl font-black uppercase text-white tracking-tight">
-          FOR YOU
-        </h2>
-      </div>
     </section>
   );
 };
