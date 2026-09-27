@@ -144,11 +144,11 @@ export const MainFooter: React.FC = () => {
         <ScrollReveal direction="up" delay={0.2}>
           <div className="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs font-mono text-brand-text-muted">
             <div>
-              © {new Date().getFullYear()} SN Olympia Fitness Unisex Gym. All verified business facts reserved.
+              © {new Date().getFullYear()} SN Olympia Fitness Unisex Gym. Yemmiganur, Andhra Pradesh
             </div>
 
             <div className="flex items-center gap-4">
-              <span className="text-brand-volt">Yemmiganur, Andhra Pradesh</span>
+              <span className="text-brand-volt">Design & Developed by Uday Solutions</span>
               <span>•</span>
               <button
                 onClick={scrollToTop}

@@ -116,13 +116,47 @@ export const TopDock: React.FC<TopDockProps> = ({
     });
   }, []);
 
-  // Scroll detection
+  const [scrollProgress, setScrollProgress] = useState(0);
+
+  // Scroll detection & website scroll progress tracking
   useEffect(() => {
     const handleScroll = () => {
-      setIsScrolled(window.scrollY > 25);
+      const scrollY =
+        window.pageYOffset ||
+        window.scrollY ||
+        document.documentElement.scrollTop ||
+        document.body.scrollTop ||
+        0;
+
+      setIsScrolled(scrollY > 25);
+
+      const docHeight = Math.max(
+        document.body.scrollHeight,
+        document.documentElement.scrollHeight,
+        document.body.offsetHeight,
+        document.documentElement.offsetHeight
+      );
+      const winHeight = window.innerHeight || document.documentElement.clientHeight || 800;
+      const maxScroll = docHeight - winHeight;
+
+      if (maxScroll > 10) {
+        const progress = Math.min(1, Math.max(0, scrollY / maxScroll));
+        setScrollProgress(progress);
+      } else {
+        setScrollProgress(0);
+      }
     };
+
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('resize', handleScroll, { passive: true });
+    document.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll();
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleScroll);
+      document.removeEventListener('scroll', handleScroll);
+    };
   }, []);
 
   // Keyboard navigation & escape listener
@@ -225,6 +259,24 @@ export const TopDock: React.FC<TopDockProps> = ({
 
   return (
     <>
+      {/* 0. Website Global Scroll Progress Bar at Top of Viewport */}
+      <div
+        className="fixed top-0 inset-x-0 h-[3.5px] sm:h-1 z-[120] pointer-events-none bg-black/60 overflow-hidden"
+        role="progressbar"
+        aria-valuenow={Math.round(scrollProgress * 100)}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label="Website scroll progress"
+      >
+        <div
+          className="h-full bg-gradient-to-r from-[#FF5E1E] via-[#FF7A18] to-[#FFA034] shadow-[0_0_14px_rgba(255,94,30,1),0_0_28px_rgba(255,160,52,0.8)] origin-left transition-all duration-150 ease-out relative"
+          style={{ width: `${scrollProgress * 100}%` }}
+        >
+          {/* Glowing Leading Flare Particle */}
+          <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white shadow-[0_0_12px_#FF5E1E,0_0_24px_#FFA034] animate-pulse" />
+        </div>
+      </div>
+
       {/* Centered Floating Header Shell — Positioned gracefully with gentle spacing */}
       <header
         role="banner"
@@ -249,13 +301,18 @@ export const TopDock: React.FC<TopDockProps> = ({
           {/* THREEUI ULTRA-LUXURY GLASSMORPHIC COMMAND BAR CONTAINER                    */}
           {/* ========================================================================= */}
           <div
-            className="relative flex items-center justify-between gap-3 sm:gap-4 md:gap-5 lg:gap-8 h-[60px] sm:h-[62px] md:h-16 px-4.5 sm:px-5 md:px-5 rounded-2xl md:rounded-full border border-white/[0.18] shadow-[0_16px_40px_-10px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_-1px_1px_rgba(255,255,255,0.06),0_0_25px_rgba(255,94,30,0.12)] transition-all duration-300 w-full md:max-w-fit mx-auto"
+            className="relative flex items-center justify-between gap-3 sm:gap-4 md:gap-5 lg:gap-8 h-[60px] sm:h-[62px] md:h-16 px-5 sm:px-6 md:px-5 rounded-2xl md:rounded-full border border-white/[0.18] shadow-[0_16px_40px_-10px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_-1px_1px_rgba(255,255,255,0.06),0_0_25px_rgba(255,94,30,0.12)] transition-all duration-300 w-full md:max-w-fit mx-auto overflow-hidden"
             style={{
               background: 'linear-gradient(135deg, rgba(20, 24, 33, 0.78) 0%, rgba(10, 12, 18, 0.88) 100%)',
               backdropFilter: 'blur(30px) saturate(190%) contrast(105%)',
               WebkitBackdropFilter: 'blur(30px) saturate(190%) contrast(105%)',
             }}
           >
+            {/* Synchronized Micro Scroll Progress Rail on Top Edge of Dock */}
+            <div
+              className="absolute top-0 left-0 h-[2px] bg-gradient-to-r from-[#FF5E1E] via-[#FF7A18] to-[#FFA034] shadow-[0_0_10px_#FF5E1E] transition-all duration-150 ease-out origin-left pointer-events-none z-30"
+              style={{ width: `${scrollProgress * 100}%` }}
+            />
             {/* 1. LEFT: OLYMPIA BRAND MARK & WORDMARK */}
             <a
               href="#overview"
@@ -375,12 +432,12 @@ export const TopDock: React.FC<TopDockProps> = ({
                 <User className="w-4 h-4 fill-white text-white" />
               </button>
 
-              {/* Mobile Hamburger Toggle Button */}
+              {/* Mobile Hamburger Toggle Button - Shifted left from the edge */}
               <button
                 onClick={() => setMobileMenuOpen(true)}
                 aria-label="Open mobile navigation menu"
                 aria-expanded={mobileMenuOpen}
-                className="inline-flex md:hidden p-2 rounded-full bg-white/10 border border-white/15 text-white hover:bg-[#FF5E1E] transition-colors"
+                className="inline-flex md:hidden p-2 rounded-xl bg-white/10 border border-white/15 text-white hover:bg-[#FF5E1E] transition-colors mr-1.5 sm:mr-2"
               >
                 <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
               </button>
