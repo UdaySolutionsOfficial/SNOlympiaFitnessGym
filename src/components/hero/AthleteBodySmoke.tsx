@@ -78,14 +78,14 @@ export const AthleteBodySmoke: React.FC<AthleteBodySmokeProps> = ({ className = 
         originX: x,
         originY: y,
         radius: Math.random() * 8 + 12,
-        maxRadius: Math.random() * 35 + 40,
+        maxRadius: Math.random() * 38 + 42,
         life: 0,
         maxLife,
         speedX: (Math.random() - 0.5) * 0.35,
         speedY: -(Math.random() * 0.65 + 0.45),
         turbulence: Math.random() * 0.03 + 0.015,
         opacity: 0,
-        maxOpacity: Math.random() * 0.12 + 0.06, // Soft, translucent realism
+        maxOpacity: Math.random() * 0.15 + 0.09, // Luminous, translucent heat vapor
       };
     };
 
@@ -144,7 +144,7 @@ export const AthleteBodySmoke: React.FC<AthleteBodySmokeProps> = ({ className = 
           continue;
         }
 
-        // Draw soft misty radial gradient
+        // Draw soft misty radial gradient with light athletic orange gym forge colors
         const grad = ctx.createRadialGradient(
           p.x,
           p.y,
@@ -153,10 +153,10 @@ export const AthleteBodySmoke: React.FC<AthleteBodySmokeProps> = ({ className = 
           p.y,
           currentRadius
         );
-        // Cool gym steam with subtle ambient orange warmth reflection
-        grad.addColorStop(0, `rgba(245, 248, 255, ${currentOpacity * 1.1})`);
-        grad.addColorStop(0.35, `rgba(255, 140, 60, ${currentOpacity * 0.4})`);
-        grad.addColorStop(0.7, `rgba(220, 230, 245, ${currentOpacity * 0.15})`);
+        // Light energetic orange workout vapor matching website theme
+        grad.addColorStop(0, `rgba(255, 190, 120, ${currentOpacity * 1.25})`);
+        grad.addColorStop(0.35, `rgba(255, 120, 45, ${currentOpacity * 0.85})`);
+        grad.addColorStop(0.7, `rgba(255, 90, 20, ${currentOpacity * 0.35})`);
         grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
 
         ctx.fillStyle = grad;
