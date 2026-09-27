@@ -17,6 +17,19 @@ export interface AssetMeta {
 }
 
 export const ASSET_MANIFEST = {
+  brand: {
+    officialBadge: {
+      id: 'brand-official-badge',
+      path: '/assets/images/brand/sn-olympia-badge.png',
+      width: 512,
+      height: 512,
+      aspectRatio: '1:1',
+      alt: 'Official SN Olympia Fitness Circular 3D Monogram Emblem',
+      description: 'Official circular brand badge with neon orange border and 3D SN monogram',
+      targetFormat: 'png',
+      status: 'READY',
+    } satisfies AssetMeta,
+  },
   hero: {
     athleteCurlingOlampiya: {
       id: 'hero-athlete-curling-olampiya',

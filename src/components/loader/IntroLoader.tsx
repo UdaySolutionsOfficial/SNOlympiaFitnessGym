@@ -255,21 +255,24 @@ export const IntroLoader: React.FC<IntroLoaderProps> = ({ onComplete }) => {
       <header className="relative z-10 shrink-0 flex flex-col items-center gap-2 mb-2 sm:mb-4">
         <div className="relative flex items-center justify-center">
           {/* Outer Rotating Dashed Neon Orbit Ring */}
-          <div className="absolute -inset-2.5 rounded-full border border-dashed border-[#FF5E1E]/40 animate-spin [animation-duration:14s] pointer-events-none" />
+          <div className="absolute -inset-3 rounded-full border border-dashed border-[#FF5E1E]/40 animate-spin [animation-duration:14s] pointer-events-none" />
 
           {/* Glowing Official SN Crest Medallion */}
-          <div className="w-12 h-12 sm:w-15 sm:h-15 rounded-full bg-gradient-to-b from-[#2A2E3B] to-[#12141A] border border-white/20 flex items-center justify-center shadow-[0_0_25px_rgba(255,94,30,0.6)] p-1.5">
+          <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full flex items-center justify-center drop-shadow-[0_0_30px_rgba(255,94,30,0.7)]">
             <SNOlympiaLogo variant="mark" className="w-full h-full" glow={false} />
           </div>
         </div>
 
         <div className="flex flex-col items-center text-center">
-          <div className="flex items-center gap-1.5">
-            <span className="font-athletic italic uppercase font-black text-sm sm:text-base tracking-wider text-white">
-              OLYMPIA <span className="text-[#FF5E1E]">GYM</span>
+          <div className="flex items-center tracking-normal">
+            <span className="font-athletic font-black uppercase text-base sm:text-lg tracking-wider text-white">
+              OLYMPIA
+            </span>
+            <span className="font-athletic italic font-black uppercase text-base sm:text-lg tracking-wider text-[#FF5E1E] ml-1.5">
+              GYM
             </span>
           </div>
-          <span className="text-[9px] font-mono tracking-[0.25em] text-brand-text-muted uppercase font-bold">
+          <span className="text-[9px] font-mono tracking-[0.25em] text-brand-text-muted uppercase font-bold mt-0.5">
             YEMMIGANUR • UNISEX FITNESS
           </span>
         </div>

@@ -27,10 +27,15 @@ export const MainFooter: React.FC = () => {
           {/* Brand Info (Span 4) */}
           <StaggerItem className="lg:col-span-4 space-y-4">
             <div className="flex items-center gap-3">
-              <SNOlympiaLogo variant="mark" className="w-8 h-8 shrink-0" />
-              <span className="font-black text-white uppercase tracking-wider text-base sm:text-lg">
-                SN OLYMPIA FITNESS
-              </span>
+              <SNOlympiaLogo variant="mark" className="w-10 h-10 shrink-0" glow={true} />
+              <div className="flex items-center tracking-normal">
+                <span className="font-athletic font-black uppercase text-base sm:text-lg tracking-wider text-white">
+                  OLYMPIA
+                </span>
+                <span className="font-athletic italic font-black uppercase text-base sm:text-lg tracking-wider text-[#FF5E1E] ml-1.5">
+                  GYM
+                </span>
+              </div>
             </div>
             <p className="text-xs sm:text-sm text-brand-text-secondary leading-relaxed font-light">
               Yemmiganur’s premier unisex strength and conditioning destination. Built on disciplined biomechanics, heavy iron, and an ego-free training environment.
