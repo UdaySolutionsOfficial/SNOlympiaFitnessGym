@@ -52,6 +52,15 @@
 }
 
 @layer utilities {
+  /* Hide scrollbars cleanly */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
   .text-fluid-hero {
     font-size: var(--font-display-hero);
     line-height: 0.95;
@@ -166,10 +175,39 @@
   animation: float3DRight 7s ease-in-out infinite 0.8s;
 }
 
+@keyframes liquidWaveFront {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+@keyframes liquidWaveBack {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-liquid-wave-front {
+  animation: liquidWaveFront 2.2s linear infinite;
+}
+
+.animate-liquid-wave-back {
+  animation: liquidWaveBack 3.6s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-border-beam,
   .animate-3d-float-left,
-  .animate-3d-float-right {
+  .animate-3d-float-right,
+  .animate-liquid-wave,
+  .animate-liquid-wave-front,
+  .animate-liquid-wave-back {
     animation: none;
   }
 }

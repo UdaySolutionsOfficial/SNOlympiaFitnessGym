@@ -130,7 +130,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ className }) => {
   return (
     <section
       id="about"
-      className={`relative py-24 md:py-36 px-4 md:px-8 max-w-7xl mx-auto overflow-hidden ${className}`}
+      className={`relative scroll-mt-24 sm:scroll-mt-28 md:scroll-mt-32 py-24 md:py-36 px-4 md:px-8 max-w-7xl mx-auto overflow-hidden ${className}`}
     >
       <div className="relative z-10 space-y-16">
         {/* Section Header with Eyebrow */}
@@ -150,10 +150,10 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ className }) => {
           </h2>
         </ScrollReveal>
 
-        {/* Editorial 2-Column Storytelling Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
-          {/* Left Column: Narrative & Pillars */}
-          <div className="lg:col-span-6 space-y-8">
+        {/* Editorial Storytelling: Narrative & Video Side-by-Side (Fills the upper empty space beside the text) */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+          {/* Left Column: Narrative & Location Hook */}
+          <div className="lg:col-span-6 space-y-6">
             <ScrollReveal direction="up" delay={0.12} className="space-y-4 text-sm md:text-base text-brand-text-secondary leading-relaxed font-normal">
               <p>
                 Established in the heart of Yemmiganur at <strong className="text-white">Timmappa Colony</strong> (Shiva Priya Theater Area), <strong className="text-white">SN Olympia Fitness</strong> was created to reject the vanity and distractions of modern commercial fitness lounges.
@@ -163,28 +163,8 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ className }) => {
               </p>
             </ScrollReveal>
 
-            {/* 4 Pillars Grid with Staggered Cascading Reveal */}
-            <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              {pillars.map((pillar, idx) => (
-                <StaggerItem
-                  key={idx}
-                  className="p-4 rounded-xl bg-brand-surface/70 border border-white/5 space-y-2 hover:border-brand-volt/30 transition-colors"
-                >
-                  <div className="w-8 h-8 rounded-lg bg-brand-volt/10 border border-brand-volt/20 flex items-center justify-center">
-                    {pillar.icon}
-                  </div>
-                  <h3 className="text-xs font-bold uppercase tracking-wider text-white">
-                    {pillar.title}
-                  </h3>
-                  <p className="text-[11px] text-brand-text-muted leading-relaxed">
-                    {pillar.description}
-                  </p>
-                </StaggerItem>
-              ))}
-            </StaggerContainer>
-
             {/* Location Hook */}
-            <ScrollReveal direction="up" delay={0.25}>
+            <ScrollReveal direction="up" delay={0.18}>
               <div className="flex items-center gap-3 p-3.5 rounded-xl bg-brand-surface/40 border border-white/5 text-xs text-brand-text-secondary">
                 <MapPin className="w-4 h-4 text-brand-volt shrink-0" />
                 <span>{SITE_CONTENT.brand.address.fullFormatted.value}</span>
@@ -192,7 +172,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ className }) => {
             </ScrollReveal>
           </div>
 
-          {/* Right Column: Wide Cinematic Interactive Equipment Video Player with Hero Neon Effect */}
+          {/* Right Column: Wide Cinematic Interactive Equipment Video Player (Moved right into marked empty space) */}
           <ScrollReveal direction="left" delay={0.15} duration={0.85} className="lg:col-span-6">
             <div className="relative group/aboutvid">
               {/* Soft Ambient Neon Glow on Ground/Back Plane (Continuous Pulse + Expansion on Hover) */}
@@ -390,6 +370,38 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ className }) => {
             </div>
           </ScrollReveal>
         </div>
+
+        {/* 4 Core Athletic Pillars Architecture (Full-width grid below Narrative & Video) */}
+        <ScrollReveal direction="up" delay={0.22}>
+          <div className="space-y-5 pt-2">
+            <div className="flex items-center gap-3">
+              <span className="w-1.5 h-1.5 rounded-full bg-brand-volt animate-pulse" />
+              <span className="text-[11px] font-mono tracking-widest text-brand-volt uppercase font-bold">
+                CORE TRAINING PHILOSOPHY &bull; 4 FOUNDATIONAL PILLARS
+              </span>
+            </div>
+
+            {/* 4 Pillars Grid with Staggered Cascading Reveal */}
+            <StaggerContainer staggerDelay={0.08} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              {pillars.map((pillar, idx) => (
+                <StaggerItem
+                  key={idx}
+                  className="p-5 rounded-2xl bg-brand-surface/70 border border-white/5 space-y-3 hover:border-brand-volt/40 hover:bg-brand-surface/90 hover:shadow-[0_12px_32px_rgba(0,0,0,0.5),0_0_20px_rgba(255,94,30,0.15)] transition-all duration-300 group"
+                >
+                  <div className="w-9 h-9 rounded-xl bg-brand-volt/10 border border-brand-volt/20 flex items-center justify-center group-hover:scale-110 group-hover:bg-brand-volt/20 transition-all duration-300">
+                    {pillar.icon}
+                  </div>
+                  <h3 className="text-xs font-bold uppercase tracking-wider text-white group-hover:text-brand-volt transition-colors">
+                    {pillar.title}
+                  </h3>
+                  <p className="text-[11px] text-brand-text-muted leading-relaxed">
+                    {pillar.description}
+                  </p>
+                </StaggerItem>
+              ))}
+            </StaggerContainer>
+          </div>
+        </ScrollReveal>
       </div>
     </section>
   );

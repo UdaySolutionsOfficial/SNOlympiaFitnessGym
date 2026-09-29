@@ -85,7 +85,7 @@ export const FacilitiesSection: React.FC = () => {
   const activeZone = FACILITY_ZONES.find((z) => z.id === selectedZone) || FACILITY_ZONES[0];
 
   return (
-    <section id="facilities" className="relative py-28 md:py-36 bg-brand-dark overflow-hidden">
+    <section id="facilities" className="relative scroll-mt-24 sm:scroll-mt-28 md:scroll-mt-32 py-28 md:py-36 bg-brand-dark overflow-hidden">
       {/* Background Ambience */}
       <div className="absolute top-1/3 left-0 w-[600px] h-[600px] bg-brand-volt/5 rounded-full blur-[160px] pointer-events-none" />
 

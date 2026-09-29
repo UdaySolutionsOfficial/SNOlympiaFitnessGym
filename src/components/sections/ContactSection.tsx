@@ -16,7 +16,7 @@ export const ContactSection: React.FC<ContactSectionProps> = ({ onOpenEnquiry })
   };
 
   return (
-    <section id="contact" className="relative py-28 md:py-36 bg-brand-surface/20 overflow-hidden border-t border-brand-border/60">
+    <section id="contact" className="relative scroll-mt-24 sm:scroll-mt-28 md:scroll-mt-32 py-28 md:py-36 bg-brand-surface/20 overflow-hidden border-t border-brand-border/60">
       {/* Background Ambience */}
       <div className="absolute top-1/2 left-10 w-[500px] h-[500px] bg-brand-volt/5 rounded-full blur-[170px] pointer-events-none" />
 

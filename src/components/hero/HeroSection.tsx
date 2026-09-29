@@ -2,7 +2,6 @@ import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { HeroBackground } from './HeroBackground';
 import { HeroVideoCard } from './HeroVideoCard';
 import { HeroTrustRatingBadge } from './HeroTrustRatingBadge';
-import { PlateViewer } from '../3d/PlateViewer';
 import { HeroExplore3DButton } from './HeroExplore3DButton';
 import { AthleteBodySmoke } from './AthleteBodySmoke';
 import { ASSET_MANIFEST } from '../../data/assets';
@@ -227,12 +226,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
 
           {/* CONTENT GRID: LEFT (Get Fit) & RIGHT (Stay Fit + Video) */}
-          <div className="relative z-20 grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 lg:gap-4 items-center min-h-[560px] sm:min-h-[660px] lg:min-h-[720px] p-5 sm:p-8 lg:p-14">
+          <div className="relative z-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-4 sm:gap-6 md:gap-6 lg:gap-4 items-stretch min-h-[560px] sm:min-h-[660px] md:min-h-[700px] lg:min-h-[720px] p-5 sm:p-8 md:p-8 lg:p-14">
             
             {/* ========================================================================= */}
-            {/* LEFT COLUMN: "Get Fit", Coaches Badge, and Bottom-Left Video Container     */}
+            {/* LEFT COLUMN: "Get Fit", Coaches/Trust Badge, and Bottom-Left Video Container */}
             {/* ========================================================================= */}
-            <div className="lg:col-span-5 flex flex-col justify-between h-full space-y-4 sm:space-y-6">
+            <div className="md:col-span-1 lg:col-span-5 flex flex-col justify-between h-full space-y-4 sm:space-y-6">
               <div className="space-y-4">
                 {/* Giant Energetic Athletic "Get Fit" Headline */}
                 <div className="group/headline cursor-default select-none text-left">
@@ -243,7 +242,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       DISCIPLINE &bull; HYPERTROPHY
                     </span>
                   </div>
-                  <h1 className="font-athletic italic uppercase font-black tracking-tight leading-[0.85] text-3xl sm:text-4xl md:text-7xl lg:text-8xl drop-shadow-2xl transition-transform duration-300 group-hover/headline:translate-x-1 text-left">
+                  <h1 className="font-athletic italic uppercase font-black tracking-tight leading-[0.85] text-3xl sm:text-4xl md:text-6xl lg:text-8xl drop-shadow-2xl transition-transform duration-300 group-hover/headline:translate-x-1 text-left">
                     <span className="text-sheen-effect inline-block">GET</span>{' '}
                     <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#FF5E1E] via-[#FF7538] to-[#FFA034] text-glow-orange">
                       FIT
@@ -251,33 +250,38 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                   </h1>
                 </div>
 
-                {/* 5.0 Google Rating & Member Reviews Credential Badge (Desktop only, moved down with animation) */}
-                <div className="hidden md:block mt-6 lg:mt-8 pt-1">
+                {/* 5.0 Google Rating & Member Reviews Credential Badge (Desktop only >=lg, sits below GET FIT) */}
+                <div className="hidden lg:block mt-6 lg:mt-8 pt-1">
                   <HeroTrustRatingBadge />
                 </div>
               </div>
 
-              {/* Bottom Left: Second Video Card (Hidden on mobile <md) */}
-              <div className="hidden md:block pt-2">
+              {/* Bottom Left: Second Video Card & Tablet Rating Badge */}
+              <div className="hidden md:flex flex-col gap-3 pt-2">
                 <HeroVideoCard
                   videoSrc={ASSET_MANIFEST.hero.introVideo2.path}
                   title="SN Olympia Energy & Coaching"
                   alignment="left"
                 />
+
+                {/* On Tablet (md:max-lg), 5-star rating card is moved down below the video at the barbell/hand level as requested */}
+                <div className="hidden md:block lg:hidden mt-2">
+                  <HeroTrustRatingBadge />
+                </div>
               </div>
             </div>
 
             {/* ========================================================================= */}
-            {/* CENTER SPACER: Keeps center athlete clear and visible                     */}
+            {/* CENTER SPACER: Keeps center athlete clear and visible (Desktop only)      */}
             {/* ========================================================================= */}
             <div className="hidden lg:block lg:col-span-2 pointer-events-none" />
 
             {/* ========================================================================= */}
-            {/* RIGHT COLUMN: "Stay Fit", First Video Card, Scroll Down Button & 3D Plate */}
+            {/* RIGHT COLUMN: "Stay Fit", First Video Card, Scroll Down Button            */}
             {/* ========================================================================= */}
-            <div className="lg:col-span-5 flex flex-col justify-between items-end h-full space-y-4 sm:space-y-6">
+            <div className="md:col-span-1 lg:col-span-5 flex flex-col justify-between items-end h-full space-y-4 sm:space-y-6">
               <div className="flex flex-col items-end w-full space-y-4">
-                {/* Giant Energetic Athletic "Stay Fit" Headline */}
+                {/* Giant Energetic Athletic "Stay Fit" Headline (Moved upper on tablet to match GET FIT) */}
                 <div className="group/stayline cursor-default select-none flex flex-col items-end text-right">
                   {/* Performance • Resilience Pill (Hidden on mobile <md) */}
                   <div className="hidden md:inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-2 shadow-sm">
@@ -286,7 +290,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                       PERFORMANCE &bull; RESILIENCE
                     </span>
                   </div>
-                  <h2 className="font-athletic italic uppercase font-black tracking-tight leading-[0.85] text-3xl sm:text-4xl md:text-7xl lg:text-8xl drop-shadow-2xl transition-transform duration-300 text-right">
+                  <h2 className="font-athletic italic uppercase font-black tracking-tight leading-[0.85] text-3xl sm:text-4xl md:text-6xl lg:text-8xl drop-shadow-2xl transition-transform duration-300 text-right">
                     <span className="text-sheen-effect inline-block">STAY</span>{' '}
                     <span className="inline-block text-transparent bg-clip-text bg-gradient-to-r from-[#FF5E1E] via-[#FF7538] to-[#FFA034] text-glow-orange">
                       FIT
@@ -304,59 +308,40 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 </div>
               </div>
 
-            {/* Bottom Right: Circular Scroll Down Button & 3D Plate Satellite */}
-            <div className="flex items-center gap-4 pt-2 w-full justify-end lg:justify-end">
-              {/* Free-Floating 3D Olympic Plate Medallion (Hidden on mobile <md) */}
-              <div
-                style={{
-                  transform: !prefersReducedMotion
-                    ? `translate3d(${mouseOffset.x * -0.04}px, ${mouseOffset.y * -0.04}px, 0)`
-                    : undefined,
-                  transition: 'transform 0.4s cubic-bezier(0.16, 1, 0.3, 1)',
-                }}
-                className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-black/50 backdrop-blur-md border border-[#FF5E1E]/40 shadow-md cursor-grab active:cursor-grabbing group"
-              >
-                <div className="w-7 h-7 relative">
-                  <PlateViewer className="w-full h-full" autoRotate />
-                </div>
-                <div className="flex items-center gap-1 text-[9px] font-mono tracking-widest text-[#FF5E1E] uppercase font-bold">
-                  <Sparkles className="w-2.5 h-2.5 animate-pulse" />
-                  <span>3D 20KG</span>
-                </div>
-              </div>
-
-              {/* Circular Scroll Down Button (Desktop / Tablet >=md) */}
-              <button
-                onClick={scrollToNext}
-                aria-label="Scroll down to classes"
-                className="hidden md:flex w-11 h-11 rounded-full bg-white/10 hover:bg-[#FF5E1E] hover:text-white border border-white/20 text-[#FF5E1E] flex items-center justify-center shadow-lg transition-all active:scale-95 group"
-              >
-                <ChevronDown className="w-5 h-5 group-hover:translate-y-0.5 transition-transform" />
-              </button>
-
-              {/* Mobile Animated Neon Play Button (<md) */}
-              <div className="relative md:hidden flex items-center justify-end z-40">
-                {/* Neon Animated Circular Play Button (No text, pulsing neon rings) */}
+              {/* Bottom Right: Circular Scroll Down Button (3D plate pill completely removed) */}
+              <div className="flex items-center gap-4 pt-2 w-full justify-end">
+                {/* Circular Scroll Down Button (Desktop / Tablet >=md) */}
                 <button
-                  type="button"
-                  data-reel-toggle="true"
-                  onClick={() => setMobileTooltipOpen((prev) => !prev)}
-                  aria-label={mobileTooltipOpen ? 'Close video reels' : 'Open video reels'}
-                  aria-expanded={mobileTooltipOpen}
-                  className="relative w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-95 cursor-pointer shadow-[0_0_28px_rgba(255,94,30,0.9),0_0_55px_rgba(255,94,30,0.45)] border border-white/30"
-                  style={{
-                    background: 'linear-gradient(135deg, #FF5E1E 0%, #FF7A18 50%, #FFA034 100%)',
-                  }}
+                  onClick={scrollToNext}
+                  aria-label="Scroll down to classes"
+                  className="hidden md:flex w-11 h-11 rounded-full bg-white/10 hover:bg-[#FF5E1E] hover:text-white border border-white/20 text-[#FF5E1E] flex items-center justify-center shadow-lg transition-all active:scale-95 group"
                 >
-                  {/* Subtle Expanding Outer Radar Wave / Pulse Ping */}
-                  <span className="absolute -inset-2 rounded-full bg-[#FF5E1E]/35 animate-ping opacity-60 pointer-events-none" />
-                  <span className="absolute -inset-1 rounded-full border border-[#FF5E1E]/70 animate-pulse pointer-events-none" />
-
-                  {/* Pure Neon Play Icon (No text) */}
-                  <Play className="relative z-10 w-5 h-5 text-white fill-white translate-x-0.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]" />
+                  <ChevronDown className="w-5 h-5 group-hover:translate-y-0.5 transition-transform" />
                 </button>
+
+                {/* Mobile Animated Neon Play Button (<md) */}
+                <div className="relative md:hidden flex items-center justify-end z-40">
+                  {/* Neon Animated Circular Play Button (No text, pulsing neon rings) */}
+                  <button
+                    type="button"
+                    data-reel-toggle="true"
+                    onClick={() => setMobileTooltipOpen((prev) => !prev)}
+                    aria-label={mobileTooltipOpen ? 'Close video reels' : 'Open video reels'}
+                    aria-expanded={mobileTooltipOpen}
+                    className="relative w-12 h-12 rounded-full flex items-center justify-center transition-transform active:scale-95 cursor-pointer shadow-[0_0_28px_rgba(255,94,30,0.9),0_0_55px_rgba(255,94,30,0.45)] border border-white/30"
+                    style={{
+                      background: 'linear-gradient(135deg, #FF5E1E 0%, #FF7A18 50%, #FFA034 100%)',
+                    }}
+                  >
+                    {/* Subtle Expanding Outer Radar Wave / Pulse Ping */}
+                    <span className="absolute -inset-2 rounded-full bg-[#FF5E1E]/35 animate-ping opacity-60 pointer-events-none" />
+                    <span className="absolute -inset-1 rounded-full border border-[#FF5E1E]/70 animate-pulse pointer-events-none" />
+
+                    {/* Pure Neon Play Icon (No text) */}
+                    <Play className="relative z-10 w-5 h-5 text-white fill-white translate-x-0.5 drop-shadow-[0_2px_8px_rgba(0,0,0,0.6)]" />
+                  </button>
+                </div>
               </div>
-            </div>
           </div>
         </div>
 

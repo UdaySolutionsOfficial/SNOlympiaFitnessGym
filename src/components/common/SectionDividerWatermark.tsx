@@ -26,7 +26,7 @@ export const SectionDividerWatermark: React.FC<SectionDividerWatermarkProps> = (
 
   return (
     <div
-      className={`relative w-full overflow-hidden pointer-events-none select-none flex items-center justify-center pt-8 pb-4 sm:pt-12 sm:pb-6 md:pt-16 md:pb-8 z-10 ${className}`}
+      className={`relative w-full overflow-hidden pointer-events-none select-none flex items-center justify-center pt-6 pb-2 sm:pt-8 sm:pb-3 md:pt-8 md:pb-2 lg:pt-16 lg:pb-8 z-10 ${className}`}
       aria-hidden="true"
     >
       <span

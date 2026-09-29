@@ -19,13 +19,13 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
   };
 
   return (
-    <section id="membership" className="relative py-28 md:py-36 bg-brand-surface/30 overflow-hidden">
+    <section id="membership" className="relative scroll-mt-24 sm:scroll-mt-28 md:scroll-mt-32 py-16 sm:py-20 md:py-24 xl:py-32 bg-brand-surface/30 overflow-hidden">
       {/* Background Ambience */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[600px] bg-brand-volt/5 rounded-full blur-[180px] pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header (Clean: No filter pills as requested) */}
-        <ScrollReveal direction="up" delay={0.05} className="text-center max-w-3xl mx-auto mb-16 sm:mb-20">
+        <ScrollReveal direction="up" delay={0.05} className="text-center max-w-3xl mx-auto mb-12 sm:mb-16 md:mb-16 lg:mb-20">
           <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-brand-volt/10 border border-brand-volt/30 text-brand-volt text-xs font-mono tracking-widest uppercase mb-4 shadow-sm">
             <Sparkles className="w-3.5 h-3.5 animate-pulse" />
             <span>Admissions & Membership Tiers</span>
@@ -43,16 +43,25 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
           </p>
         </ScrollReveal>
 
-        {/* 3 Tier Cards Grid: 1 Month (Left), 12 Months Recommended (Center), 6 Months (Right) */}
-        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch pt-4 sm:pt-6">
+        {/* 3 Tier Cards Grid:
+            - Mobile (< md): 1 column
+            - Tablet (md to xl, 768px - 1279px, including iPad Pro 1032px): 2 columns, Annual Pass is a wide Hero on top (col-span-2), and 1M & 6M sit side-by-side below
+            - Desktop (xl+, 1280px+): 3 columns side-by-side with Annual Pass elevated in the center
+        */}
+        <StaggerContainer staggerDelay={0.12} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 xl:gap-8 items-stretch pt-2 sm:pt-4">
           {plans.map((plan: MembershipPlan) => {
             const isFeatured = plan.durationKey === 'annual';
+            const isMonthly = plan.durationKey === 'monthly';
 
             return (
               <StaggerItem
                 key={plan.id}
                 className={`relative flex flex-col justify-between ${
-                  isFeatured ? 'md:-translate-y-4 lg:-translate-y-5 z-20' : 'z-10'
+                  isFeatured
+                    ? 'order-2 md:order-1 xl:order-2 md:col-span-2 xl:col-span-1 md:translate-y-0 xl:-translate-y-5 z-20'
+                    : isMonthly
+                    ? 'order-1 md:order-2 xl:order-1 md:col-span-1 xl:col-span-1 z-10'
+                    : 'order-3 md:order-3 xl:order-3 md:col-span-1 xl:col-span-1 z-10'
                 }`}
               >
                 {/* Outer Looping Glowing Edge Border Shell */}
@@ -109,7 +118,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
 
                   {/* Layer 3: Inner Glassmorphic Surface of the Card */}
                   <div
-                    className={`relative w-full h-full rounded-[calc(1.5rem-2px)] p-6 sm:p-8 flex flex-col justify-between overflow-hidden transition-colors duration-300 ${
+                    className={`relative w-full h-full rounded-[calc(1.5rem-2px)] p-6 sm:p-7 md:p-6 lg:p-8 flex flex-col justify-between overflow-hidden transition-colors duration-300 ${
                       isFeatured
                         ? 'bg-gradient-to-b from-[#141822] via-[#0C0E14] to-[#08090C]'
                         : 'bg-[#0C0E12] group-hover/card:bg-[#10131A]'
@@ -121,8 +130,8 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
                     <div>
                       {/* Integrated In-Card Recommendation Pill - Seamless architectural part of card */}
                       {isFeatured && (
-                        <div className="flex justify-center -mt-1 sm:-mt-2 mb-5">
-                          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-brand-volt/15 via-brand-volt/25 to-brand-volt/15 border border-brand-volt/40 text-brand-volt font-mono text-[11px] sm:text-xs font-black tracking-widest uppercase shadow-[0_0_20px_rgba(255,94,30,0.3)] backdrop-blur-md">
+                        <div className="flex justify-center -mt-1 sm:-mt-2 mb-4">
+                          <div className="inline-flex items-center gap-2 px-3.5 sm:px-4 py-1.5 rounded-full bg-gradient-to-r from-brand-volt/15 via-brand-volt/25 to-brand-volt/15 border border-brand-volt/40 text-brand-volt font-mono text-[10px] sm:text-xs font-black tracking-widest uppercase shadow-[0_0_20px_rgba(255,94,30,0.3)] backdrop-blur-md">
                             <Flame className="w-3.5 h-3.5 fill-brand-volt text-brand-volt animate-pulse" />
                             <span>RECOMMENDED • BEST VALUE</span>
                           </div>
@@ -130,33 +139,33 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
                       )}
 
                       {/* Duration & Access Badge */}
-                      <div className="flex items-center justify-between text-xs font-mono mb-3">
-                        <span className="text-brand-text-muted uppercase font-bold tracking-wider">
+                      <div className="flex items-center justify-between gap-2 text-xs font-mono mb-3">
+                        <span className="text-brand-text-muted uppercase font-bold tracking-wider text-[11px] sm:text-xs">
                           {isFeatured ? 'Annual Pass (12 Mo)' : plan.billingCycle}
                         </span>
-                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-brand-volt px-2 py-0.5 rounded bg-brand-volt/10 border border-brand-volt/20">
-                          <Award className="w-3 h-3" />
+                        <span className="inline-flex items-center gap-1 text-[10px] sm:text-[11px] font-bold text-brand-volt px-2 py-0.5 rounded bg-brand-volt/10 border border-brand-volt/20 shrink-0 whitespace-nowrap">
+                          <Award className="w-3 h-3 shrink-0" />
                           UNISEX ACCESS
                         </span>
                       </div>
 
                       {/* Tier Name */}
-                      <h3 className="text-2xl sm:text-3xl font-black uppercase text-white tracking-tight mb-2 group-hover/card:text-brand-volt transition-colors">
+                      <h3 className="text-xl sm:text-2xl xl:text-3xl font-black uppercase text-white tracking-tight mb-2 group-hover/card:text-brand-volt transition-colors">
                         {plan.tierName}
                       </h3>
 
                       {/* Tagline */}
-                      <p className="text-xs text-brand-text-secondary leading-relaxed mb-6 font-light">
+                      <p className="text-xs text-brand-text-secondary leading-relaxed mb-5 font-light">
                         {plan.tagline}
                       </p>
 
                       {/* Prominent High-Contrast Pricing Display */}
-                      <div className={`p-4 sm:p-5 rounded-2xl mb-6 border transition-all ${
+                      <div className={`p-4 sm:p-5 rounded-2xl mb-5 border transition-all ${
                         isFeatured
                           ? 'bg-gradient-to-br from-brand-surface/90 to-brand-volt/10 border-brand-volt/50 shadow-[0_0_30px_rgba(255,94,30,0.15)]'
                           : 'bg-brand-dark/90 border-brand-border/70 group-hover/card:border-brand-border'
                       }`}>
-                        <div className="flex items-baseline justify-between gap-2">
+                        <div className="flex flex-wrap items-baseline justify-between gap-2">
                           <div className="flex items-baseline gap-1">
                             <span className="text-3xl sm:text-4xl font-black text-white font-mono tracking-tight">
                               {plan.price}
@@ -166,30 +175,32 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
                             </span>
                           </div>
                           {plan.savings && (
-                            <span className="px-2.5 py-1 rounded-md bg-brand-volt/20 border border-brand-volt/40 text-brand-volt text-[10px] sm:text-[11px] font-mono font-black uppercase tracking-wider animate-pulse">
+                            <span className="px-2.5 py-1 rounded-md bg-brand-volt/20 border border-brand-volt/40 text-brand-volt text-[10px] sm:text-[11px] font-mono font-black uppercase tracking-wider shrink-0 whitespace-nowrap animate-pulse">
                               {plan.savings}
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5 text-[11px] font-mono text-brand-text-muted">
-                          <span className="uppercase tracking-wider">{plan.billingCycle}</span>
-                          <span className="text-brand-text-secondary">{plan.breakdown}</span>
+                        <div className="flex items-center justify-between mt-2 pt-2 border-t border-white/5 text-[11px] font-mono text-brand-text-muted gap-2">
+                          <span className="uppercase tracking-wider shrink-0">{plan.billingCycle}</span>
+                          <span className="text-brand-text-secondary text-right">{plan.breakdown}</span>
                         </div>
                       </div>
 
-                      {/* Plan Inclusions Checklist */}
-                      <div className="space-y-3 mb-8">
+                      {/* Plan Inclusions Checklist (2 columns on tablet for featured hero card) */}
+                      <div className="space-y-3 mb-6">
                         <div className="text-[11px] font-mono uppercase tracking-widest text-brand-text-muted font-bold">
                           Included In Discipline
                         </div>
-                        {plan.features.map((feat: string, fIdx: number) => (
-                          <div key={fIdx} className="flex items-start gap-2.5 text-xs sm:text-sm text-brand-text-primary">
-                            <div className="w-4 h-4 rounded-full bg-brand-volt/15 border border-brand-volt/40 flex items-center justify-center shrink-0 mt-0.5 group-hover/card:bg-brand-volt/25 transition-colors">
-                              <Check className="w-2.5 h-2.5 text-brand-volt stroke-[3]" />
+                        <div className={isFeatured ? 'grid grid-cols-1 md:grid-cols-2 xl:grid-cols-1 gap-2.5 sm:gap-3' : 'space-y-2.5'}>
+                          {plan.features.map((feat: string, fIdx: number) => (
+                            <div key={fIdx} className="flex items-start gap-2.5 text-xs sm:text-sm text-brand-text-primary">
+                              <div className="w-4 h-4 rounded-full bg-brand-volt/15 border border-brand-volt/40 flex items-center justify-center shrink-0 mt-0.5 group-hover/card:bg-brand-volt/25 transition-colors">
+                                <Check className="w-2.5 h-2.5 text-brand-volt stroke-[3]" />
+                              </div>
+                              <span className="leading-snug">{feat}</span>
                             </div>
-                            <span className="leading-snug">{feat}</span>
-                          </div>
-                        ))}
+                          ))}
+                        </div>
                       </div>
                     </div>
 
@@ -197,7 +208,7 @@ export const MembershipSection: React.FC<MembershipSectionProps> = ({ onSelectPl
                     <div className="pt-4 border-t border-brand-border/50">
                       <button
                         onClick={() => handlePlanClick(plan.tierName)}
-                        className={`w-full py-4 px-5 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 group/btn ${
+                        className={`w-full py-3.5 sm:py-4 px-5 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-300 flex items-center justify-center gap-2 group/btn ${
                           isFeatured
                             ? 'bg-gradient-to-r from-amber-400 via-[#FF7538] to-[#FF5E1E] text-brand-dark shadow-[0_0_25px_rgba(255,94,30,0.7)] hover:shadow-[0_0_40px_rgba(255,94,30,1)] hover:scale-[1.02] active:scale-95'
                             : 'bg-brand-surface border border-white/15 text-white hover:border-brand-volt hover:text-brand-volt hover:bg-brand-surface-hover hover:scale-[1.02] active:scale-95'

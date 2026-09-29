@@ -564,7 +564,7 @@ export const VideoArenaSection: React.FC = () => {
   return (
     <section
       id="action"
-      className="relative py-16 sm:py-28 md:py-44 bg-[#08090A] overflow-hidden select-none"
+      className="relative scroll-mt-24 sm:scroll-mt-28 md:scroll-mt-32 pt-8 sm:pt-12 md:pt-12 lg:pt-28 pb-14 sm:pb-20 md:pb-24 lg:pb-36 bg-[#08090A] overflow-hidden select-none"
     >
       {/* 1. Ambient Background Atmosphere */}
       <div className="absolute inset-0 pointer-events-none">
@@ -577,7 +577,7 @@ export const VideoArenaSection: React.FC = () => {
         {/* ========================================================================= */}
         {/* SECTION HEADER WITH CATEGORY FILTER                                       */}
         {/* ========================================================================= */}
-        <ScrollReveal direction="up" delay={0.05} className="flex flex-col md:flex-row md:items-end justify-between gap-5 mb-4 sm:mb-8 md:mb-16">
+        <ScrollReveal direction="up" delay={0.05} className="flex flex-col lg:flex-row lg:items-end justify-between gap-5 md:gap-6 lg:gap-5 mb-6 sm:mb-8 md:mb-10 lg:mb-14">
           <div>
             {/* Section Tag */}
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/5 border border-white/10 backdrop-blur-md mb-3 shadow-sm">
@@ -587,8 +587,8 @@ export const VideoArenaSection: React.FC = () => {
               </span>
             </div>
 
-            {/* Headline with Athletic Gradient */}
-            <h2 className="font-athletic italic uppercase font-black text-4xl sm:text-5xl md:text-6xl tracking-tight text-white leading-none">
+            {/* Headline with Athletic Gradient (Single line on tablet & desktop) */}
+            <h2 className="font-athletic italic uppercase font-black text-3xl sm:text-4xl md:text-[2.35rem] lg:text-4xl xl:text-5xl 2xl:text-6xl tracking-tight text-white leading-none whitespace-normal sm:whitespace-nowrap">
               THE OLYMPIA <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#FF5E1E] via-[#FF7538] to-[#FFA034] text-glow-orange">ACTION</span> VAULT
             </h2>
             <p className="text-sm sm:text-base text-brand-text-secondary max-w-xl mt-3 font-normal">
@@ -596,8 +596,8 @@ export const VideoArenaSection: React.FC = () => {
             </p>
           </div>
 
-          {/* Interactive Category Filter Pills (Vertical stack on mobile, horizontal row on desktop) */}
-          <div className="flex flex-col md:flex-row items-stretch md:items-center gap-1.5 md:gap-0 p-1.5 rounded-2xl md:rounded-full bg-black/70 border border-white/15 backdrop-blur-xl shadow-lg w-full max-w-sm sm:max-w-md md:w-auto md:max-w-none self-start md:self-auto">
+          {/* Interactive Category Filter Pills (Vertical stack on mobile, centered horizontal on tablet, right-aligned on desktop) */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-1.5 sm:gap-1 md:gap-1.5 lg:gap-0 p-1.5 rounded-2xl sm:rounded-full bg-black/70 border border-white/15 backdrop-blur-xl shadow-lg w-full max-w-sm sm:max-w-none sm:w-fit self-center lg:self-auto mx-auto lg:mx-0 mt-4 md:mt-4 lg:mt-0 shrink-0">
             {(
               [
                 { id: 'all', label: 'All Action', count: 13, icon: <Sparkles className="w-3.5 h-3.5" /> },
@@ -610,7 +610,7 @@ export const VideoArenaSection: React.FC = () => {
                 <button
                   key={filter.id}
                   onClick={() => setActiveFilter(filter.id)}
-                  className={`relative flex items-center justify-between md:justify-start gap-2.5 px-4 py-2.5 md:py-2 rounded-xl md:rounded-full text-xs font-bold uppercase tracking-wider outline-none transition-all ${
+                  className={`relative flex items-center justify-between sm:justify-center gap-2.5 sm:gap-2 md:gap-2.5 px-4 sm:px-3.5 md:px-4 py-2.5 sm:py-2 rounded-xl sm:rounded-full text-xs font-bold uppercase tracking-wider outline-none transition-all ${
                     isActive ? 'text-[#0A0B10]' : 'text-neutral-400 hover:text-white'
                   }`}
                 >
@@ -619,14 +619,14 @@ export const VideoArenaSection: React.FC = () => {
                     <motion.div
                       layoutId="activeReelFilterPill"
                       transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-                      className="absolute inset-0 rounded-xl md:rounded-full bg-gradient-to-b from-white via-[#F4F6FB] to-[#E2E6EE] shadow-[0_4px_20px_rgba(255,94,30,0.6)] z-0"
+                      className="absolute inset-0 rounded-xl sm:rounded-full bg-gradient-to-b from-white via-[#F4F6FB] to-[#E2E6EE] shadow-[0_4px_20px_rgba(255,94,30,0.6)] z-0"
                     />
                   )}
-                  <div className="relative z-10 flex items-center gap-2.5">
+                  <div className="relative z-10 flex items-center gap-2.5 sm:gap-1.5 md:gap-2">
                     <span className={isActive ? 'text-[#FF5E1E]' : 'opacity-70'}>
                       {filter.icon}
                     </span>
-                    <span className="whitespace-nowrap font-extrabold tracking-wide">{filter.label}</span>
+                    <span className="whitespace-nowrap font-extrabold tracking-wide text-xs">{filter.label}</span>
                   </div>
                   <span
                     className={`relative z-10 text-[10px] font-mono px-2 py-0.5 rounded-full ${

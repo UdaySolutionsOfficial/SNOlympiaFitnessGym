@@ -49,10 +49,15 @@ export default {
           '0%': { transform: 'translateX(0%)' },
           '100%': { transform: 'translateX(-50%)' },
         },
+        'liquid-wave': {
+          '0%': { transform: 'translateX(0%)' },
+          '100%': { transform: 'translateX(-50%)' },
+        },
       },
       animation: {
         'pulse-subtle': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
         marquee: 'marquee 28s linear infinite',
+        'liquid-wave': 'liquid-wave 2.2s linear infinite',
       }
     },
   },

@@ -20,6 +20,7 @@ import { LocationSection } from '../components/sections/LocationSection';
 import { FinalCTASection } from '../components/sections/FinalCTASection';
 import { MainFooter } from '../components/footer/MainFooter';
 import { StickyMobileBar } from '../components/navigation/StickyMobileBar';
+import { ScrollToTopLiquidButton } from '../components/navigation/ScrollToTopLiquidButton';
 import { EnquiryModal } from '../components/modals/EnquiryModal';
 import { SectionDividerWatermark } from '../components/common/SectionDividerWatermark';
 import { FireEmberParticles } from '../components/common/FireEmberParticles';
@@ -278,6 +279,9 @@ export const HomeView: React.FC<HomeViewProps> = ({ onOpenDesignSystem }) => {
         onJoinClick={() => handleOpenEnquiry('Mobile Sticky Bar')}
         isModalOpen={enquiryModalOpen}
       />
+
+      {/* 6.5. Floating Progressive Liquid Scroll-to-Top Action Button */}
+      <ScrollToTopLiquidButton />
 
       {/* 7. Direct Admissions & Inquiry Modal */}
       <EnquiryModal

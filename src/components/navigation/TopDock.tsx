@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { SITE_CONTENT } from '../../data/siteContent';
 import {
   Phone,
@@ -14,6 +14,8 @@ import {
   Info,
   Send,
   Zap,
+  ChevronLeft,
+  ChevronRight,
 } from 'lucide-react';
 import { useReducedMotion } from '../../hooks/useReducedMotion';
 import { SNOlympiaLogo } from '../common/SNOlympiaLogo';
@@ -75,17 +77,57 @@ const NAV_ITEMS: readonly NavItemConfig[] = [
   },
 ];
 
+interface AnimatedBurgerIconProps {
+  isOpen: boolean;
+}
+
 /**
- * ThreeUI Glassmorphic Animated Top Dock — Command Bar Variant
- * Adapted specifically for SN Olympia Fitness Unisex Gym:
- *
- * 1. Frosted glass pill with dual-layer backdrop filter and ambient aurora glow.
- * 2. Left: Olympia brand insignia mark + wordmark.
- * 3. Center: Proximity-spring dock with items dynamically reacting to cursor coordinates.
- * 4. Active item highlighted with high-contrast gradient pill.
- * 5. Right: Phone hotline, electric orange gradient CTA button, and user profile trigger.
- * 6. Full accessibility with keyboard focus and mobile drawer fallback.
+ * AnimatedBurgerIcon
+ * Elastic morphing hamburger icon inspired by Gaetan Gonzalez's Lottie burger menu.
+ * - In closed state: 3 sleek parallel lines with center volt-orange accent and glowing ends.
+ * - In open state: Top and bottom lines spring-rotate into a crisp 45deg 'X' with center alignment,
+ *   while the middle bar scales and slides out smoothly with opacity fade.
  */
+const AnimatedBurgerIcon: React.FC<AnimatedBurgerIconProps> = ({ isOpen }) => {
+  return (
+    <div className="relative w-5 h-4 flex flex-col justify-between items-center pointer-events-none select-none" aria-hidden="true">
+      {/* Top Bar */}
+      <motion.span
+        initial={false}
+        animate={
+          isOpen
+            ? { rotate: 45, y: 7, backgroundColor: '#FF5E1E' }
+            : { rotate: 0, y: 0, backgroundColor: '#FFFFFF' }
+        }
+        transition={{ type: 'spring', stiffness: 360, damping: 24 }}
+        className="w-full h-[2px] rounded-full origin-center shadow-[0_0_8px_rgba(255,94,30,0.6)] block"
+      />
+      {/* Middle Bar */}
+      <motion.span
+        initial={false}
+        animate={
+          isOpen
+            ? { opacity: 0, scaleX: 0, x: 12 }
+            : { opacity: 1, scaleX: 1, x: 0, backgroundColor: '#FF5E1E' }
+        }
+        transition={{ duration: 0.18, ease: 'easeOut' }}
+        className="w-full h-[2px] rounded-full origin-left shadow-[0_0_10px_rgba(255,94,30,0.85)] block"
+      />
+      {/* Bottom Bar */}
+      <motion.span
+        initial={false}
+        animate={
+          isOpen
+            ? { rotate: -45, y: -7, backgroundColor: '#FF5E1E' }
+            : { rotate: 0, y: 0, backgroundColor: '#FF7538' }
+        }
+        transition={{ type: 'spring', stiffness: 360, damping: 24 }}
+        className="w-full h-[2px] rounded-full origin-center shadow-[0_0_8px_rgba(255,94,30,0.6)] block"
+      />
+    </div>
+  );
+};
+
 export const TopDock: React.FC<TopDockProps> = ({
   activeSection = 'overview',
   onNavigate,
@@ -100,12 +142,83 @@ export const TopDock: React.FC<TopDockProps> = ({
     setCurrentActive(activeSection);
   }, [activeSection]);
 
-  // Proximity dock tracking
-  const dockTrackRef = useRef<HTMLDivElement | null>(null);
+  // Proximity dock tracking & horizontal scroll management
+  const dockTrackRef = useRef<HTMLElement | null>(null);
   const itemRefs = useRef<Map<string, HTMLButtonElement>>(new Map());
   const [itemInfluences, setItemInfluences] = useState<Record<string, number>>({});
   const springStates = useRef<Record<string, { value: number; velocity: number; target: number }>>({});
   const rafRef = useRef<number | null>(null);
+
+  // Tablet horizontal scroll cue tracking
+  const [canScrollLeft, setCanScrollLeft] = useState(false);
+  const [canScrollRight, setCanScrollRight] = useState(false);
+
+  const checkNavScroll = useCallback(() => {
+    const el = dockTrackRef.current;
+    if (!el) return;
+    const { scrollLeft, scrollWidth, clientWidth } = el;
+    setCanScrollLeft(scrollLeft > 6);
+    setCanScrollRight(scrollLeft + clientWidth < scrollWidth - 6);
+  }, []);
+
+  useEffect(() => {
+    const el = dockTrackRef.current;
+    if (!el) return;
+    checkNavScroll();
+    el.addEventListener('scroll', checkNavScroll, { passive: true });
+    window.addEventListener('resize', checkNavScroll, { passive: true });
+
+    let resizeObserver: ResizeObserver | null = null;
+    if (typeof ResizeObserver !== 'undefined') {
+      resizeObserver = new ResizeObserver(() => {
+        checkNavScroll();
+      });
+      resizeObserver.observe(el);
+      if (el.parentElement) {
+        resizeObserver.observe(el.parentElement);
+      }
+    }
+
+    return () => {
+      el.removeEventListener('scroll', checkNavScroll);
+      window.removeEventListener('resize', checkNavScroll);
+      if (resizeObserver) {
+        resizeObserver.disconnect();
+      }
+    };
+  }, [checkNavScroll]);
+
+  // Translate vertical wheel scroll to horizontal scroll when hovering over the scrollable nav
+  useEffect(() => {
+    const navEl = dockTrackRef.current;
+    if (!navEl) return;
+
+    const handleWheel = (e: WheelEvent) => {
+      if (navEl.scrollWidth > navEl.clientWidth) {
+        if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+          navEl.scrollLeft += e.deltaY;
+          e.preventDefault();
+        }
+      }
+    };
+
+    navEl.addEventListener('wheel', handleWheel, { passive: false });
+    return () => navEl.removeEventListener('wheel', handleWheel);
+  }, []);
+
+  // Auto-scroll active section into center of horizontal view
+  useEffect(() => {
+    const activeBtn = itemRefs.current.get(currentActive);
+    const navEl = dockTrackRef.current;
+    if (activeBtn && navEl && navEl.scrollWidth > navEl.clientWidth) {
+      activeBtn.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest',
+      });
+    }
+    checkNavScroll();
+  }, [currentActive, checkNavScroll]);
 
   // Initialize spring states
   useEffect(() => {
@@ -212,7 +325,7 @@ export const TopDock: React.FC<TopDockProps> = ({
   }, [updateSprings]);
 
   // Handle pointer movement across proximity dock
-  const handleDockPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+  const handleDockPointerMove = (e: React.PointerEvent<HTMLElement>) => {
     if (prefersReducedMotion || window.innerWidth < 768) return;
     const pointerX = e.clientX;
     const proximityRadius = 115; // px
@@ -247,6 +360,18 @@ export const TopDock: React.FC<TopDockProps> = ({
     setMobileMenuOpen(false);
     const targetId = href.startsWith('#') ? href.slice(1) : href;
     setCurrentActive(targetId);
+
+    // Auto-scroll the clicked tab into view within the horizontal dock
+    const btn = itemRefs.current.get(targetId);
+    const navEl = dockTrackRef.current;
+    if (btn && navEl && navEl.scrollWidth > navEl.clientWidth) {
+      btn.scrollIntoView({
+        behavior: 'smooth',
+        inline: 'center',
+        block: 'nearest',
+      });
+    }
+
     if (onNavigate) {
       onNavigate(targetId);
     } else {
@@ -280,11 +405,11 @@ export const TopDock: React.FC<TopDockProps> = ({
       {/* Centered Floating Header Shell — Positioned gracefully with gentle spacing */}
       <header
         role="banner"
-        className={`fixed top-2.5 sm:top-3 md:top-3 inset-x-0 z-[60] flex justify-center px-3 sm:px-4 md:px-6 pointer-events-none transition-all duration-300 ${
+        className={`fixed top-2.5 sm:top-3 md:top-3 inset-x-0 z-[60] flex justify-center px-3 sm:px-4 md:px-5 lg:px-6 pointer-events-none transition-all duration-300 ${
           isScrolled ? 'translate-y-0 scale-98 sm:scale-100' : 'translate-y-0'
         }`}
       >
-        <div className="relative pointer-events-auto w-full md:w-auto">
+        <div className="relative pointer-events-auto w-full max-w-[calc(100vw-24px)] sm:max-w-[calc(100vw-32px)] md:max-w-4xl xl:max-w-fit xl:w-auto">
           {/* Ambient Aurora Glow Behind Dock */}
           <div
             className="absolute -inset-x-4 -top-3 -bottom-3 pointer-events-none opacity-60 filter blur-2xl transition-opacity duration-500"
@@ -301,7 +426,7 @@ export const TopDock: React.FC<TopDockProps> = ({
           {/* THREEUI ULTRA-LUXURY GLASSMORPHIC COMMAND BAR CONTAINER                    */}
           {/* ========================================================================= */}
           <div
-            className="relative flex items-center justify-between gap-3 sm:gap-4 md:gap-5 lg:gap-8 h-[60px] sm:h-[62px] md:h-16 px-5 sm:px-6 md:px-5 rounded-2xl md:rounded-full border border-white/[0.18] shadow-[0_16px_40px_-10px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_-1px_1px_rgba(255,255,255,0.06),0_0_25px_rgba(255,94,30,0.12)] transition-all duration-300 w-full md:max-w-fit mx-auto overflow-hidden"
+            className="relative flex items-center justify-between gap-2 sm:gap-3 md:gap-3 lg:gap-4 xl:gap-8 h-[60px] sm:h-[62px] md:h-16 px-3.5 sm:px-4 md:px-4 lg:px-4.5 xl:px-6 rounded-2xl md:rounded-full border border-white/[0.18] shadow-[0_16px_40px_-10px_rgba(0,0,0,0.85),inset_0_1px_1px_rgba(255,255,255,0.22),inset_0_-1px_1px_rgba(255,255,255,0.06),0_0_25px_rgba(255,94,30,0.12)] transition-all duration-300 w-full max-w-full xl:w-auto xl:max-w-fit mx-auto overflow-hidden"
             style={{
               background: 'linear-gradient(135deg, rgba(20, 24, 33, 0.78) 0%, rgba(10, 12, 18, 0.88) 100%)',
               backdropFilter: 'blur(30px) saturate(190%) contrast(105%)',
@@ -320,100 +445,144 @@ export const TopDock: React.FC<TopDockProps> = ({
                 e.preventDefault();
                 handleLinkClick('#overview');
               }}
-              className="flex items-center gap-2.5 sm:gap-3 group focus-visible:outline-none select-none pl-1 shrink-0"
+              className="flex items-center gap-2 sm:gap-2.5 md:gap-2 lg:gap-3 group focus-visible:outline-none select-none pl-1 shrink-0"
             >
               {/* Official Transparent SN Logo Icon — Pure Floating Monogram */}
-              <SNOlympiaLogo className="w-10 h-10 sm:w-10.5 sm:h-10.5 md:w-11 md:h-11 shrink-0 group-hover:scale-105 transition-transform" priority />
+              <SNOlympiaLogo className="w-9 h-9 sm:w-10 sm:h-10 md:w-9 md:h-9 lg:w-11 lg:h-11 shrink-0 group-hover:scale-105 transition-transform" priority />
 
               {/* Wordmark (Clean & Vertically Centered) */}
               <div className="flex items-center">
-                <span className="font-athletic italic uppercase font-black text-sm sm:text-base md:text-lg tracking-tight text-white leading-none whitespace-nowrap">
+                <span className="font-athletic italic uppercase font-black text-sm sm:text-base md:text-sm lg:text-base xl:text-lg tracking-tight text-white leading-none whitespace-nowrap">
                   OLYMPIA <span className="text-[#FF5E1E]">GYM</span>
                 </span>
               </div>
             </a>
 
-            {/* 2. CENTER: THREEUI PROXIMITY SPRING DOCK (DESKTOP & TABLET DYNAMIC) */}
-            <nav
-              ref={dockTrackRef}
-              onPointerMove={handleDockPointerMove}
-              onPointerLeave={handleDockPointerLeave}
-              aria-label="Primary Navigation Dock"
-              className="hidden md:flex items-center gap-0.5 sm:gap-1 lg:gap-1.5 p-1 sm:p-1.5 rounded-full bg-black/25 border border-white/[0.08] shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] backdrop-blur-md"
-            >
-              {NAV_ITEMS.map((item) => {
-                const isActive = currentActive === item.id;
-                const influence = itemInfluences[item.id] || 0;
-                const scale = 1 + influence * 0.08;
-                const translateY = -influence * 2;
+            {/* 2. CENTER: THREEUI PROXIMITY SPRING DOCK (DYNAMIC HORIZONTAL SCROLL) */}
+            <div className="relative hidden md:flex flex-1 min-w-0 items-center overflow-hidden max-w-full justify-center">
+              {/* Left Scroll Cue & Interactive Chevron */}
+              <div
+                className={`absolute left-0 top-0 bottom-0 z-20 flex items-center pr-3 bg-gradient-to-r from-[#0C0E14] via-[#0C0E14]/90 to-transparent transition-opacity duration-200 ${
+                  canScrollLeft ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+                }`}
+              >
+                <button
+                  type="button"
+                  aria-label="Scroll tabs left"
+                  onClick={() => {
+                    if (dockTrackRef.current) {
+                      dockTrackRef.current.scrollBy({ left: -160, behavior: 'smooth' });
+                    }
+                  }}
+                  className="w-5 h-5 rounded-full bg-[#1C202A]/90 hover:bg-[#FF5E1E] text-white/80 hover:text-white flex items-center justify-center border border-white/20 shadow-md transition-all active:scale-90 ml-0.5 cursor-pointer"
+                >
+                  <ChevronLeft className="w-3 h-3 stroke-[3]" />
+                </button>
+              </div>
 
-                return (
-                  <button
-                    key={item.id}
-                    ref={(el) => {
-                      if (el) itemRefs.current.set(item.id, el);
-                      else itemRefs.current.delete(item.id);
-                    }}
-                    type="button"
-                    onClick={() => handleLinkClick(item.href)}
-                    style={{
-                      transform: !prefersReducedMotion
-                        ? `translateY(${translateY}px) scale(${scale})`
-                        : undefined,
-                      transition: 'color 0.16s, border-color 0.18s',
-                    }}
-                    className={`relative flex items-center gap-1 sm:gap-1.5 px-2.5 sm:px-3 md:px-3 lg:px-4 py-1.5 sm:py-2 rounded-full text-xs uppercase tracking-wider select-none outline-none transition-colors ${
-                      isActive
-                        ? 'text-[#0A0B10]'
-                        : influence > 0.08
-                        ? 'text-white bg-white/10 border border-white/15 shadow-sm'
-                        : 'text-neutral-400 hover:text-white bg-transparent border border-transparent'
-                    }`}
-                  >
-                    {/* Animated Smooth Sliding White Active Pill (Framer Motion spring layout) */}
-                    {isActive && (
-                      <motion.div
-                        layoutId="activeDockPill"
-                        transition={{
-                          type: 'spring',
-                          stiffness: 280,
-                          damping: 26,
-                          mass: 0.6,
-                        }}
-                        className="absolute inset-0 rounded-full bg-gradient-to-b from-white via-[#F8FAFC] to-[#EDF2F7] shadow-[0_4px_22px_rgba(255,94,30,0.5),0_0_12px_rgba(255,255,255,0.7)] z-0"
-                      />
-                    )}
+              {/* Scrollable Track Container */}
+              <nav
+                ref={dockTrackRef}
+                onPointerMove={handleDockPointerMove}
+                onPointerLeave={handleDockPointerLeave}
+                aria-label="Primary Navigation Dock"
+                className="flex flex-1 min-w-0 items-center justify-start xl:justify-center gap-1 md:gap-1 lg:gap-1.5 p-1 md:p-1 lg:p-1.5 rounded-full bg-black/25 border border-white/[0.08] shadow-[inset_0_1px_2px_rgba(0,0,0,0.35)] backdrop-blur-md overflow-x-auto no-scrollbar scroll-smooth overscroll-contain select-none w-full xl:w-auto"
+                style={{ WebkitOverflowScrolling: 'touch', touchAction: 'pan-x' }}
+              >
+                {NAV_ITEMS.map((item) => {
+                  const isActive = currentActive === item.id;
+                  const influence = itemInfluences[item.id] || 0;
+                  const scale = 1 + influence * 0.08;
+                  const translateY = -influence * 2;
 
-                    <span
-                      className={`relative z-10 transition-colors shrink-0 ${
+                  return (
+                    <button
+                      key={item.id}
+                      ref={(el) => {
+                        if (el) itemRefs.current.set(item.id, el);
+                        else itemRefs.current.delete(item.id);
+                      }}
+                      type="button"
+                      onClick={() => handleLinkClick(item.href)}
+                      style={{
+                        transform: !prefersReducedMotion
+                          ? `translateY(${translateY}px) scale(${scale})`
+                          : undefined,
+                        transition: 'color 0.16s, border-color 0.18s',
+                      }}
+                      className={`relative flex items-center shrink-0 gap-1 md:gap-1 lg:gap-1.5 px-3 md:px-2.5 lg:px-4 py-1.5 md:py-1.5 lg:py-2 rounded-full uppercase tracking-wider md:tracking-normal lg:tracking-wider select-none outline-none transition-colors whitespace-nowrap cursor-pointer ${
                         isActive
-                          ? 'text-[#FF5E1E]'
+                          ? 'text-[#0A0B10]'
                           : influence > 0.08
-                          ? 'text-[#FF5E1E]'
-                          : 'text-neutral-400'
+                          ? 'text-white bg-white/10 border border-white/15 shadow-sm'
+                          : 'text-neutral-400 hover:text-white bg-transparent border border-transparent'
                       }`}
                     >
-                      {item.icon}
-                    </span>
-                    <span
-                      className={`relative z-10 text-[10px] md:text-[11px] lg:text-xs whitespace-nowrap transition-all ${
-                        isActive ? 'font-black text-[#0A0B10]' : 'font-medium'
-                      }`}
-                    >
-                      {item.label}
-                    </span>
-                  </button>
-                );
-              })}
-            </nav>
+                      {/* Animated Smooth Sliding White Active Pill (Framer Motion spring layout) */}
+                      {isActive && (
+                        <motion.div
+                          layoutId="activeDockPill"
+                          transition={{
+                            type: 'spring',
+                            stiffness: 280,
+                            damping: 26,
+                            mass: 0.6,
+                          }}
+                          className="absolute inset-0 rounded-full bg-gradient-to-b from-white via-[#F8FAFC] to-[#EDF2F7] shadow-[0_4px_22px_rgba(255,94,30,0.5),0_0_12px_rgba(255,255,255,0.7)] z-0"
+                        />
+                      )}
 
-            {/* 3. RIGHT: CONTACT US DIALER CTA & PROFILE (ACTIONS) */}
-            <div className="flex items-center gap-2 sm:gap-2.5 shrink-0">
-              {/* High-Energy Electric Orange Gradient Phone Dialer CTA Button (Hidden on Mobile screens, visible on md+) */}
+                      <span
+                        className={`relative z-10 transition-colors shrink-0 [&>svg]:w-3 md:[&>svg]:w-3.5 lg:[&>svg]:w-3.5 ${
+                          isActive
+                            ? 'text-[#FF5E1E]'
+                            : influence > 0.08
+                            ? 'text-[#FF5E1E]'
+                            : 'text-neutral-400'
+                        }`}
+                      >
+                        {item.icon}
+                      </span>
+                      <span
+                        className={`relative z-10 text-[11px] md:text-[11.5px] lg:text-xs whitespace-nowrap transition-all ${
+                          isActive ? 'font-black text-[#0A0B10]' : 'font-medium'
+                        }`}
+                      >
+                        {item.label}
+                      </span>
+                    </button>
+                  );
+                })}
+              </nav>
+
+              {/* Right Scroll Cue & Interactive Chevron */}
+              <div
+                className={`absolute right-0 top-0 bottom-0 z-20 flex items-center pl-3 bg-gradient-to-l from-[#0C0E14] via-[#0C0E14]/90 to-transparent transition-opacity duration-200 ${
+                  canScrollRight ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
+                }`}
+              >
+                <button
+                  type="button"
+                  aria-label="Scroll tabs right"
+                  onClick={() => {
+                    if (dockTrackRef.current) {
+                      dockTrackRef.current.scrollBy({ left: 160, behavior: 'smooth' });
+                    }
+                  }}
+                  className="w-5 h-5 rounded-full bg-[#1C202A]/90 hover:bg-[#FF5E1E] text-white/80 hover:text-white flex items-center justify-center border border-white/20 shadow-md transition-all active:scale-90 mr-0.5 cursor-pointer"
+                >
+                  <ChevronRight className="w-3 h-3 stroke-[3]" />
+                </button>
+              </div>
+            </div>
+
+            {/* 3. RIGHT: CONTACT US DIALER CTA & PROFILE (DESKTOP ONLY >= xl) */}
+            <div className="hidden xl:flex items-center gap-2 sm:gap-2.5 shrink-0">
+              {/* High-Energy Electric Orange Gradient Phone Dialer CTA Button */}
               <a
                 href={`tel:${SITE_CONTENT.brand.contact.phone.value}`}
                 aria-label="Call Olympia Gym"
-                className="hidden md:inline-flex items-center gap-1.5 px-4 sm:px-5 lg:px-6 py-2 sm:py-2.5 rounded-full text-white font-black text-[11px] sm:text-xs uppercase tracking-wider shadow-[0_10px_26px_-10px_rgba(255,94,30,0.95)] hover:shadow-[0_12px_32px_-8px_rgba(255,94,30,1)] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer border border-white/20 select-none whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-4 sm:px-5 lg:px-6 py-2 sm:py-2.5 rounded-full text-white font-black text-[11px] sm:text-xs uppercase tracking-wider shadow-[0_10px_26px_-10px_rgba(255,94,30,0.95)] hover:shadow-[0_12px_32px_-8px_rgba(255,94,30,1)] hover:-translate-y-0.5 active:translate-y-0 transition-all cursor-pointer border border-white/20 select-none whitespace-nowrap"
                 style={{
                   background: 'linear-gradient(180deg, #FF5E1E 0%, #E0480C 100%)',
                 }}
@@ -423,114 +592,166 @@ export const TopDock: React.FC<TopDockProps> = ({
                 <ArrowUpRight className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-white/90 stroke-[2.5]" />
               </a>
 
-              {/* Member Profile Avatar Circle (Hidden on mobile <md) */}
+              {/* Member Profile Avatar Circle (Desktop only >= xl) */}
               <button
                 onClick={() => handleLinkClick('#membership')}
                 aria-label="Member Area & Profile"
-                className="hidden md:flex w-9 h-9 sm:w-9 sm:h-9 rounded-full bg-white/10 hover:bg-[#FF5E1E] text-white items-center justify-center border border-white/20 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,94,30,0.7)] transition-all shadow-sm active:scale-95 shrink-0"
+                className="flex w-9 h-9 rounded-full bg-white/10 hover:bg-[#FF5E1E] text-white items-center justify-center border border-white/20 hover:scale-105 hover:shadow-[0_0_20px_rgba(255,94,30,0.7)] transition-all shadow-sm active:scale-95 shrink-0"
               >
                 <User className="w-4 h-4 fill-white text-white" />
               </button>
-
-              {/* Mobile Hamburger Toggle Button - Shifted left from the edge */}
-              <button
-                onClick={() => setMobileMenuOpen(true)}
-                aria-label="Open mobile navigation menu"
-                aria-expanded={mobileMenuOpen}
-                className="inline-flex md:hidden p-2 rounded-xl bg-white/10 border border-white/15 text-white hover:bg-[#FF5E1E] transition-colors mr-1.5 sm:mr-2"
-              >
-                <Menu className="w-4 h-4 sm:w-5 sm:h-5" />
-              </button>
             </div>
+
+            {/* Mobile Hamburger Toggle Button (Animated Morphing Burger Icon) */}
+            <motion.button
+              type="button"
+              onClick={() => setMobileMenuOpen((prev) => !prev)}
+              aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open mobile navigation menu'}
+              aria-expanded={mobileMenuOpen}
+              whileHover={{ scale: 1.06 }}
+              whileTap={{ scale: 0.92 }}
+              className={`inline-flex md:hidden items-center justify-center p-2.5 rounded-xl border transition-all duration-300 mr-1 sm:mr-1.5 shrink-0 ${
+                mobileMenuOpen
+                  ? 'bg-[#FF5E1E]/20 border-[#FF5E1E]/60 shadow-[0_0_20px_rgba(255,94,30,0.4)]'
+                  : 'bg-white/10 hover:bg-[#FF5E1E]/20 border-white/15 hover:border-[#FF5E1E]/40 text-white'
+              }`}
+            >
+              <AnimatedBurgerIcon isOpen={mobileMenuOpen} />
+            </motion.button>
           </div>
         </div>
       </header>
 
       {/* ========================================================================= */}
-      {/* FULLSCREEN GLASSMORPHIC MOBILE DRAWER                                     */}
+      {/* FULLSCREEN GLASSMORPHIC MOBILE DRAWER (ANIMATED ARRIVAL & DEPARTURE)      */}
       {/* ========================================================================= */}
-      {mobileMenuOpen && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Mobile Navigation"
-          className="fixed inset-0 z-[70] md:hidden bg-[#08090A]/95 backdrop-blur-2xl flex flex-col justify-between p-6 sm:p-8 animate-fadeIn"
-        >
-          {/* Top Bar with Brand & Close */}
-          <div className="flex items-center justify-between border-b border-white/10 pb-5">
-            <div className="flex items-center gap-2.5">
-              <SNOlympiaLogo className="w-8 h-8 shrink-0" />
-              <span className="font-athletic italic uppercase font-black text-white text-base tracking-tight">
-                OLYMPIA <span className="text-[#FF5E1E]">GYM</span>
-              </span>
-            </div>
-
-            <button
-              onClick={() => setMobileMenuOpen(false)}
-              aria-label="Close navigation menu"
-              className="p-2 rounded-full bg-white/10 text-white hover:bg-[#FF5E1E] transition-colors"
+      <AnimatePresence>
+        {mobileMenuOpen && (
+          <motion.div
+            key="mobileDrawer"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Navigation Menu"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.28, ease: 'easeInOut' }}
+            className="fixed inset-0 z-[70] md:hidden bg-[#08090A]/95 backdrop-blur-2xl flex flex-col justify-between p-6 sm:p-8"
+          >
+            {/* Top Bar with Brand & Morphing Close Button */}
+            <motion.div
+              initial={{ opacity: 0, y: -20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -15, transition: { duration: 0.2 } }}
+              transition={{ duration: 0.3, ease: 'easeOut' }}
+              className="flex items-center justify-between border-b border-white/10 pb-5"
             >
-              <X className="w-5 h-5" />
-            </button>
-          </div>
+              <div className="flex items-center gap-2.5">
+                <SNOlympiaLogo className="w-8 h-8 shrink-0" />
+                <span className="font-athletic italic uppercase font-black text-white text-base tracking-tight">
+                  OLYMPIA <span className="text-[#FF5E1E]">GYM</span>
+                </span>
+              </div>
 
-          {/* Nav Links List */}
-          <ul className="space-y-4 my-auto py-6">
-            {NAV_ITEMS.map((item, index) => {
-              const isActive = currentActive === item.id;
-              return (
-                <li key={item.id}>
-                  <button
-                    type="button"
-                    onClick={() => handleLinkClick(item.href)}
-                    className={`w-full group flex items-center justify-between text-2xl font-athletic italic uppercase font-black transition-all text-left ${
-                      isActive
-                        ? 'text-[#FF5E1E] translate-x-1'
-                        : 'text-white hover:text-[#FF5E1E]'
-                    }`}
+              <motion.button
+                type="button"
+                whileHover={{ scale: 1.06 }}
+                whileTap={{ scale: 0.92 }}
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Close navigation menu"
+                className="p-2.5 rounded-xl bg-white/10 hover:bg-[#FF5E1E]/20 border border-white/15 hover:border-[#FF5E1E]/40 text-white transition-all shadow-md cursor-pointer"
+              >
+                <AnimatedBurgerIcon isOpen={true} />
+              </motion.button>
+            </motion.div>
+
+            {/* Nav Links List with Smooth Arrival (Right-to-Left) & Departure (Left-to-Right) */}
+            <ul className="space-y-4 my-auto py-6 overflow-hidden">
+              {NAV_ITEMS.map((item, index) => {
+                const isActive = currentActive === item.id;
+                const xOffset = prefersReducedMotion ? 0 : 80;
+
+                return (
+                  <motion.li
+                    key={item.id}
+                    initial={{ opacity: 0, x: xOffset }}
+                    animate={{
+                      opacity: 1,
+                      x: 0,
+                      transition: {
+                        duration: 0.38,
+                        delay: 0.08 + index * 0.045,
+                        ease: [0.22, 1, 0.36, 1], // Smooth arrival curve from right to left
+                      },
+                    }}
+                    exit={{
+                      opacity: 0,
+                      x: xOffset, // Smooth departure curve from left to right
+                      transition: {
+                        duration: 0.22,
+                        delay: (NAV_ITEMS.length - 1 - index) * 0.025,
+                        ease: [0.4, 0, 0.2, 1],
+                      },
+                    }}
                   >
-                    <div className="flex items-center gap-3">
-                      <span
-                        className={`${
-                          isActive
-                            ? 'text-[#FF5E1E] opacity-100'
-                            : 'text-[#FF5E1E] opacity-70 group-hover:opacity-100'
-                        }`}
-                      >
-                        {item.icon}
-                      </span>
-                      <span>{item.label}</span>
-                      {isActive && (
-                        <span className="w-2 h-2 rounded-full bg-[#FF5E1E] shadow-[0_0_8px_#FF5E1E] ml-1 animate-pulse" />
-                      )}
-                    </div>
-                    <span
-                      className={`text-xs font-mono transition-colors ${
-                        isActive ? 'text-[#FF5E1E]' : 'text-brand-text-muted group-hover:text-[#FF5E1E]'
+                    <button
+                      type="button"
+                      onClick={() => handleLinkClick(item.href)}
+                      className={`w-full group flex items-center justify-between text-2xl font-athletic italic uppercase font-black transition-all text-left cursor-pointer ${
+                        isActive
+                          ? 'text-[#FF5E1E] translate-x-1'
+                          : 'text-white hover:text-[#FF5E1E]'
                       }`}
                     >
-                      0{index + 1}
-                    </span>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+                      <div className="flex items-center gap-3">
+                        <span
+                          className={`${
+                            isActive
+                              ? 'text-[#FF5E1E] opacity-100'
+                              : 'text-[#FF5E1E] opacity-70 group-hover:opacity-100'
+                          }`}
+                        >
+                          {item.icon}
+                        </span>
+                        <span>{item.label}</span>
+                        {isActive && (
+                          <span className="w-2 h-2 rounded-full bg-[#FF5E1E] shadow-[0_0_8px_#FF5E1E] ml-1 animate-pulse" />
+                        )}
+                      </div>
+                      <span
+                        className={`text-xs font-mono transition-colors ${
+                          isActive ? 'text-[#FF5E1E]' : 'text-brand-text-muted group-hover:text-[#FF5E1E]'
+                        }`}
+                      >
+                        0{index + 1}
+                      </span>
+                    </button>
+                  </motion.li>
+                );
+              })}
+            </ul>
 
-          {/* Bottom Mobile Drawer Actions */}
-          <div className="pt-4 border-t border-white/10">
-            <a
-              href={`tel:${SITE_CONTENT.brand.contact.phone.value}`}
-              aria-label="Call Olympia Gym"
-              className="w-full py-3.5 px-4 rounded-full bg-[#FF5E1E] text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(255,94,30,0.6)] active:scale-[0.98] transition-transform"
+            {/* Bottom Mobile Drawer Actions */}
+            <motion.div
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20, transition: { duration: 0.2 } }}
+              transition={{ duration: 0.35, delay: 0.38, ease: 'easeOut' }}
+              className="pt-4 border-t border-white/10"
             >
-              <Phone className="w-4 h-4 fill-current" />
-              <span>CONTACT US NOW</span>
-              <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
-            </a>
-          </div>
-        </div>
-      )}
+              <a
+                href={`tel:${SITE_CONTENT.brand.contact.phone.value}`}
+                aria-label="Call Olympia Gym"
+                className="w-full py-3.5 px-4 rounded-full bg-[#FF5E1E] text-white font-black text-xs uppercase tracking-widest flex items-center justify-center gap-2 shadow-[0_0_25px_rgba(255,94,30,0.6)] active:scale-[0.98] transition-transform cursor-pointer"
+              >
+                <Phone className="w-4 h-4 fill-current" />
+                <span>CONTACT US NOW</span>
+                <ArrowUpRight className="w-4 h-4 stroke-[2.5]" />
+              </a>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </>
   );
 };
