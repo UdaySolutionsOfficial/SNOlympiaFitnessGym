@@ -703,16 +703,18 @@ export const VideoArenaSection: React.FC = () => {
                       : 'border-white/15 hover:border-white/40'
                   }`}
                 >
-                  {/* In-Place Video Player */}
+                  {/* In-Place Video Player with Instant HD Poster & Smart Preload */}
                   <video
                     ref={(el) => {
                       if (el) videoRefs.current.set(video.id, el);
                       else videoRefs.current.delete(video.id);
                     }}
                     src={video.src}
+                    poster={video.src.replace('.mp4', '-poster.webp')}
+                    preload={isCenter ? 'auto' : Math.abs(offset) < 1.3 ? 'metadata' : 'none'}
                     loop
                     muted={activeAudioId !== video.id || isAudioMuted}
-                    autoPlay
+                    autoPlay={isCenter}
                     playsInline
                     onTimeUpdate={(e) => {
                       if (activeAudioId === video.id && !isScrubbingRef.current) {

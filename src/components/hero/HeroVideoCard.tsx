@@ -5,6 +5,7 @@ import { ASSET_MANIFEST } from '../../data/assets';
 
 export interface HeroVideoCardProps {
   videoSrc?: string;
+  posterSrc?: string;
   title?: string;
   tag?: string;
   className?: string;
@@ -32,11 +33,18 @@ const formatTime = (seconds: number): string => {
  */
 export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
   videoSrc = ASSET_MANIFEST.hero.introVideo.path,
+  posterSrc,
   title = 'SN Olympia Experience',
   className = '',
   alignment = 'right',
   compact = false,
 }) => {
+  const effectivePoster =
+    posterSrc ||
+    (videoSrc.includes('intro-video-2')
+      ? '/assets/videos/intro-video-2-poster.webp'
+      : '/assets/videos/intro-video-poster.webp');
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [isPlaying, setIsPlaying] = useState(true);
@@ -233,10 +241,12 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
                 }`
           }
         >
-          {/* Looping Muted Preview Video */}
+          {/* Looping Muted Preview Video with Instant Poster Thumbnail */}
           <video
             ref={previewVideoRef}
             src={videoSrc}
+            poster={effectivePoster}
+            preload="metadata"
             playsInline
             loop
             muted
@@ -331,6 +341,7 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
               <video
                 ref={modalVideoRef}
                 src={videoSrc}
+                poster={effectivePoster}
                 autoPlay
                 playsInline
                 loop

@@ -114,13 +114,13 @@ export const FacilitiesSection: React.FC = () => {
               key={zone.id}
               className="group relative rounded-2xl overflow-hidden border border-brand-border/80 bg-brand-surface flex flex-col justify-between"
             >
-              {/* Image Frame */}
-              <div className="relative h-64 sm:h-80 w-full overflow-hidden bg-brand-charcoal">
+              {/* Image Frame with Shimmer Skeleton Loading */}
+              <div className="relative h-64 sm:h-80 w-full overflow-hidden bg-brand-charcoal bg-[linear-gradient(115deg,#0d0f14_10%,#1a1e28_25%,#0d0f14_40%)] bg-[length:250%_100%]">
                 {zone.image ? (
                   <img
                     src={zone.image}
                     alt={zone.title}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-out"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-all duration-700 ease-out"
                     loading="lazy"
                     decoding="async"
                   />

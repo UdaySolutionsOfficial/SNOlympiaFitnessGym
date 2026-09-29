@@ -49,8 +49,8 @@ const CRITICAL_PRELOAD_ASSETS = [
   '/assets/images/programs/program-strength.jpg',
   '/assets/images/gallery/gallery-01.jpg',
   '/assets/images/gallery/gallery-02.jpg',
-  '/assets/images/our-world/olympia-community-12.png',
-  '/assets/images/our-world/olympia-community-15.png',
+  '/assets/images/our-world/olympia-community-12.webp',
+  '/assets/images/our-world/olympia-community-15.webp',
   '/assets/images/our-world/olympia-facility-02.jpg',
 ];
 

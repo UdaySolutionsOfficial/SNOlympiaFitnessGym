@@ -225,6 +225,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ className }) => {
                     ref={videoRef}
                     src="/assets/videos/about-equipment.mp4"
                     poster={ASSET_MANIFEST.about.gymAtmosphere.path}
+                    preload="metadata"
                     autoPlay
                     loop
                     muted={isMuted}
