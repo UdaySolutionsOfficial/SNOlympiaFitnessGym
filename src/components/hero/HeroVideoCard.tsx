@@ -57,11 +57,20 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
   const previewVideoRef = useRef<HTMLVideoElement | null>(null);
   const modalVideoRef = useRef<HTMLVideoElement | null>(null);
 
-  // Auto-play the card preview muted on loop
+  // Auto-play the card preview muted on loop as soon as loaded
   useEffect(() => {
-    if (previewVideoRef.current) {
-      previewVideoRef.current.muted = true;
-      previewVideoRef.current.play().catch(() => {});
+    const vid = previewVideoRef.current;
+    if (vid) {
+      vid.muted = true;
+      const play = () => {
+        vid.play().catch(() => {});
+      };
+      if (vid.readyState >= 2) {
+        play();
+      } else {
+        vid.addEventListener('canplay', play, { once: true });
+        vid.addEventListener('loadeddata', play, { once: true });
+      }
     }
   }, [videoSrc]);
 
@@ -102,27 +111,47 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
   // Autoplay modal video from the beginning with sound once open
   useEffect(() => {
     if (isModalOpen && modalVideoRef.current) {
-      modalVideoRef.current.currentTime = 0;
-      modalVideoRef.current.muted = false;
-      modalVideoRef.current.volume = 1;
-      setIsMuted(false);
-      modalVideoRef.current.play().then(() => setIsPlaying(true)).catch(() => {
-        // Fallback to muted only if browser blocks unmuted audio
-        if (modalVideoRef.current) {
-          modalVideoRef.current.muted = true;
-          setIsMuted(true);
-          modalVideoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+      const vid = modalVideoRef.current;
+      const attemptPlay = () => {
+        vid.currentTime = 0;
+        vid.muted = false;
+        vid.volume = 1;
+        setIsMuted(false);
+        const p = vid.play();
+        if (p !== undefined) {
+          p.then(() => setIsPlaying(true)).catch(() => {
+            // Fallback to muted autoplay if browser policy restricts unmuted audio
+            vid.muted = true;
+            setIsMuted(true);
+            vid.play().then(() => setIsPlaying(true)).catch(() => {});
+          });
         }
-      });
+      };
+
+      if (vid.readyState >= 2) {
+        attemptPlay();
+      } else {
+        vid.addEventListener('canplay', attemptPlay, { once: true });
+        vid.addEventListener('loadeddata', attemptPlay, { once: true });
+      }
     }
   }, [isModalOpen]);
 
   // Toggle play/pause on video frame click
-  const handleTogglePlay = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleTogglePlay = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     if (!modalVideoRef.current) return;
     if (modalVideoRef.current.paused) {
-      modalVideoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+      const p = modalVideoRef.current.play();
+      if (p !== undefined) {
+        p.then(() => setIsPlaying(true)).catch(() => {
+          if (modalVideoRef.current) {
+            modalVideoRef.current.muted = true;
+            setIsMuted(true);
+            modalVideoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
+          }
+        });
+      }
     } else {
       modalVideoRef.current.pause();
       setIsPlaying(false);
@@ -241,12 +270,13 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
                 }`
           }
         >
-          {/* Looping Muted Preview Video with Instant Poster Thumbnail */}
+          {/* Looping Muted Preview Video with Instant Poster Thumbnail & High-Speed Autoplay */}
           <video
             ref={previewVideoRef}
             src={videoSrc}
             poster={effectivePoster}
-            preload="metadata"
+            preload="auto"
+            defaultMuted
             playsInline
             loop
             muted
@@ -346,16 +376,22 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
                 playsInline
                 loop
                 muted={isMuted}
+                preload="auto"
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
                 onTimeUpdate={handleTimeUpdate}
                 onLoadedMetadata={handleLoadedMetadata}
                 className="w-full h-full object-cover sm:object-contain bg-black"
               />
 
-              {/* Momentary Play/Pause Status Indicator Ripple */}
+              {/* Momentary Play/Pause Status Indicator Ripple - Interactive Click-to-Play */}
               {!isPlaying && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 pointer-events-none transition-opacity">
-                  <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-[#FF5E1E] text-white flex items-center justify-center shadow-[0_0_35px_#FF5E1E] border border-white/30 animate-pulse">
-                    <Play className="w-6 h-6 sm:w-7 sm:h-7 fill-white translate-x-0.5" />
+                <div
+                  className="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer z-30 transition-opacity"
+                  onClick={handleTogglePlay}
+                >
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#FF5E1E] text-white flex items-center justify-center shadow-[0_0_35px_#FF5E1E] border border-white/30 hover:scale-110 active:scale-95 transition-transform animate-pulse">
+                    <Play className="w-7 h-7 sm:w-8 sm:h-8 fill-white translate-x-0.5" />
                   </div>
                 </div>
               )}
