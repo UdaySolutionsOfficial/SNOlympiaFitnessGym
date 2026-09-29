@@ -7,7 +7,6 @@ import { AthleteBodySmoke } from './AthleteBodySmoke';
 import { ASSET_MANIFEST } from '../../data/assets';
 import { ChevronDown, Sparkles, Play, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useReducedMotion } from '../../hooks/useReducedMotion';
 
 export interface HeroSectionProps {
   onJoinClick?: () => void;
@@ -26,39 +25,24 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
   onJoinClick,
   onExploreClick,
 }) => {
-  const [mouseOffset, setMouseOffset] = useState({ x: 0, y: 0 });
-  const [heroPointer, setHeroPointer] = useState({ x: 0, y: 0 });
-  const [isHeroHovered, setIsHeroHovered] = useState(false);
   const heroCardRef = useRef<HTMLDivElement | null>(null);
-  const prefersReducedMotion = useReducedMotion();
+  const heroGlowRef = useRef<HTMLDivElement | null>(null);
+  const [isHeroHovered, setIsHeroHovered] = useState(false);
 
-  // Pointer position tracker for hero border glow following cursor direction
+  // Pointer position tracker for hero border glow following cursor direction (direct DOM update - zero re-renders)
   const handleHeroPointerMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!heroCardRef.current) return;
+    if (!heroCardRef.current || !heroGlowRef.current) return;
     const rect = heroCardRef.current.getBoundingClientRect();
-    setHeroPointer({
-      x: e.clientX - rect.left,
-      y: e.clientY - rect.top,
-    });
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    heroGlowRef.current.style.background = `radial-gradient(
+      450px circle at ${x}px ${y}px,
+      rgba(255, 255, 255, 0.98) 0%,
+      rgba(255, 160, 52, 0.85) 15%,
+      rgba(255, 94, 30, 0.5) 35%,
+      transparent 70%
+    )`;
   };
-
-  // Subtle mouse parallax on desktop
-  const handleMouseMove = useCallback(
-    (e: MouseEvent) => {
-      if (prefersReducedMotion || window.innerWidth < 1024) return;
-      const centerX = window.innerWidth / 2;
-      const centerY = window.innerHeight / 2;
-      const deltaX = (e.clientX - centerX) / centerX;
-      const deltaY = (e.clientY - centerY) / centerY;
-      setMouseOffset({ x: deltaX * 15, y: deltaY * 15 });
-    },
-    [prefersReducedMotion]
-  );
-
-  useEffect(() => {
-    window.addEventListener('mousemove', handleMouseMove, { passive: true });
-    return () => window.removeEventListener('mousemove', handleMouseMove);
-  }, [handleMouseMove]);
 
   const [mobileTooltipOpen, setMobileTooltipOpen] = useState(false);
   const tooltipRef = useRef<HTMLDivElement | null>(null);
@@ -136,20 +120,12 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
         />
 
         {/* Border Layer 3: Interactive Pointer-Responsive Glow following Cursor Direction near Edges */}
-        {isHeroHovered && (
-          <div
-            className="absolute inset-0 pointer-events-none transition-opacity duration-200"
-            style={{
-              background: `radial-gradient(
-                450px circle at ${heroPointer.x}px ${heroPointer.y}px,
-                rgba(255, 255, 255, 0.98) 0%,
-                rgba(255, 160, 52, 0.85) 15%,
-                rgba(255, 94, 30, 0.5) 35%,
-                transparent 70%
-              )`,
-            }}
-          />
-        )}
+        <div
+          ref={heroGlowRef}
+          className={`absolute inset-0 pointer-events-none transition-opacity duration-300 ${
+            isHeroHovered ? 'opacity-100' : 'opacity-0'
+          }`}
+        />
 
         {/* Inner Surface of Hero Card */}
         <div className="relative w-full h-full rounded-[calc(1.75rem-2px)] sm:rounded-[calc(2.5rem-2px)] bg-[#0C0E12] overflow-hidden">

@@ -262,24 +262,64 @@ export const VideoArenaSection: React.FC = () => {
     }
   }, [activeFilter]);
 
-  // Synchronize In-Place Audio Playback
+  // Synchronize In-Place Audio Playback with Viewport Intersection & Modal Awareness
   useEffect(() => {
-    videoRefs.current.forEach((el, id) => {
-      if (id === activeAudioId) {
-        el.muted = isAudioMuted;
-        el.volume = isAudioMuted ? 0 : 1;
-        if (isPlaying) {
-          el.play().catch(() => {});
-        } else {
+    let isVisible = false;
+    let isModalActive = false;
+
+    const syncVideos = () => {
+      videoRefs.current.forEach((el, id) => {
+        if (!isVisible || isModalActive) {
           el.pause();
+          return;
         }
-      } else {
-        el.muted = true;
-        el.volume = 0;
-        // Keep smooth silent preview loop running
-        el.play().catch(() => {});
-      }
-    });
+
+        if (id === activeAudioId) {
+          el.muted = isAudioMuted;
+          el.volume = isAudioMuted ? 0 : 1;
+          if (isPlaying) {
+            el.play().catch(() => {});
+          } else {
+            el.pause();
+          }
+        } else {
+          el.muted = true;
+          el.volume = 0;
+          el.play().catch(() => {});
+        }
+      });
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        isVisible = entries[0]?.isIntersecting ?? false;
+        syncVideos();
+      },
+      { threshold: 0.1 }
+    );
+
+    if (containerRef.current) {
+      observer.observe(containerRef.current);
+    }
+
+    const onModalOpen = () => {
+      isModalActive = true;
+      syncVideos();
+    };
+
+    const onModalClose = () => {
+      isModalActive = false;
+      syncVideos();
+    };
+
+    window.addEventListener('gym-modal-opened', onModalOpen);
+    window.addEventListener('gym-modal-closed', onModalClose);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('gym-modal-opened', onModalOpen);
+      window.removeEventListener('gym-modal-closed', onModalClose);
+    };
   }, [activeAudioId, isAudioMuted, isPlaying]);
 
   // Infinite Loop Horizontal Wheel & Trackpad Gesture Scrolling (Real Intentional Scroll Only)

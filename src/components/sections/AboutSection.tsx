@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { ASSET_MANIFEST } from '../../data/assets';
 import { SITE_CONTENT } from '../../data/siteContent';
 import { StatusBadge } from '../common/StatusBadge';
@@ -21,8 +21,56 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ className }) => {
   const [duration, setDuration] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
 
+  const sectionRef = useRef<HTMLElement | null>(null);
   const isScrubbingRef = useRef(false);
   const videoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Manage viewport visibility & modal open/close to pause background decoding
+  useEffect(() => {
+    let isVisible = false;
+    let isModalActive = false;
+
+    const updatePlayback = () => {
+      const vid = videoRef.current;
+      if (!vid) return;
+      if (isVisible && !isModalActive && isPlaying) {
+        vid.play().catch(() => {});
+      } else {
+        vid.pause();
+      }
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        isVisible = entries[0]?.isIntersecting ?? false;
+        updatePlayback();
+      },
+      { threshold: 0.1 }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    const onModalOpen = () => {
+      isModalActive = true;
+      updatePlayback();
+    };
+
+    const onModalClose = () => {
+      isModalActive = false;
+      updatePlayback();
+    };
+
+    window.addEventListener('gym-modal-opened', onModalOpen);
+    window.addEventListener('gym-modal-closed', onModalClose);
+
+    return () => {
+      observer.disconnect();
+      window.removeEventListener('gym-modal-opened', onModalOpen);
+      window.removeEventListener('gym-modal-closed', onModalClose);
+    };
+  }, [isPlaying]);
 
   // Time format helper (m:ss)
   const formatTime = (secs: number) => {
@@ -129,6 +177,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ className }) => {
 
   return (
     <section
+      ref={sectionRef}
       id="about"
       className={`relative scroll-mt-24 sm:scroll-mt-28 md:scroll-mt-32 py-24 md:py-36 px-4 md:px-8 max-w-7xl mx-auto overflow-hidden ${className}`}
     >

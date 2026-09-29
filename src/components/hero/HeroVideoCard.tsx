@@ -21,15 +21,254 @@ const formatTime = (seconds: number): string => {
 };
 
 /**
+ * Isolated Modal Video Player
+ * Completely decoupled from HeroVideoCard so time updates and scrubbers
+ * do NOT trigger parent card or hero section re-renders!
+ */
+interface HeroVideoModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  videoSrc: string;
+  posterSrc: string;
+  title: string;
+}
+
+const HeroVideoModal: React.FC<HeroVideoModalProps> = ({
+  isOpen,
+  onClose,
+  videoSrc,
+  posterSrc,
+  title,
+}) => {
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const modalVideoRef = useRef<HTMLVideoElement | null>(null);
+
+  // Notify page that video modal is active so background animations & other videos pause
+  useEffect(() => {
+    if (!isOpen) return;
+
+    window.dispatchEvent(new CustomEvent('gym-modal-opened'));
+    if (typeof document !== 'undefined') {
+      document.body.style.overflow = 'hidden';
+    }
+
+    return () => {
+      window.dispatchEvent(new CustomEvent('gym-modal-closed'));
+      if (typeof document !== 'undefined') {
+        document.body.style.overflow = 'unset';
+      }
+    };
+  }, [isOpen]);
+
+  // Autoplay modal video from 00:00 with sound on open
+  useEffect(() => {
+    if (!isOpen) return;
+    const vid = modalVideoRef.current;
+    if (!vid) return;
+
+    const startPlay = () => {
+      vid.currentTime = 0;
+      vid.muted = false;
+      vid.volume = 1;
+      setIsMuted(false);
+      const playPromise = vid.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => setIsPlaying(true))
+          .catch(() => {
+            // If browser autoplay policy requires mute on unmuted audio
+            vid.muted = true;
+            setIsMuted(true);
+            vid.play().then(() => setIsPlaying(true)).catch(() => {});
+          });
+      }
+    };
+
+    if (vid.readyState >= 2) {
+      startPlay();
+    } else {
+      vid.addEventListener('canplay', startPlay, { once: true });
+      vid.addEventListener('loadeddata', startPlay, { once: true });
+    }
+  }, [isOpen]);
+
+  // Keyboard escape listener
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [isOpen, onClose]);
+
+  if (!isOpen || typeof document === 'undefined') return null;
+
+  const handleTogglePlay = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const vid = modalVideoRef.current;
+    if (!vid) return;
+
+    if (vid.paused) {
+      vid.play()
+        .then(() => setIsPlaying(true))
+        .catch(() => {
+          vid.muted = true;
+          setIsMuted(true);
+          vid.play().then(() => setIsPlaying(true)).catch(() => {});
+        });
+    } else {
+      vid.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const handleToggleMute = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
+    const vid = modalVideoRef.current;
+    if (!vid) return;
+    const nextMuted = !isMuted;
+    vid.muted = nextMuted;
+    setIsMuted(nextMuted);
+  };
+
+  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation();
+    const vid = modalVideoRef.current;
+    if (!vid || duration <= 0) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const clickX = e.clientX - rect.left;
+    const ratio = Math.max(0, Math.min(1, clickX / rect.width));
+    const targetTime = ratio * duration;
+    vid.currentTime = targetTime;
+    setCurrentTime(targetTime);
+  };
+
+  const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
+
+  return createPortal(
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={`${title} Video Player`}
+      className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-6 md:p-8 animate-fadeIn"
+      onClick={onClose}
+    >
+      <div
+        className="relative w-full max-w-3xl md:max-w-[780px] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#FF5E1E]/60 shadow-[0_0_60px_rgba(255,94,30,0.35),0_25px_80px_rgba(0,0,0,0.95)] bg-[#0C0E12] transition-transform duration-200 group/player select-none"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* Top Close Button */}
+        <button
+          onClick={onClose}
+          aria-label="Close popup video"
+          className="absolute top-3.5 right-3.5 z-40 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/60 hover:bg-[#FF5E1E] text-white flex items-center justify-center backdrop-blur-xl border border-white/20 hover:border-[#FF5E1E] transition-all hover:scale-105 active:scale-95 shadow-xl opacity-80 hover:opacity-100"
+        >
+          <X className="w-4 h-4" />
+        </button>
+
+        {/* Video Container Frame */}
+        <div
+          className="relative w-full aspect-video bg-black flex items-center justify-center cursor-pointer overflow-hidden"
+          onClick={handleTogglePlay}
+        >
+          <video
+            ref={modalVideoRef}
+            src={videoSrc}
+            poster={posterSrc}
+            autoPlay
+            playsInline
+            loop
+            muted={isMuted}
+            preload="auto"
+            onPlay={() => setIsPlaying(true)}
+            onPause={() => setIsPlaying(false)}
+            onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
+            onLoadedMetadata={(e) => setDuration(e.currentTarget.duration)}
+            className="w-full h-full object-cover sm:object-contain bg-black"
+          />
+
+          {/* Click-to-Play Indicator Ripple */}
+          {!isPlaying && (
+            <div
+              className="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer z-30 transition-opacity"
+              onClick={handleTogglePlay}
+            >
+              <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#FF5E1E] text-white flex items-center justify-center shadow-[0_0_35px_#FF5E1E] border border-white/30 hover:scale-110 active:scale-95 transition-transform animate-pulse">
+                <Play className="w-7 h-7 sm:w-8 sm:h-8 fill-white translate-x-0.5" />
+              </div>
+            </div>
+          )}
+
+          {/* Hover Controls Overlay */}
+          <div className="absolute inset-0 pointer-events-none opacity-0 group-hover/player:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4 sm:p-5 bg-gradient-to-t from-black/85 via-transparent to-black/35">
+            <div className="flex items-center gap-2 pointer-events-auto">
+              <span className="w-2 h-2 rounded-full bg-[#FF5E1E] shadow-[0_0_8px_#FF5E1E] animate-pulse" />
+              <span className="text-xs font-mono font-bold uppercase tracking-wider text-white drop-shadow-md">
+                {title}
+              </span>
+            </div>
+
+            <div className="space-y-3 pointer-events-auto w-full">
+              <div className="flex items-center justify-between text-xs">
+                <span className="text-[11px] font-mono font-semibold text-white/85 drop-shadow">
+                  {formatTime(currentTime)} / {formatTime(duration)}
+                </span>
+
+                <button
+                  onClick={handleToggleMute}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/65 hover:bg-black/95 backdrop-blur-xl border border-white/20 hover:border-[#FF5E1E] text-white hover:text-[#FF5E1E] shadow-lg transition-all active:scale-95 group/sound"
+                >
+                  {isMuted ? (
+                    <>
+                      <VolumeX className="w-3.5 h-3.5 text-red-400" />
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-red-400">
+                        Muted
+                      </span>
+                    </>
+                  ) : (
+                    <>
+                      <Volume2 className="w-3.5 h-3.5 text-[#FF5E1E]" />
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-white group-hover/sound:text-[#FF5E1E]">
+                        Sound On
+                      </span>
+                    </>
+                  )}
+                </button>
+              </div>
+
+              {/* Progress Bar */}
+              <div
+                className="relative w-full h-1.5 sm:h-2 bg-white/25 hover:h-2.5 rounded-full overflow-hidden cursor-pointer backdrop-blur-md transition-all duration-150 group/bar"
+                onClick={handleSeek}
+                role="slider"
+                aria-label="Video playback progress"
+                aria-valuenow={Math.round(progressPercent)}
+              >
+                <div
+                  className="h-full bg-gradient-to-r from-amber-400 via-[#FF7538] to-[#FF5E1E] shadow-[0_0_12px_#FF5E1E] rounded-full relative transition-[width] duration-100 ease-linear"
+                  style={{ width: `${progressPercent}%` }}
+                >
+                  <span className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white shadow-[0_0_8px_#FFFFFF]" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>,
+    document.body
+  );
+};
+
+/**
  * High-End 3D Floating Video Card with Continuous Pop-Out Levitation,
- * Interactive 3D Parallax & Portal-Based Blurred Backdrop Modal Popup.
- * 
- * Features requested by user:
- * 1. Popup rendered via React Portal so top navbar is blurred in the background.
- * 2. Reduced, professional cinema-grade popup container dimensions.
- * 3. Native controls removed completely.
- * 4. Only animated progress bar and customized mute/unmute button.
- * 5. Controls only revealed on hover over the video.
+ * Interactive 3D Parallax & Decoupled Portal Modal Video Player.
  */
 export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
   videoSrc = ASSET_MANIFEST.hero.introVideo.path,
@@ -47,146 +286,64 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
-  const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(false);
-  const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(0);
   const [tilt, setTilt] = useState({ x: 0, y: 0, glareX: 50, glareY: 50 });
 
   const cardRef = useRef<HTMLDivElement | null>(null);
   const previewVideoRef = useRef<HTMLVideoElement | null>(null);
-  const modalVideoRef = useRef<HTMLVideoElement | null>(null);
 
-  // Auto-play the card preview muted on loop as soon as loaded
+  // Reliable Autoplay on all devices with direct property assignments & touch/scroll fallback
   useEffect(() => {
     const vid = previewVideoRef.current;
-    if (vid) {
-      vid.muted = true;
-      const play = () => {
-        vid.play().catch(() => {});
-      };
-      if (vid.readyState >= 2) {
-        play();
-      } else {
-        vid.addEventListener('canplay', play, { once: true });
-        vid.addEventListener('loadeddata', play, { once: true });
-      }
-    }
-  }, [videoSrc]);
+    if (!vid) return;
 
-  // Handle opening popup video modal with sound and locking body scroll
+    vid.muted = true;
+    vid.defaultMuted = true;
+    vid.playsInline = true;
+
+    const playPreview = () => {
+      if (!isModalOpen) {
+        vid.play().catch(() => {});
+      }
+    };
+
+    if (vid.readyState >= 2) {
+      playPreview();
+    } else {
+      vid.addEventListener('canplay', playPreview, { once: true });
+      vid.addEventListener('loadeddata', playPreview, { once: true });
+    }
+
+    // Unblock mobile autoplay on first user interaction anywhere
+    const onUserTouch = () => {
+      if (vid.paused && !isModalOpen) {
+        playPreview();
+      }
+    };
+    window.addEventListener('pointerdown', onUserTouch, { passive: true, once: true });
+    window.addEventListener('touchstart', onUserTouch, { passive: true, once: true });
+    window.addEventListener('scroll', onUserTouch, { passive: true, once: true });
+
+    return () => {
+      window.removeEventListener('pointerdown', onUserTouch);
+      window.removeEventListener('touchstart', onUserTouch);
+      window.removeEventListener('scroll', onUserTouch);
+    };
+  }, [videoSrc, isModalOpen]);
+
+  // Handle opening modal: pause preview video to free GPU decoder
   const handleOpenModal = () => {
     if (previewVideoRef.current) {
       previewVideoRef.current.pause();
     }
     setIsModalOpen(true);
-    setIsPlaying(true);
-    setIsMuted(false);
-    if (typeof document !== 'undefined') {
-      document.body.style.overflow = 'hidden';
-    }
   };
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
-    if (typeof document !== 'undefined') {
-      document.body.style.overflow = 'unset';
-    }
     if (previewVideoRef.current) {
       previewVideoRef.current.play().catch(() => {});
     }
   }, []);
-
-  // Keyboard escape listener
-  useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' && isModalOpen) {
-        handleCloseModal();
-      }
-    };
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isModalOpen, handleCloseModal]);
-
-  // Autoplay modal video from the beginning with sound once open
-  useEffect(() => {
-    if (isModalOpen && modalVideoRef.current) {
-      const vid = modalVideoRef.current;
-      const attemptPlay = () => {
-        vid.currentTime = 0;
-        vid.muted = false;
-        vid.volume = 1;
-        setIsMuted(false);
-        const p = vid.play();
-        if (p !== undefined) {
-          p.then(() => setIsPlaying(true)).catch(() => {
-            // Fallback to muted autoplay if browser policy restricts unmuted audio
-            vid.muted = true;
-            setIsMuted(true);
-            vid.play().then(() => setIsPlaying(true)).catch(() => {});
-          });
-        }
-      };
-
-      if (vid.readyState >= 2) {
-        attemptPlay();
-      } else {
-        vid.addEventListener('canplay', attemptPlay, { once: true });
-        vid.addEventListener('loadeddata', attemptPlay, { once: true });
-      }
-    }
-  }, [isModalOpen]);
-
-  // Toggle play/pause on video frame click
-  const handleTogglePlay = (e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    if (!modalVideoRef.current) return;
-    if (modalVideoRef.current.paused) {
-      const p = modalVideoRef.current.play();
-      if (p !== undefined) {
-        p.then(() => setIsPlaying(true)).catch(() => {
-          if (modalVideoRef.current) {
-            modalVideoRef.current.muted = true;
-            setIsMuted(true);
-            modalVideoRef.current.play().then(() => setIsPlaying(true)).catch(() => {});
-          }
-        });
-      }
-    } else {
-      modalVideoRef.current.pause();
-      setIsPlaying(false);
-    }
-  };
-
-  // Toggle sound mute/unmute
-  const handleToggleMute = (e?: React.MouseEvent) => {
-    if (e) e.stopPropagation();
-    if (!modalVideoRef.current) return;
-    const nextMuted = !isMuted;
-    modalVideoRef.current.muted = nextMuted;
-    setIsMuted(nextMuted);
-  };
-
-  // Video time update
-  const handleTimeUpdate = (e: React.SyntheticEvent<HTMLVideoElement>) => {
-    setCurrentTime(e.currentTarget.currentTime);
-  };
-
-  const handleLoadedMetadata = (e: React.SyntheticEvent<HTMLVideoElement>) => {
-    setDuration(e.currentTarget.duration);
-  };
-
-  // Scrub on animated progress bar
-  const handleSeek = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    if (!modalVideoRef.current || duration <= 0) return;
-    const rect = e.currentTarget.getBoundingClientRect();
-    const clickX = e.clientX - rect.left;
-    const ratio = Math.max(0, Math.min(1, clickX / rect.width));
-    const targetTime = ratio * duration;
-    modalVideoRef.current.currentTime = targetTime;
-    setCurrentTime(targetTime);
-  };
 
   // 3D Mouse Parallax Tracker
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -195,7 +352,6 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
     const x = (e.clientX - rect.left) / rect.width;
     const y = (e.clientY - rect.top) / rect.height;
 
-    // Rotate up to 16 degrees
     const rotateY = (x - 0.5) * 16;
     const rotateX = (0.5 - y) * 16;
 
@@ -216,11 +372,8 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
     setTilt({ x: 0, y: 0, glareX: 50, glareY: 50 });
   };
 
-  const progressPercent = duration > 0 ? (currentTime / duration) * 100 : 0;
-
   return (
     <>
-      {/* 3D Floating & Tilting Card Container with True Stereoscopic Depth */}
       <div
         ref={cardRef}
         onMouseMove={handleMouseMove}
@@ -238,7 +391,7 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
         }}
         className={`group/vid relative select-none [perspective:1200px] [transform-style:preserve-3d] cursor-pointer ${className}`}
       >
-        {/* Soft Ambient Floating Shadow on Ground Plane */}
+        {/* Soft Ambient Floating Shadow */}
         <div
           className={`absolute -bottom-3 inset-x-4 h-6 rounded-full bg-[#FF5E1E]/20 blur-xl pointer-events-none transition-all duration-500 ${
             isHovered ? 'scale-115 opacity-80' : 'opacity-40 animate-pulse'
@@ -270,9 +423,16 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
                 }`
           }
         >
-          {/* Looping Muted Preview Video with Instant Poster Thumbnail & High-Speed Autoplay */}
+          {/* Looping Muted Preview Video with Instant Poster & Autoplay */}
           <video
-            ref={previewVideoRef}
+            ref={(el) => {
+              previewVideoRef.current = el;
+              if (el) {
+                el.muted = true;
+                el.defaultMuted = true;
+                el.playsInline = true;
+              }
+            }}
             src={videoSrc}
             poster={effectivePoster}
             preload="auto"
@@ -305,7 +465,7 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
           {/* Cinematic Vignettes */}
           <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-black/30 pointer-events-none" />
 
-          {/* BOTTOM PLAY BUTTON WITH ANIMATED "EXPLORE" HOVER EXPANSION */}
+          {/* Play Button */}
           <div className="absolute bottom-2.5 left-2.5 sm:bottom-3 sm:left-3 z-20 pointer-events-none">
             <div className="flex items-center">
               <div
@@ -315,10 +475,7 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
                     : 'w-8 h-8 sm:w-9 sm:h-9 justify-center'
                 }`}
               >
-                {/* Play Icon */}
                 <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 fill-white text-white shrink-0 translate-x-0.5" />
-
-                {/* Animated "Explore" Text Label Revealed on Hover */}
                 <div
                   className={`overflow-hidden transition-all duration-300 ease-out flex items-center ${
                     isHovered ? 'max-w-[80px] opacity-100 ml-1' : 'max-w-0 opacity-0 ml-0'
@@ -332,140 +489,19 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
             </div>
           </div>
 
-          {/* Subtle Orange Bottom Rim Glow */}
+          {/* Bottom Rim Glow */}
           <div className="absolute bottom-0 inset-x-0 h-1 bg-gradient-to-r from-transparent via-[#FF5E1E] to-transparent opacity-70 group-hover/vid:opacity-100 transition-opacity" />
         </div>
       </div>
 
-      {/* ========================================================================= */}
-      {/* POPUP MODAL VIDEO PLAYER (Rendered via Portal to blur entire page & navbar)*/}
-      {/* ========================================================================= */}
-      {isModalOpen && typeof document !== 'undefined' && createPortal(
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={`${title} Video Player`}
-          className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-6 md:p-8 animate-fadeIn"
-          onClick={handleCloseModal}
-        >
-          {/* Floating Responsive Popup Card (Reduced Professional Cinema Size) */}
-          <div
-            className="relative w-full max-w-3xl md:max-w-[780px] rounded-2xl sm:rounded-3xl overflow-hidden border border-[#FF5E1E]/60 shadow-[0_0_60px_rgba(255,94,30,0.35),0_25px_80px_rgba(0,0,0,0.95)] bg-[#0C0E12] transition-transform duration-200 group/player select-none"
-            onClick={(e) => e.stopPropagation()}
-          >
-            {/* Top Close Button (Discreet & Hover-Elevated) */}
-            <button
-              onClick={handleCloseModal}
-              aria-label="Close popup video"
-              className="absolute top-3.5 right-3.5 z-40 w-8 h-8 sm:w-9 sm:h-9 rounded-full bg-black/60 hover:bg-[#FF5E1E] text-white flex items-center justify-center backdrop-blur-xl border border-white/20 hover:border-[#FF5E1E] transition-all hover:scale-105 active:scale-95 shadow-xl opacity-80 hover:opacity-100"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            {/* Video Container Frame */}
-            <div
-              className="relative w-full aspect-video bg-black flex items-center justify-center cursor-pointer overflow-hidden"
-              onClick={handleTogglePlay}
-            >
-              {/* Video Element without any native buttons */}
-              <video
-                ref={modalVideoRef}
-                src={videoSrc}
-                poster={effectivePoster}
-                autoPlay
-                playsInline
-                loop
-                muted={isMuted}
-                preload="auto"
-                onPlay={() => setIsPlaying(true)}
-                onPause={() => setIsPlaying(false)}
-                onTimeUpdate={handleTimeUpdate}
-                onLoadedMetadata={handleLoadedMetadata}
-                className="w-full h-full object-cover sm:object-contain bg-black"
-              />
-
-              {/* Momentary Play/Pause Status Indicator Ripple - Interactive Click-to-Play */}
-              {!isPlaying && (
-                <div
-                  className="absolute inset-0 flex items-center justify-center bg-black/40 cursor-pointer z-30 transition-opacity"
-                  onClick={handleTogglePlay}
-                >
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-[#FF5E1E] text-white flex items-center justify-center shadow-[0_0_35px_#FF5E1E] border border-white/30 hover:scale-110 active:scale-95 transition-transform animate-pulse">
-                    <Play className="w-7 h-7 sm:w-8 sm:h-8 fill-white translate-x-0.5" />
-                  </div>
-                </div>
-              )}
-
-              {/* ========================================================================= */}
-              {/* HOVER-ONLY OVERLAY CONTROLS (Progress Bar + Sound Mute/Unmute Button)      */}
-              {/* ========================================================================= */}
-              <div className="absolute inset-0 pointer-events-none opacity-0 group-hover/player:opacity-100 transition-opacity duration-300 flex flex-col justify-between p-4 sm:p-5 bg-gradient-to-t from-black/85 via-transparent to-black/35">
-                
-                {/* Top Video Title Badge */}
-                <div className="flex items-center gap-2 pointer-events-auto">
-                  <span className="w-2 h-2 rounded-full bg-[#FF5E1E] shadow-[0_0_8px_#FF5E1E] animate-pulse" />
-                  <span className="text-xs font-mono font-bold uppercase tracking-wider text-white drop-shadow-md">
-                    {title}
-                  </span>
-                </div>
-
-                {/* Bottom Interactive Area */}
-                <div className="space-y-3 pointer-events-auto w-full">
-                  <div className="flex items-center justify-between text-xs">
-                    {/* Timestamp */}
-                    <span className="text-[11px] font-mono font-semibold text-white/85 drop-shadow">
-                      {formatTime(currentTime)} / {formatTime(duration)}
-                    </span>
-
-                    {/* Customized Sound Mute/Unmute Button */}
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        handleToggleMute();
-                      }}
-                      className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-black/65 hover:bg-black/95 backdrop-blur-xl border border-white/20 hover:border-[#FF5E1E] text-white hover:text-[#FF5E1E] shadow-lg transition-all active:scale-95 group/sound"
-                    >
-                      {isMuted ? (
-                        <>
-                          <VolumeX className="w-3.5 h-3.5 text-red-400" />
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-red-400">
-                            Muted
-                          </span>
-                        </>
-                      ) : (
-                        <>
-                          <Volume2 className="w-3.5 h-3.5 text-[#FF5E1E]" />
-                          <span className="text-[10px] font-mono font-bold uppercase tracking-wider text-white group-hover/sound:text-[#FF5E1E]">
-                            Sound On
-                          </span>
-                        </>
-                      )}
-                    </button>
-                  </div>
-
-                  {/* Customized Animated Progress Bar */}
-                  <div
-                    className="relative w-full h-1.5 sm:h-2 bg-white/25 hover:h-2.5 rounded-full overflow-hidden cursor-pointer backdrop-blur-md transition-all duration-150 group/bar"
-                    onClick={handleSeek}
-                    role="slider"
-                    aria-label="Video playback progress"
-                    aria-valuenow={Math.round(progressPercent)}
-                  >
-                    <div
-                      className="h-full bg-gradient-to-r from-amber-400 via-[#FF7538] to-[#FF5E1E] shadow-[0_0_12px_#FF5E1E] rounded-full relative transition-[width] duration-100 ease-linear"
-                      style={{ width: `${progressPercent}%` }}
-                    >
-                      {/* Leading Glow Dot */}
-                      <span className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white shadow-[0_0_8px_#FFFFFF]" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>,
-        document.body
-      )}
+      {/* Decoupled High-Performance Modal Player */}
+      <HeroVideoModal
+        isOpen={isModalOpen}
+        onClose={handleCloseModal}
+        videoSrc={videoSrc}
+        posterSrc={effectivePoster}
+        title={title}
+      />
     </>
   );
 };
