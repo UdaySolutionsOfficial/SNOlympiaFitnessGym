@@ -69,8 +69,10 @@ const HeroVideoModal: React.FC<HeroVideoModalProps> = ({
     const vid = modalVideoRef.current;
     if (!vid) return;
 
+    let hasStarted = false;
     const startPlay = () => {
-      vid.currentTime = 0;
+      if (hasStarted) return;
+      hasStarted = true;
       vid.muted = false;
       vid.volume = 1;
       setIsMuted(false);
@@ -93,6 +95,11 @@ const HeroVideoModal: React.FC<HeroVideoModalProps> = ({
       vid.addEventListener('canplay', startPlay, { once: true });
       vid.addEventListener('loadeddata', startPlay, { once: true });
     }
+
+    return () => {
+      vid.removeEventListener('canplay', startPlay);
+      vid.removeEventListener('loadeddata', startPlay);
+    };
   }, [isOpen]);
 
   // Keyboard escape listener
@@ -156,7 +163,7 @@ const HeroVideoModal: React.FC<HeroVideoModalProps> = ({
       role="dialog"
       aria-modal="true"
       aria-label={`${title} Video Player`}
-      className="fixed inset-0 z-[9999] bg-black/85 backdrop-blur-2xl flex items-center justify-center p-4 sm:p-6 md:p-8 animate-fadeIn"
+      className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center p-4 sm:p-6 md:p-8 animate-fadeIn"
       onClick={onClose}
     >
       <div
@@ -181,7 +188,6 @@ const HeroVideoModal: React.FC<HeroVideoModalProps> = ({
             ref={modalVideoRef}
             src={videoSrc}
             poster={posterSrc}
-            autoPlay
             playsInline
             loop
             muted={isMuted}
@@ -244,14 +250,14 @@ const HeroVideoModal: React.FC<HeroVideoModalProps> = ({
 
               {/* Progress Bar */}
               <div
-                className="relative w-full h-1.5 sm:h-2 bg-white/25 hover:h-2.5 rounded-full overflow-hidden cursor-pointer backdrop-blur-md transition-all duration-150 group/bar"
+                className="relative w-full h-1.5 sm:h-2 bg-white/20 hover:h-2.5 rounded-full overflow-hidden cursor-pointer transition-all duration-150 group/bar"
                 onClick={handleSeek}
                 role="slider"
                 aria-label="Video playback progress"
                 aria-valuenow={Math.round(progressPercent)}
               >
                 <div
-                  className="h-full bg-gradient-to-r from-amber-400 via-[#FF7538] to-[#FF5E1E] shadow-[0_0_12px_#FF5E1E] rounded-full relative transition-[width] duration-100 ease-linear"
+                  className="h-full bg-gradient-to-r from-amber-400 via-[#FF7538] to-[#FF5E1E] shadow-[0_0_12px_#FF5E1E] rounded-full relative"
                   style={{ width: `${progressPercent}%` }}
                 >
                   <span className="absolute right-0 top-1/2 -translate-y-1/2 w-2 h-2 rounded-full bg-white shadow-[0_0_8px_#FFFFFF]" />
@@ -285,6 +291,7 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
       : '/assets/videos/intro-video-poster.webp');
 
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isOtherModalOpen, setIsOtherModalOpen] = useState(false);
   const [isHovered, setIsHovered] = useState(false);
   const [tilt, setTilt] = useState({ x: 0, y: 0, glareX: 50, glareY: 50 });
 
@@ -293,6 +300,7 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
 
   // Reliable Autoplay on all devices with direct property assignments & touch/scroll fallback
   useEffect(() => {
+    if (isModalOpen || isOtherModalOpen) return;
     const vid = previewVideoRef.current;
     if (!vid) return;
 
@@ -301,7 +309,7 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
     vid.playsInline = true;
 
     const playPreview = () => {
-      if (!isModalOpen) {
+      if (!isModalOpen && !isOtherModalOpen) {
         vid.play().catch(() => {});
       }
     };
@@ -315,7 +323,7 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
 
     // Unblock mobile autoplay on first user interaction anywhere
     const onUserTouch = () => {
-      if (vid.paused && !isModalOpen) {
+      if (vid.paused && !isModalOpen && !isOtherModalOpen) {
         playPreview();
       }
     };
@@ -328,7 +336,23 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
       window.removeEventListener('touchstart', onUserTouch);
       window.removeEventListener('scroll', onUserTouch);
     };
-  }, [videoSrc, isModalOpen]);
+  }, [videoSrc, isModalOpen, isOtherModalOpen]);
+
+  // When another card opens a modal, completely unmount preview video to free 100% of GPU decoders
+  useEffect(() => {
+    const onOtherModalOpen = () => {
+      setIsOtherModalOpen(true);
+    };
+    const onOtherModalClose = () => {
+      setIsOtherModalOpen(false);
+    };
+    window.addEventListener('gym-modal-opened', onOtherModalOpen);
+    window.addEventListener('gym-modal-closed', onOtherModalClose);
+    return () => {
+      window.removeEventListener('gym-modal-opened', onOtherModalOpen);
+      window.removeEventListener('gym-modal-closed', onOtherModalClose);
+    };
+  }, []);
 
   // Handle opening modal: pause preview video to free GPU decoder
   const handleOpenModal = () => {
@@ -340,9 +364,6 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
 
   const handleCloseModal = useCallback(() => {
     setIsModalOpen(false);
-    if (previewVideoRef.current) {
-      previewVideoRef.current.play().catch(() => {});
-    }
   }, []);
 
   // 3D Mouse Parallax Tracker
@@ -389,7 +410,7 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
             handleOpenModal();
           }
         }}
-        className={`group/vid relative select-none [perspective:1200px] [transform-style:preserve-3d] cursor-pointer ${className}`}
+        className={`group/vid relative select-none [perspective:1200px] [transform-style:preserve-3d] cursor-pointer w-fit ${className}`}
       >
         {/* Soft Ambient Floating Shadow */}
         <div
@@ -423,26 +444,34 @@ export const HeroVideoCard: React.FC<HeroVideoCardProps> = ({
                 }`
           }
         >
-          {/* Looping Muted Preview Video with Instant Poster & Autoplay */}
-          <video
-            ref={(el) => {
-              previewVideoRef.current = el;
-              if (el) {
-                el.muted = true;
-                el.defaultMuted = true;
-                el.playsInline = true;
-              }
-            }}
-            src={videoSrc}
-            poster={effectivePoster}
-            preload="auto"
-            defaultMuted
-            playsInline
-            loop
-            muted
-            autoPlay
-            className="w-full h-full object-cover object-center filter brightness-90 group-hover/vid:brightness-100 transition-all duration-500 scale-100 group-hover/vid:scale-105"
-          />
+          {/* Looping Muted Preview Video (Unmounted while ANY modal is open to 100% free network sockets & decoders) */}
+          {!isModalOpen && !isOtherModalOpen ? (
+            <video
+              ref={(el) => {
+                previewVideoRef.current = el;
+                if (el) {
+                  el.muted = true;
+                  el.defaultMuted = true;
+                  el.playsInline = true;
+                }
+              }}
+              src={videoSrc}
+              poster={effectivePoster}
+              preload="metadata"
+              defaultMuted
+              playsInline
+              loop
+              muted
+              autoPlay
+              className="w-full h-full object-cover object-center filter brightness-90 group-hover/vid:brightness-100 transition-all duration-500 scale-100 group-hover/vid:scale-105"
+            />
+          ) : (
+            <img
+              src={effectivePoster}
+              alt={title}
+              className="w-full h-full object-cover object-center filter brightness-90 scale-100"
+            />
+          )}
 
           {/* Compact Mode Title Badge */}
           {compact && (

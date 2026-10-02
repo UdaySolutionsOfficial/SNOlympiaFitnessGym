@@ -20,6 +20,7 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ className }) => {
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [isHovered, setIsHovered] = useState(false);
+  const [isSectionVisible, setIsSectionVisible] = useState(false);
 
   const sectionRef = useRef<HTMLElement | null>(null);
   const isScrubbingRef = useRef(false);
@@ -42,7 +43,9 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ className }) => {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        isVisible = entries[0]?.isIntersecting ?? false;
+        const visible = entries[0]?.isIntersecting ?? false;
+        isVisible = visible;
+        setIsSectionVisible(visible);
         updatePlayback();
       },
       { threshold: 0.1 }
@@ -269,26 +272,35 @@ export const AboutSection: React.FC<AboutSectionProps> = ({ className }) => {
 
                 {/* Main Video Inner Container */}
                 <div className="relative rounded-[22px] overflow-hidden bg-brand-surface/90 select-none">
-                  {/* High-Definition Auto-Looping Equipment Video */}
-                  <video
-                    ref={videoRef}
-                    src="/assets/videos/about-equipment.mp4"
-                    poster={ASSET_MANIFEST.about.gymAtmosphere.path}
-                    preload="metadata"
-                    autoPlay
-                    loop
-                    muted={isMuted}
-                    playsInline
-                    onTimeUpdate={(e) => {
-                      if (!isScrubbingRef.current) {
-                        setCurrentTime(e.currentTarget.currentTime);
-                      }
-                    }}
-                    onLoadedMetadata={(e) => {
-                      setDuration(e.currentTarget.duration);
-                    }}
-                    className="w-full aspect-[16/10] object-cover object-center filter contrast-[1.05] brightness-[0.95] group-hover/aboutvid:scale-105 transition-transform duration-700 ease-out"
-                  />
+                  {/* High-Definition Auto-Looping Equipment Video (only mounted when in viewport) */}
+                  {isSectionVisible ? (
+                    <video
+                      ref={videoRef}
+                      src="/assets/videos/about-equipment.mp4"
+                      poster={ASSET_MANIFEST.about.gymAtmosphere.path}
+                      preload="metadata"
+                      autoPlay
+                      loop
+                      muted={isMuted}
+                      playsInline
+                      onTimeUpdate={(e) => {
+                        if (!isScrubbingRef.current) {
+                          setCurrentTime(e.currentTarget.currentTime);
+                        }
+                      }}
+                      onLoadedMetadata={(e) => {
+                        setDuration(e.currentTarget.duration);
+                      }}
+                      className="w-full aspect-[16/10] object-cover object-center filter contrast-[1.05] brightness-[0.95] group-hover/aboutvid:scale-105 transition-transform duration-700 ease-out"
+                    />
+                  ) : (
+                    <img
+                      src={ASSET_MANIFEST.about.gymAtmosphere.path}
+                      alt="SN Olympia Equipment"
+                      loading="lazy"
+                      className="w-full aspect-[16/10] object-cover object-center filter contrast-[1.05] brightness-[0.95]"
+                    />
+                  )}
 
                   {/* Cinematic Vignette Gradients */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/20 to-black/40 pointer-events-none" />

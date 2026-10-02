@@ -233,7 +233,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
               </div>
 
               {/* Bottom Left: Second Video Card & Tablet Rating Badge */}
-              <div className="hidden md:flex flex-col gap-3 pt-2">
+              <div className="hidden md:flex flex-col gap-3 pt-2 w-fit">
                 <HeroVideoCard
                   videoSrc={ASSET_MANIFEST.hero.introVideo2.path}
                   title="SN Olympia Energy & Coaching"
@@ -275,7 +275,7 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
                 </div>
 
                 {/* Floating Translucent Video Card (Hidden on mobile <md) */}
-                <div className="hidden md:block mt-1">
+                <div className="hidden md:block mt-1 w-fit">
                   <HeroVideoCard
                     videoSrc={ASSET_MANIFEST.hero.introVideo.path}
                     title="SN Olympia Facility Showcase"
@@ -321,9 +321,11 @@ export const HeroSection: React.FC<HeroSectionProps> = ({
           </div>
         </div>
 
-        {/* Signature Centered 3D "Explore More" Button (Placed at Bottom of Hero Image) */}
-        <div className="relative lg:absolute lg:bottom-7 inset-x-0 flex justify-center items-center z-10 pointer-events-auto pb-6 lg:pb-0">
-          <HeroExplore3DButton onClick={onExploreClick || onJoinClick} />
+        {/* Signature Centered 3D "Explore More" Button (Elevated to z-30 with pointer-events isolation) */}
+        <div className="relative lg:absolute lg:bottom-7 inset-x-0 flex justify-center items-center z-30 pointer-events-none pb-6 lg:pb-0">
+          <div className="pointer-events-auto">
+            <HeroExplore3DButton onClick={onExploreClick || onJoinClick} />
+          </div>
         </div>
       </div>
     </div>

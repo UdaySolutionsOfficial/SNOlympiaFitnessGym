@@ -262,6 +262,8 @@ export const VideoArenaSection: React.FC = () => {
     }
   }, [activeFilter]);
 
+  const [isSectionVisible, setIsSectionVisible] = useState(false);
+
   // Synchronize In-Place Audio Playback with Viewport Intersection & Modal Awareness
   useEffect(() => {
     let isVisible = false;
@@ -292,7 +294,9 @@ export const VideoArenaSection: React.FC = () => {
 
     const observer = new IntersectionObserver(
       (entries) => {
-        isVisible = entries[0]?.isIntersecting ?? false;
+        const visible = entries[0]?.isIntersecting ?? false;
+        isVisible = visible;
+        setIsSectionVisible(visible);
         syncVideos();
       },
       { threshold: 0.1 }
@@ -743,31 +747,40 @@ export const VideoArenaSection: React.FC = () => {
                       : 'border-white/15 hover:border-white/40'
                   }`}
                 >
-                  {/* In-Place Video Player with Instant HD Poster & Smart Preload */}
-                  <video
-                    ref={(el) => {
-                      if (el) videoRefs.current.set(video.id, el);
-                      else videoRefs.current.delete(video.id);
-                    }}
-                    src={video.src}
-                    poster={video.src.replace('.mp4', '-poster.webp')}
-                    preload={isCenter ? 'auto' : Math.abs(offset) < 1.3 ? 'metadata' : 'none'}
-                    loop
-                    muted={activeAudioId !== video.id || isAudioMuted}
-                    autoPlay={isCenter}
-                    playsInline
-                    onTimeUpdate={(e) => {
-                      if (activeAudioId === video.id && !isScrubbingRef.current) {
-                        setCurrentTime(e.currentTarget.currentTime);
-                      }
-                    }}
-                    onLoadedMetadata={(e) => {
-                      if (activeAudioId === video.id) {
-                        setDuration(e.currentTarget.duration);
-                      }
-                    }}
-                    className="w-full h-full object-cover object-center filter brightness-95 group-hover:brightness-105 transition-all duration-500"
-                  />
+                  {/* In-Place Video Player with Instant HD Poster & Smart Preload (only mounted when in viewport) */}
+                  {isSectionVisible ? (
+                    <video
+                      ref={(el) => {
+                        if (el) videoRefs.current.set(video.id, el);
+                        else videoRefs.current.delete(video.id);
+                      }}
+                      src={video.src}
+                      poster={video.src.replace('.mp4', '-poster.webp')}
+                      preload={isCenter ? 'auto' : Math.abs(offset) < 1.3 ? 'metadata' : 'none'}
+                      loop
+                      muted={activeAudioId !== video.id || isAudioMuted}
+                      autoPlay={isCenter}
+                      playsInline
+                      onTimeUpdate={(e) => {
+                        if (activeAudioId === video.id && !isScrubbingRef.current) {
+                          setCurrentTime(e.currentTarget.currentTime);
+                        }
+                      }}
+                      onLoadedMetadata={(e) => {
+                        if (activeAudioId === video.id) {
+                          setDuration(e.currentTarget.duration);
+                        }
+                      }}
+                      className="w-full h-full object-cover object-center filter brightness-95 group-hover:brightness-105 transition-all duration-500"
+                    />
+                  ) : (
+                    <img
+                      src={video.src.replace('.mp4', '-poster.webp')}
+                      alt={video.title}
+                      loading="lazy"
+                      className="w-full h-full object-cover object-center filter brightness-95"
+                    />
+                  )}
 
                   {/* Top-To-Bottom Vignette Gradients */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/25 to-black/40 pointer-events-none" />

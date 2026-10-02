@@ -140,6 +140,7 @@ export const HeroExplore3DButton: React.FC<HeroExplore3DButtonProps> = ({
     <div className={`relative [perspective:1000px] inline-block ${className}`}>
       <button
         ref={buttonRef}
+        type="button"
         onClick={onClick}
         onMouseMove={handleMouseMove}
         onMouseEnter={handleMouseEnter}

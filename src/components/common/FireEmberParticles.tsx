@@ -72,16 +72,26 @@ export const FireEmberParticles: React.FC<FireEmberParticlesProps> = ({
       };
     });
 
-    // Handle tab visibility to pause when inactive
+    // Handle tab visibility and video modal state to pause when inactive
+    let isModalOpen = false;
     const handleVisibility = () => {
       isVisible = !document.hidden;
     };
+    const handleModalOpen = () => {
+      isModalOpen = true;
+    };
+    const handleModalClose = () => {
+      isModalOpen = false;
+    };
+
     document.addEventListener('visibilitychange', handleVisibility);
+    window.addEventListener('gym-modal-opened', handleModalOpen);
+    window.addEventListener('gym-modal-closed', handleModalClose);
 
     let time = 0;
     const render = () => {
       animId = requestAnimationFrame(render);
-      if (!isVisible) return;
+      if (!isVisible || isModalOpen) return;
 
       time += 0.015;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -136,6 +146,8 @@ export const FireEmberParticles: React.FC<FireEmberParticlesProps> = ({
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', handleResize);
       document.removeEventListener('visibilitychange', handleVisibility);
+      window.removeEventListener('gym-modal-opened', handleModalOpen);
+      window.removeEventListener('gym-modal-closed', handleModalClose);
     };
   }, [count, prefersReducedMotion]);
 

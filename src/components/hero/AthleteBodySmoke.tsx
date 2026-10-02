@@ -98,6 +98,7 @@ export const AthleteBodySmoke: React.FC<AthleteBodySmokeProps> = ({ className = 
     }
 
     // Visibility observer to pause when scrolled out of view
+    let isModalOpen = false;
     const observer = new IntersectionObserver(
       (entries) => {
         isVisible = entries[0]?.isIntersecting ?? false;
@@ -106,10 +107,19 @@ export const AthleteBodySmoke: React.FC<AthleteBodySmokeProps> = ({ className = 
     );
     observer.observe(container);
 
+    const handleModalOpen = () => {
+      isModalOpen = true;
+    };
+    const handleModalClose = () => {
+      isModalOpen = false;
+    };
+    window.addEventListener('gym-modal-opened', handleModalOpen);
+    window.addEventListener('gym-modal-closed', handleModalClose);
+
     let frame = 0;
     const render = () => {
       animId = requestAnimationFrame(render);
-      if (!isVisible) return;
+      if (!isVisible || isModalOpen) return;
 
       frame++;
       ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -173,6 +183,8 @@ export const AthleteBodySmoke: React.FC<AthleteBodySmokeProps> = ({ className = 
     return () => {
       cancelAnimationFrame(animId);
       window.removeEventListener('resize', resize);
+      window.removeEventListener('gym-modal-opened', handleModalOpen);
+      window.removeEventListener('gym-modal-closed', handleModalClose);
       observer.disconnect();
     };
   }, [prefersReducedMotion]);

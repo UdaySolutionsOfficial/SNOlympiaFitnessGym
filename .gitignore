@@ -26,3 +26,5 @@ dist-ssr
 # Raw unorganized asset working directories (production assets are in public/assets/)
 image assests/
 video assests/
+problem/
+scratch/
